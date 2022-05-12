@@ -25,6 +25,7 @@ export default class ScvService {
     // configuration
     this.port =  opts.port || 80;
     this.appDir = opts.appDir || APPDIR;
+    this.distDir = opts.distDir || path.join(APPDIR, 'dist');
     this.initialized = undefined;
     this.protocol = opts.protocol || "http";
     let apiUrl = opts.apiUrl || 'http://suttacentral.net/api';
@@ -42,7 +43,7 @@ export default class ScvService {
   }
 
   async initialize() {
-    let { app, port, scApi, protocol } = this;
+    let { app, port, scApi, protocol, distDir } = this;
     if (this.initialized != null) {
       this.warn("ScvService is already initialized");
       return this;
@@ -54,17 +55,17 @@ export default class ScvService {
     });
 
     app.use(compression());
-    //TBD app.all('*', function(req, res, next) {
-        //TBD res.header("Access-Control-Allow-Origin", "*");
-        //TBD res.header("Access-Control-Allow-Headers", [
-            //TBD "X-Requested-With",
-            //TBD "Content-Type",
-            //TBD "Access-Control-Allow-Headers",
-            //TBD "Authorization",
-        //TBD ].join(","));
-        //TBD res.header("Access-Control-Allow-Methods", "GET, OPTIONS, PUT, POST");
-        //TBD next();
-    //TBD });
+    app.all('*', function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", [
+            "X-Requested-With",
+            "Content-Type",
+            "Access-Control-Allow-Headers",
+            "Authorization",
+        ].join(","));
+        res.header("Access-Control-Allow-Methods", "GET, OPTIONS, PUT, POST");
+        next();
+    });
    
     //TBD app.get('/scv/auth/*',
         //TBD jwt({secret: ScvRest.JWT_SECRET, algorithms:['HS256']}),
@@ -74,30 +75,30 @@ export default class ScvService {
         //TBD });
 
     Object.entries({
-      "/scv/index.html": "../dist/index.html",
-      "/scv/img": "../dist/img",
-      "/audio": "../dist/audio",
-      "/css": "../dist/css",
-      "/fonts": "../dist/fonts",
-      "/MaterialIcons.css": "../dist/MaterialIcons.css",
-      "/MaterialIcons.ttf": "../dist/MaterialIcons.ttf",
-      "/scv/js": "../dist/js",
-      "/scv/css": "../dist/css",
-      "/scv/fonts":  "../dist/fonts",
+      "/scv/index.html": "index.html",
+      "/scv/img": "img",
+      "/audio": "audio",
+      "/css": "css",
+      "/fonts": "fonts",
+      "/MaterialIcons.css": "MaterialIcons.css",
+      "/MaterialIcons.ttf": "MaterialIcons.ttf",
+      "/scv/js": "js",
+      "/scv/css": "css",
+      "/scv/fonts":  "fonts",
       "/scv/sounds": "../local/sounds",
     }).forEach(kv => {
       let [ urlPath, value ] = kv;
-      let filePath = path.join(__dirname, value);
+      let filePath = path.join(distDir, value);
       app.use(urlPath, express.static(filePath));
       this.info(`initialize() static: ${urlPath} => ${filePath}`);
     });
 
-    //TBD app.use(favicon(path.join(__dirname, "../dist/img/favicon.png")));
+    app.use(favicon(path.join(distDir, "img/favicon.png")));
 
-    //TBD app.get(["/","/scv"], function(req,res,next) {
-        //TBD res.redirect("/scv/index.html");
-        //TBD next();
-    //TBD });
+    app.get(["/","/scv"], function(req,res,next) {
+        res.redirect("/scv/index.html");
+        next();
+    });
 
     //TBD await scApi.initialize();
     //TBD var rbServer =  app.locals.rbServer = new RbServer();
