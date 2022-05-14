@@ -15,4 +15,4 @@ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
 mv server.key ${SSLDIR}
 mv server.crt ${SSLDIR}
 
-echo -e "${SCRIPT}: BEGIN `date`"
+echo -e "${SCRIPT}: END `date`"
