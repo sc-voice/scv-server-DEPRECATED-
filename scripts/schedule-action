@@ -1,0 +1,13 @@
+#!/bin/bash
+DIR=`dirname $0`; 
+pushd $DIR/..
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+echo -e "${SCRIPT}: BEGIN `date`"
+
+git pull
+$DIR/update-ebt-data
+npm install --save scv-bilara@latest
+
+$DIR/publish-npm
+
+echo -e "${SCRIPT}: END `date`"
