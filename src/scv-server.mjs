@@ -1,9 +1,11 @@
 import fs from "fs";
 import path from "path";
+import https from 'node:https';
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const APPDIR = path.dirname(__dirname);
-global.__appdir = APPDIR;
+const APP_DIR = path.dirname(__dirname);
+const LOCAL_DIR = path.join(APP_DIR, 'local');
+global.__appdir = APP_DIR;
 
 import compression from "compression";
 import express from "express";
@@ -24,9 +26,10 @@ export default class ScvService {
 
     // configuration
     this.port =  opts.port || 80;
-    this.appDir = opts.appDir || APPDIR;
-    this.distDir = opts.distDir || path.join(APPDIR, 'dist');
+    this.appDir = opts.appDir || APP_DIR;
+    this.distDir = opts.distDir || path.join(APP_DIR, 'dist');
     this.initialized = undefined;
+    this.sslPath = opts.sslPath || path.join(LOCAL_DIR, 'ssl');
     this.protocol = opts.protocol || "http";
     let apiUrl = opts.apiUrl || 'http://suttacentral.net/api';
     this.apiUrl = apiUrl;
@@ -40,6 +43,28 @@ export default class ScvService {
     //TBD Object.defineProperty(this, "rbServer", {value: rbServer});
 
     logger.debug("ctor", opts);
+  }
+
+  async listenSSL(restBundles=[], sslOpts) {
+    let { port=443, app, sslPath } = this;
+    if (!fs.existsSync(sslPath)) {
+      throw new Error(`Nonexistent sslPath:${sslPath}`);
+    }
+    sslOpts = sslOpts || {
+      cert: fs.readFileSync(path.join(sslPath, 'server.crt')),
+      key: fs.readFileSync(path.join(sslPath, 'server.key')),
+    };
+    //TBD if (restBundles.filter(rb=>rb===this)[0] == null) {
+      //TBD restBundles.push(this);
+    //TBD }
+    //TBD restBundles.forEach(rb => rb.bindExpress(app));
+    var server = https.createServer(sslOpts, app);
+    let httpServer = server.listen(port);
+    if (!httpServer.listening) {
+      throw new Error(`Could not create HTTPS listener`);
+    }
+    // TBD this.rbss = new RbSingleton(restBundles, this.httpServer);
+    return httpServer;
   }
 
   async initialize() {
@@ -123,10 +148,13 @@ export default class ScvService {
       //TBD await rbServer.listen(app, restBundles, ports); 
     //TBD }
     //TBD await rbServer.initialize();
-    let httpListener = await app.listen(port);
+
+    let httpListener = protocol === "https"
+      ? await this.listenSSL()
+      : await app.listen(port)
     Object.defineProperty(this, "httpServer", {value: httpListener});
 
-    this.info("initialize() => OK ", {APPDIR, port});
+    this.info("initialize() => OK ", {APP_DIR, port});
     this.initialized = true;
     return this;
   }

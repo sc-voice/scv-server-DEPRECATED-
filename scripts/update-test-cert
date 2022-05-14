@@ -1,0 +1,14 @@
+#/bin/basho
+
+DIR=`dirname $0`
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+echo -e "${SCRIPT}: BEGIN `date`"
+
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+  -keyout ../test/ssl/server.key \
+  -out ../test/ssl/server.crt \
+  -subj "/CN=example.com" \
+  -addext "subjectAltName=DNS:example.com,DNS:www.example.net,IP:10.0.0.1"
+
+echo -e "${SCRIPT}: BEGIN `date`"

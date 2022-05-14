@@ -1,5 +1,5 @@
 {
-  "xreporter": "min",
+  "reporter": "min",
   "inline-diffs": true,
   "glob": [ "TEST" ],
   "watch": true,

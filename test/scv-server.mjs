@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const APP_DIR = path.dirname(__dirname);
 import express from "express";
 import supertest from "supertest";
 import { logger } from "log-instance";
@@ -23,16 +24,20 @@ typeof describe === "function" &&
       return new Promise((r) => setTimeout(() => r(), ms));
     }
 
-    async function testServer(port = 3000) {
+    async function testServer(args={}) {
+      let { port, protocol="http" } = args;
+      port = port || (protocol === "https" ? 443 : 3000);
       let scv = TEST_SERVERS[port];
       
       if (scv == null) {
-        TEST_SERVERS[port] = scv = new ScvServer({port});
+        args = Object.assign({port}, args);
+        TEST_SERVERS[port] = scv = new ScvServer(args);
         should(scv).instanceOf(ScvServer);
         should(await scv.initialize()).equal(scv);
         should(scv).properties({
           initialized:true,
           port,
+          protocol,
           apiUrl: 'http://suttacentral.net/api',
         });
         let { app } = scv;
@@ -44,7 +49,7 @@ typeof describe === "function" &&
       return scv;
     }
 
-    it("TESTTESTdefault ctor()", async()=>{ 
+    it("default ctor()", async()=>{ 
       let port = 80;
       let scv = new ScvServer();
       should(scv).instanceOf(ScvServer);
@@ -54,9 +59,10 @@ typeof describe === "function" &&
         appDir: path.dirname(__dirname),
         initialized: undefined,
         protocol: "http",
+        sslPath: path.join(APP_DIR, "local", "ssl"),
       });
     })
-    it("TESTTESTcustom ctor()", async()=>{ 
+    it("custom ctor()", async()=>{ 
       let port = 3000;
       let appDir = "testAppDir";
       let distDir = "testDistDir";
@@ -64,6 +70,7 @@ typeof describe === "function" &&
       let app = "testApp";
       let scApi = "testScApi";
       let protocol = "https";
+      let sslPath = "testSSLPath";
       let scv = new ScvServer({
         apiUrl,
         app,
@@ -72,6 +79,7 @@ typeof describe === "function" &&
         port,
         protocol,
         scApi,
+        sslPath,
       });
       should(scv).instanceOf(ScvServer);
 
@@ -83,15 +91,16 @@ typeof describe === "function" &&
         port,
         protocol,
         initialized: undefined,
+        sslPath,
       });
 
       // injected properties are not enumerable
       should(scv.app).equal(app);
       should(scv.scApi).equal(scApi);
     })
-    it("TESTTESTGET /test", async()=>{ 
+    it("GET /test", async()=>{ 
       //logger.logLevel = 'info';
-      let scv = await testServer(3000);
+      let scv = await testServer();
       var res = await supertest(scv.app)
         .get('/test')
         .set('Accept', 'application/json')
@@ -99,16 +108,16 @@ typeof describe === "function" &&
         .expect("Content-Type", /json/)
         .expect({test:"TEST OK"});
     })
-    it("TESTTESTGET /favicon", async()=>{ 
-      let scv = await testServer(3000);
+    it("GET /favicon", async()=>{ 
+      let scv = await testServer();
       var res = await supertest(scv.app)
         .get('/favicon.ico')
         .expect(200)
         .expect("Content-Type", /image/)
     })
 
-    it("TESTTESTGET /index.html", async()=>{ 
-      let scv = await testServer(3000);
+    it("GET /index.html", async()=>{ 
+      let scv = await testServer();
       let indexUrl = '/scv/index.html';
       let res = [
         await supertest(scv.app).get(indexUrl)
@@ -121,6 +130,20 @@ typeof describe === "function" &&
           .expect(302)
           .expect("Location", indexUrl),
       ]
+    })
+    it("TESTTESTGET SSL /index.html", async()=>{ 
+      let port = 3443;
+      let sslPath = path.join(APP_DIR, 'test', 'ssl');
+      let scv = await testServer({protocol: 'https', port, sslPath});
+      let certificate = fs.readFileSync(path.join(sslPath, 'server.crt'));
+      let privateKey = fs.readFileSync(path.join(sslPath, 'server.key'));
+      let indexUrl = '/scv/index.html';
+      await supertest(scv.app).get(indexUrl)
+        .trustLocalhost()
+        .key(privateKey)
+        .cert(certificate)
+        .expect(200)
+        .expect("Content-Type", /html/);
     })
 
   });
