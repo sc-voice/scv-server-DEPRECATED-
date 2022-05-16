@@ -98,6 +98,40 @@ typeof describe === "function" &&
       should(scv.app).equal(app);
       should(scv.scApi).equal(scApi);
     })
+    it("TESTTESTcustom ctor() protocol and port", async()=>{ 
+      let appDir = "testAppDir";
+      let distDir = "testDistDir";
+      let apiUrl = "http://apiUrl";
+      let app = "testApp";
+      let scApi = "testScApi";
+      let protocol = "https";
+      let sslPath = "testSSLPath";
+      let scv = new ScvServer({
+        apiUrl,
+        app,
+        appDir,
+        distDir,
+        protocol,
+        scApi,
+        sslPath,
+      });
+      should(scv).instanceOf(ScvServer);
+
+      // configured properties are enumerable
+      should.deepEqual(Object.assign({}, scv), {
+        apiUrl,
+        appDir,
+        distDir,
+        port: 443,
+        protocol,
+        initialized: undefined,
+        sslPath,
+      });
+
+      // injected properties are not enumerable
+      should(scv.app).equal(app);
+      should(scv.scApi).equal(scApi);
+    })
     it("GET /test", async()=>{ 
       //logger.logLevel = 'info';
       let scv = await testServer();

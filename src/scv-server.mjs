@@ -20,17 +20,19 @@ const { ScApi } = pkgScApi;
 //TBD const { RestBundle, RbServer, } = pkgRestBundle;
 const MS_MINUTE = 60*1000;
 
-export default class ScvService {
+export default class ScvServer {
   constructor(opts={}) {
     logger.logInstance(this)
 
     // configuration
-    this.port =  opts.port || 80;
     this.appDir = opts.appDir || APP_DIR;
     this.distDir = opts.distDir || path.join(APP_DIR, 'dist');
     this.initialized = undefined;
     this.sslPath = opts.sslPath || path.join(LOCAL_DIR, 'ssl');
     this.protocol = opts.protocol || "http";
+    this.port =  opts.port || 
+      this.protocol === "https" && 443 ||
+      80;
     let apiUrl = opts.apiUrl || 'http://suttacentral.net/api';
     this.apiUrl = apiUrl;
 
@@ -42,11 +44,12 @@ export default class ScvService {
     //TBD let rbServer = opts.rbServer || new RbServer();
     //TBD Object.defineProperty(this, "rbServer", {value: rbServer});
 
-    logger.debug("ctor", opts);
+    this.info("ctor", opts);
+    this.debug("ctor", this);
   }
 
   async listenSSL(restBundles=[], sslOpts) {
-    let { port=443, app, sslPath } = this;
+    let { port, app, sslPath } = this;
     if (!fs.existsSync(sslPath)) {
       throw new Error(`Nonexistent sslPath:${sslPath}`);
     }
@@ -54,23 +57,33 @@ export default class ScvService {
       cert: fs.readFileSync(path.join(sslPath, 'server.crt')),
       key: fs.readFileSync(path.join(sslPath, 'server.key')),
     };
+    this.port = port;
     //TBD if (restBundles.filter(rb=>rb===this)[0] == null) {
       //TBD restBundles.push(this);
     //TBD }
     //TBD restBundles.forEach(rb => rb.bindExpress(app));
     var server = https.createServer(sslOpts, app);
-    let httpServer = server.listen(port);
+    let httpServer = await server.listen(port);
     if (!httpServer.listening) {
-      throw new Error(`Could not create HTTPS listener`);
+      throw new Error([
+        `Could not create active HTTPS listener on port ${port}`,
+        `(NOTE: TCP ports below 1024 are restricted to superusers).`,
+      ].join(' '));
     }
     // TBD this.rbss = new RbSingleton(restBundles, this.httpServer);
     return httpServer;
   }
 
+  async listen(restBundles=[]) {
+    let { app, port} = this;
+    this.port = port;
+    return app.listen(port);
+  }
+
   async initialize() {
     let { app, port, scApi, protocol, distDir } = this;
     if (this.initialized != null) {
-      this.warn("ScvService is already initialized");
+      this.warn("ScvServer is already initialized");
       return this;
     }
     this.initialized = false;
@@ -115,7 +128,7 @@ export default class ScvService {
       let [ urlPath, value ] = kv;
       let filePath = path.join(distDir, value);
       app.use(urlPath, express.static(filePath));
-      this.info(`initialize() static: ${urlPath} => ${filePath}`);
+      this.debug(`initialize() static: ${urlPath} => ${filePath}`);
     });
 
     app.use(favicon(path.join(distDir, "img/favicon.png")));
@@ -139,54 +152,13 @@ export default class ScvService {
     //TBD await scvRest.initialize();
     //TBD restBundles.push(scvRest);
 
-    //TBD if (protocol === "https") {
-      //TBD await rbServer.listenSSL(app, restBundles); 
-      //TBD this.info("initialize() listenSSL");
-    //TBD } else {
-      //TBD let ports = [port, 3000].concat(new Array(100).fill(3000)
-        //TBD .map((p,i)=>p+i));
-      //TBD await rbServer.listen(app, restBundles, ports); 
-    //TBD }
-    //TBD await rbServer.initialize();
-
     let httpListener = protocol === "https"
       ? await this.listenSSL()
-      : await app.listen(port)
+      : await this.listen()
     Object.defineProperty(this, "httpServer", {value: httpListener});
 
-    this.info("initialize() => OK ", {APP_DIR, port});
+    this.info("initialize() => listening on port:", port);
     this.initialized = true;
     return this;
   }
 }
-
-
-/*
-const app = module.exports = express();
-
-RbServer.logDefault();
-
-// ensure argv is actually for script instead of mocha
-var argv = process.argv[1].match(__filename) && process.argv || [];
-argv.filter(a => a==='--log-debug').length && (logger.level = 'debug');
-var port = argv.reduce((a,v)=>(v==='-3000' ? 3000 : a), 80);
-
-// set up application
-(async function() {
-    try {
-
-
-        // create http server and web socket
-        if (argv.some((a) => a === '--ssl')) {
-            rbServer.listenSSL(app, restBundles); 
-        } else {
-            var ports = [port, 3000].concat(new Array(100).fill(3000).map((p,i)=>p+i));
-            rbServer.listen(app, restBundles, ports); 
-        }
-        await rbServer.initialize();
-    } catch(e) {
-        logger.error(e.stack);
-        throw e;
-    }
-})();
-*/

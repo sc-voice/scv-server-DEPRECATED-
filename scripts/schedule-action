@@ -8,6 +8,8 @@ git pull
 $DIR/update-ebt-data
 npm install --save scv-bilara@latest
 
+npm run test
+
 $DIR/publish-npm
 
 echo -e "${SCRIPT}: END `date`"
