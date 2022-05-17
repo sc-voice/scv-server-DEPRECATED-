@@ -8,7 +8,9 @@ git pull
 npm install --save scv-bilara@latest
 
 npm run test; RC=$?; 
-if [ "$RC" != "0" ]; then
+if [ "$RC" == "0" ]; then
+  echo TEST COMPLETED!
+else 
   echo ERROR $RC
   exit $RC
 fi
