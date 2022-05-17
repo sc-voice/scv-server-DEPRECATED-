@@ -7,7 +7,11 @@ echo -e "${SCRIPT}: BEGIN `date`"
 git pull
 npm install --save scv-bilara@latest
 
-npm run test
+npm run test; RC=$?; 
+if [ "$RC" != "0" ]; then
+  echo ERROR $RC
+  exit $RC
+fi
 
 $DIR/publish-npm
 

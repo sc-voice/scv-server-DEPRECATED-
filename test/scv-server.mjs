@@ -1,6 +1,7 @@
 import should from "should";
 import fs from "fs";
 import path from "path";
+import running from "why-is-node-running";
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_DIR = path.dirname(__dirname);
@@ -17,6 +18,14 @@ typeof describe === "function" &&
   describe("scv-server", function() {
     const TEST_SERVERS = {};
     this.timeout(10*1000);
+
+    after(()=>{
+      Object.keys(TEST_SERVERS).forEach(port=>{
+        logger.info(`Closing test server on port:${port}`);
+        let scv = TEST_SERVERS[port];
+        scv.httpServer.close();
+      });
+    });
 
     function sleep(ms = 600) {
       // The testing server takes a while to wakeup
