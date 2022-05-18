@@ -11,7 +11,7 @@ npm run test; RC=$?;
 if [ "$RC" == "0" ]; then
   echo TEST COMPLETED!
 else 
-  echo ERROR $RC
+  echo TESTS FAILED (RC$RC)
   exit $RC
 fi
 
