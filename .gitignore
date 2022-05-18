@@ -4,7 +4,6 @@ ssl/
 local/
 archive
 .eslint*
-dist/
 
 # Logs
 logs
