@@ -20,6 +20,8 @@ const { ScApi } = pkgScApi;
 //TBD const { RestBundle, RbServer, } = pkgRestBundle;
 const MS_MINUTE = 60*1000;
 
+const listeners = {};
+
 export default class ScvServer {
   constructor(opts={}) {
     logger.logInstance(this)
@@ -72,6 +74,24 @@ export default class ScvServer {
     }
     // TBD this.rbss = new RbSingleton(restBundles, this.httpServer);
     return httpServer;
+  }
+
+  async close() {
+    let { httpServer, port } = this;
+    if (httpServer) {
+      if (httpServer.listening) {
+        this.warn(`server shutting down (port:${port})`);
+        await new Promise((resolve, reject) => {
+          httpServer.close(()=>resolve());
+        });
+        this.warn(`server shutdown completed (port:${port})`);
+        this.httpServer = undefined;
+      } else {
+        this.warn(`server is not running on port:${port}`);
+      }
+    } else {
+      this.warn("server is not initialized (port:${port})");
+    }
   }
 
   async listen(restBundles=[]) {
@@ -152,10 +172,10 @@ export default class ScvServer {
     //TBD await scvRest.initialize();
     //TBD restBundles.push(scvRest);
 
-    let httpListener = protocol === "https"
+    let httpServer = protocol === "https"
       ? await this.listenSSL()
       : await this.listen()
-    Object.defineProperty(this, "httpServer", {value: httpListener});
+    Object.defineProperty(this, "httpServer", {value: httpServer});
 
     this.info("initialize() => listening on port:", port);
     this.initialized = true;

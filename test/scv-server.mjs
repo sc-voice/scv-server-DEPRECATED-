@@ -23,7 +23,7 @@ typeof describe === "function" &&
       Object.keys(TEST_SERVERS).forEach(port=>{
         logger.info(`Closing test server on port:${port}`);
         let scv = TEST_SERVERS[port];
-        scv.httpServer.close();
+        scv.close();
       });
     });
 
