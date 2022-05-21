@@ -196,7 +196,7 @@ typeof describe === "function" &&
         .expect("Content-Type", /html/);
     })
     it("TESTTESTGET port conflict", async()=>{ 
-      logger.level = 'info';
+      //logger.logLevel = 'info';
       let port = 3001;
       let scv1 = new ScvServer({port});
       let scv2 = new ScvServer({port});

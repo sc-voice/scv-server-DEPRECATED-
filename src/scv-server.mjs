@@ -101,11 +101,11 @@ export default class ScvServer {
     let { httpServer, port } = this;
     if (httpServer) {
       if (httpServer.listening) {
-        this.warn(`server shutting down (port:${port})`);
+        this.info(`server shutting down (port:${port})`);
         await new Promise((resolve, reject) => {
           httpServer.close(()=>resolve());
         });
-        this.warn(`server shutdown completed (port:${port})`);
+        this.info(`server shutdown completed (port:${port})`);
         this.httpServer = undefined;
         portMap[port] = undefined;
       } else {
