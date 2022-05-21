@@ -63,6 +63,7 @@ typeof describe === "function" &&
       let scv = new ScvServer();
       should(scv).instanceOf(ScvServer);
       should(scv).properties({
+        name: "ScvServer1",
         port,
         apiUrl: "http://suttacentral.net/api",
         appDir: path.dirname(__dirname),
@@ -71,8 +72,9 @@ typeof describe === "function" &&
         sslPath: path.join(APP_DIR, "local", "ssl"),
       });
     })
-    it("custom ctor()", async()=>{ 
+    it("TESTTESTcustom ctor()", async()=>{ 
       let port = 3000;
+      let name = "testCustom";
       let appDir = "testAppDir";
       let distDir = "testDistDir";
       let apiUrl = "http://apiUrl";
@@ -81,6 +83,7 @@ typeof describe === "function" &&
       let protocol = "https";
       let sslPath = "testSSLPath";
       let scv = new ScvServer({
+        name,
         apiUrl,
         app,
         appDir,
@@ -94,6 +97,7 @@ typeof describe === "function" &&
 
       // configured properties are enumerable
       should.deepEqual(Object.assign({}, scv), {
+        name,
         apiUrl,
         appDir,
         distDir,
@@ -115,7 +119,9 @@ typeof describe === "function" &&
       let scApi = "testScApi";
       let protocol = "https";
       let sslPath = "testSSLPath";
+      let name = "TestHttps";
       let scv = new ScvServer({
+        name,
         apiUrl,
         app,
         appDir,
@@ -128,6 +134,7 @@ typeof describe === "function" &&
 
       // configured properties are enumerable
       should.deepEqual(Object.assign({}, scv), {
+        name,
         apiUrl,
         appDir,
         distDir,
@@ -187,6 +194,22 @@ typeof describe === "function" &&
         .cert(certificate)
         .expect(200)
         .expect("Content-Type", /html/);
+    })
+    it("TESTTESTGET port conflict", async()=>{ 
+      logger.level = 'info';
+      let port = 3001;
+      let scv1 = new ScvServer({port});
+      let scv2 = new ScvServer({port});
+      await scv1.initialize();
+      let eCaught;
+      try { await scv2.initialize() } catch(e) { eCaught = e; }
+      should(eCaught.message).match(/conflict with.*on active port:3001/);
+      should(ScvServer.portMap).properties({[port]:scv1});
+      await scv1.close();
+      should(ScvServer.portMap[port]).equal(undefined);
+      await scv2.initialize();
+      should(ScvServer.portMap).properties({[port]:scv2});
+      await scv2.close();
     })
 
   });

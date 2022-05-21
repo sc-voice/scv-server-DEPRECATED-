@@ -20,13 +20,16 @@ const { ScApi } = pkgScApi;
 //TBD const { RestBundle, RbServer, } = pkgRestBundle;
 const MS_MINUTE = 60*1000;
 
-const listeners = {};
+const portMap = {};
+var instance = 1;
+
 
 export default class ScvServer {
   constructor(opts={}) {
     logger.logInstance(this)
 
     // configuration
+    this.name = opts.name || `ScvServer${instance++}`;
     this.appDir = opts.appDir || APP_DIR;
     this.distDir = opts.distDir || path.join(APP_DIR, 'dist');
     this.initialized = undefined;
@@ -50,6 +53,8 @@ export default class ScvServer {
     this.debug("ctor", this);
   }
 
+  static get portMap() { return portMap }
+
   async listenSSL(restBundles=[], sslOpts) {
     let { port, app, sslPath } = this;
     if (!fs.existsSync(sslPath)) {
@@ -59,7 +64,12 @@ export default class ScvServer {
       cert: fs.readFileSync(path.join(sslPath, 'server.crt')),
       key: fs.readFileSync(path.join(sslPath, 'server.key')),
     };
+    if (portMap[port]) {
+      throw new Error(
+        `ScvServer.listenSSL() conflict with active port:${port}`);
+    }
     this.port = port;
+    portMap[port] = this;
     //TBD if (restBundles.filter(rb=>rb===this)[0] == null) {
       //TBD restBundles.push(this);
     //TBD }
@@ -76,6 +86,17 @@ export default class ScvServer {
     return httpServer;
   }
 
+  async listen(restBundles=[]) {
+    let { app, port} = this;
+    if (portMap[port]) {
+      throw new Error(
+        `ScvServer.listen() conflict with active port:${port}`);
+    }
+    this.port = port;
+    portMap[port] = this;
+    return app.listen(port);
+  }
+
   async close() {
     let { httpServer, port } = this;
     if (httpServer) {
@@ -86,24 +107,25 @@ export default class ScvServer {
         });
         this.warn(`server shutdown completed (port:${port})`);
         this.httpServer = undefined;
+        portMap[port] = undefined;
       } else {
         this.warn(`server is not running on port:${port}`);
       }
     } else {
-      this.warn("server is not initialized (port:${port})");
+      this.warn(`server is not initialized (port:${port})`);
     }
   }
 
-  async listen(restBundles=[]) {
-    let { app, port} = this;
-    this.port = port;
-    return app.listen(port);
-  }
-
   async initialize() {
-    let { app, port, scApi, protocol, distDir } = this;
+    let { app, port, scApi, name, protocol, distDir } = this;
+    if (portMap[port]) {
+      throw new Error([
+        `${name} conflict`,
+        `with ${portMap[port].name}`,
+        `on active port:${port}`].join(' '));
+    }
     if (this.initialized != null) {
-      this.warn("ScvServer is already initialized");
+      this.warn(`already initialized on port:${port}`);
       return this;
     }
     this.initialized = false;
@@ -175,7 +197,10 @@ export default class ScvServer {
     let httpServer = protocol === "https"
       ? await this.listenSSL()
       : await this.listen()
-    Object.defineProperty(this, "httpServer", {value: httpServer});
+    Object.defineProperty(this, "httpServer", {
+      writable: true,
+      value: httpServer,
+    });
 
     this.info("initialize() => listening on port:", port);
     this.initialized = true;
