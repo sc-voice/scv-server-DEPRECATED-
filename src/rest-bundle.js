@@ -15,66 +15,32 @@
   const v8 = require("v8");
 
   class RestBundle {
-    constructor(name = "test", options = {}) {
+    constructor(options = {}) {
+      let { name="test" } = options;
       if (typeof name !== "string") {
         throw new Error(`bundle name is required: ${name}`);
       }
       logger.info(`RestBundle.ctor(${name})`);
       this.name = name;
-      this.uribase = options.uribase || "/" + this.name;
       this.appDir =
         options.appDir || 
-        require.resolve("scv-bilara").split("node_modules")[0];
-      this.svcDir = options.svcDir || path.join(__dirname, "..");
-      this.srcPkg = options.srcPkg || require("../package.json");
-      this.node_modules = path.join(this.appDir, "node_modules");
-      this.emitter = options.emtitter || new EventEmitter();
-      this.ui_index = options.ui_index || "/ui/index-service";
-      this.$onRequestSuccess =
-        options.onRequestSuccess || RestBundle.onRequestSuccess;
-      this.$onRequestFail = options.onRequestFail || RestBundle.onRequestFail;
-      this.taskBag = []; // unordered task collection with duplicates
-      this.apiModelDir =
-        options.apiModelDir || path.join(process.cwd(), "api-model");
-    }
+        require.resolve("scv-bilara").split("/node_modules")[0];
 
-    initialize() {
-      if (this.initialized) {
-        return Promise.resolve(this.initializeResult);
-      }
-      if (this.initialized === false) {
-        return new Promise((resolve, reject) => {
-          this.emitter.addListener("initialized", (that) => {
-            resolve(that.initializeResult);
-          });
+      let privateProps = {
+        uribase: options.uribase || "/" + this.name,
+        scvDir: options.scvDir || path.join(__dirname, ".."),
+        node_modules: path.join(this.appDir, "node_modules"),
+        $onRequestSuccess: 
+          options.onRequestSuccess || RestBundle.onRequestSuccess,
+        $onRequestFail:
+         options.onRequestFail || RestBundle.onRequestFail,
+        taskBag: [], // unordered task collection with duplicates
+      };
+      Object.keys(privateProps).forEach(prop=>{
+        Object.defineProperty(this, prop, {
+          value: privateProps[prop],
         });
-      }
-      this.initialized = false;
-      logger.info(`RestBundle-${this.name}.initialize()`);
-      return new Promise((resolve, reject) => {
-        var that = this;
-        that
-          .loadApiModel()
-          .then((r) => {
-            that.onApiModelLoaded(r);
-            that.onInitializeEvents(that.emitter, r);
-            that.initialized = true;
-            that.initializeResult = r;
-            that.emitter.emit("initialized", that);
-            resolve(r);
-          })
-          .catch((e) => reject(e));
       });
-    }
-
-    onApiModelLoaded(apiModel) {
-      // => 1) construct configured objects
-      //    2) send initial events
-    }
-
-    onInitializeEvents(emitter, apiModel) {
-      //    1) construct configured objects
-      // => 2) send initial events
     }
 
     resourceMethod(method, name, handler, mime) {
@@ -215,8 +181,8 @@
         let disktotal = diskused + diskavail;
         return {
           name: this.name,
-          package: this.srcPkg.name,
-          version: this.srcPkg.version,
+          package: srcPkg.name,
+          version: srcPkg.version,
           hostname: os.hostname(),
           uptime: os.uptime(),
           loadavg: os.loadavg(),
@@ -298,38 +264,11 @@
       }
     }
 
-    bindUI(app) {
-      app.use("/dist", express.static(path.join(this.appDir, "dist")));
-      app.get("/ui", (req, res, next) =>
-        res.redirect(this.uribase + this.ui_index)
-      );
-      app.use("/ui", express.static(path.join(this.appDir, "src/ui")));
-    }
-
-    bindEjs(app) {
-      var views = path.join(this.svcDir, "src/ui/ejs");
-      app.set("views", path.join(this.svcDir, "src/ui/ejs"));
-      app.set("view engine", "ejs");
-      var ejsmap = {
-        service: this.name,
-        package: this.srcPkg.name,
-        version: this.srcPkg.version,
-      };
-      var uripath = "/ui/index-service";
-      var template = "index-service.ejs";
-      logger.debug(" binding", uripath, "to", views + "/" + template);
-      app.get(uripath, (req, res, next) => {
-        res.render(template, ejsmap);
-      });
-    }
-
     bindExpress(rootApp, restHandlers = this.handlers) {
       var app = (this.app = express());
       this.rootApp = rootApp;
       rootApp.use("/node_modules", express.static(this.node_modules));
       app.use(bodyParser.json());
-      this.bindEjs(app);
-      this.bindUI(app);
       restHandlers.sort((a, b) => {
         var cmp = a.method.localeCompare(b.method);
         if (cmp === 0) {
@@ -359,191 +298,6 @@
       return this;
     }
 
-    apiHash(model) {
-      delete model.rbHash;
-      model.rbHash = _rbHash.hash(model);
-      return model;
-    }
-
-    apiModelPath(name = this.name) {
-      var fileName = `${this.srcPkg.name}.${name}.json`;
-      return path.normalize(path.join(this.apiModelDir, fileName));
-    }
-
-    updateApiModel(apiModel) {
-      return apiModel;
-    }
-
-    loadApiModel(name = this.name) {
-      return new Promise((resolve, reject) => {
-        var modelPath = this.apiModelPath(name);
-        try {
-          this.loadApiFile(modelPath)
-            .then((fileApiModel) => {
-              resolve(this.updateApiModel(fileApiModel));
-            })
-            .catch((e) => {
-              logger.error(`RestBundle.loadApiModel(${name})`, e.stack);
-              reject(e);
-            });
-        } catch (e) {
-          logger.error(`RestBundle.loadApiModel(${name})`, e.stack);
-          reject(e);
-        }
-      });
-    }
-
-    saveApiModel(apiModel, name = this.name) {
-      return this.saveApiFile(apiModel, this.apiModelPath(name));
-    }
-
-    loadApiFile(modelPath = this.apiModelPath(this.name)) {
-      return new Promise((resolve, reject) => {
-        if (fs.existsSync(modelPath)) {
-          fs.readFile(modelPath, (err, data) => {
-            if (err) {
-              logger.warn(
-                `RestBundle-${this.name}.loadApiModel() file:${modelPath}`,
-                err,
-                "E01"
-              );
-              reject(err);
-            } else {
-              try {
-                var obj = JSON.parse(data);
-                var rbHash = obj.rbHash;
-                logger.debug(
-                  `RestBundle-${this.name}.loadApiModel() file:${modelPath}`
-                );
-                logger.info(
-                  `RestBundle-${this.name}.loadApiModel() rbHash:${rbHash}`
-                );
-                resolve(obj);
-              } catch (err) {
-                logger.warn(
-                  `RestBundle-${this.name}.loadApiModel() file:${modelPath}`,
-                  err.message,
-                  "E02"
-                );
-                reject(err);
-              }
-            }
-          });
-        } else {
-          logger.debug(
-            `RestBundle-${this.name}.loadApiModel() unavailable:${modelPath} `
-          );
-          resolve(null);
-        }
-      });
-    }
-
-    saveApiFile(apiModel, modelPath = this.apiModelPath()) {
-      return new Promise((resolve, reject) => {
-        let async = function* () {
-          try {
-            var dir = path.dirname(modelPath);
-
-            if (!fs.existsSync(dir)) {
-              yield fs.mkdir(dir, (err) => {
-                if (err) {
-                  async.throw(err);
-                } else {
-                  async.next(true);
-                }
-              });
-            }
-            var json = JSON.stringify(apiModel, null, "    ") + "\n";
-            yield fs.writeFile(modelPath, json, (err) => {
-              if (err) {
-                async.throw(err);
-              } else {
-                logger.info(
-                  `RestBundle.saveApiModel()`,
-                  `${json.length} characters written to ${modelPath}`
-                );
-                async.next(true);
-              }
-            });
-            resolve(apiModel);
-          } catch (err) {
-            logger.warn(err.stack);
-            reject(err);
-          }
-        }.call(this);
-        async.next();
-      });
-    }
-
-    getApiModel(req, res, next, name) {
-      return new Promise((resolve, reject) => {
-        this.loadApiModel(name)
-          .then((model) =>
-            resolve({
-              apiModel: this.apiHash(model),
-            })
-          )
-          .catch((e) => {
-            logger.warn(e.stack);
-            reject(e);
-          });
-      });
-    }
-
-    putApiModel(req, res, next, name = this.name) {
-      var that = this;
-      return new Promise((resolve, reject) => {
-        var async = function* () {
-          try {
-            var curModel = yield that
-              .loadApiModel(name)
-              .then((r) => async.next(r))
-              .catch((e) => async.throw(e));
-            curModel = curModel || {};
-            that.apiHash(curModel); // might be unhashed
-            var putModel = req.body && req.body.apiModel;
-            if (putModel == null || putModel.rbHash == null) {
-              var err = new Error("Bad request:" + JSON.stringify(req.body));
-              res.locals.status = 400;
-            } else if (putModel.rbHash !== curModel.rbHash) {
-              console.log(curModel, putModel);
-              var err = new Error(
-                "Save ignored--service data has changed: " + curModel.rbHash
-              );
-              res.locals.status = 409;
-            } else {
-              var err = null;
-            }
-            if (err) {
-              // expected error
-              logger.info(err.stack);
-              res.locals.data = {
-                error: err.message,
-                data: {
-                  apiModel: curModel,
-                },
-              };
-              reject(err);
-            } else {
-              var updatedModel = Object.assign({}, curModel, putModel);
-              that.apiHash(updatedModel);
-              yield that
-                .saveApiModel(updatedModel, name)
-                .then((r) => async.next(r))
-                .catch((e) => async.throw(e));
-              resolve({
-                apiModel: that.apiHash(updatedModel), // update hash
-              });
-            }
-          } catch (err) {
-            // unexpected error
-            logger.warn(err.stack);
-            reject(err);
-          }
-        }.call(that);
-        async.next();
-      });
-    }
   } // class RestBundle
 
   module.exports = exports.RestBundle = RestBundle;

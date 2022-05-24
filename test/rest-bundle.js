@@ -11,19 +11,31 @@ typeof describe === "function" &&
     const path = require("path");
     const { exec } = require("child_process");
     const util = require("util");
-    //TBD const app = require("../scripts/server.js");
+    //const app = require("./rb-server.js");
     const { logger } = require("log-instance");
     const RbHash = require("../src/rb-hash");
+    const testApp = express();
+    const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";
     function testRb(app) {
       return app.locals.restBundles.filter((rb) => rb.name === "test")[0];
     }
     this.timeout(5 * 1000);
 
-    it("RestBundle can be extended", async()=>{
+    it("TESTTESTdefault ctor", ()=>{
+      let rb = new RestBundle();
+      let appDir = APPDIR;
+      should.deepEqual(Object.keys(rb).sort(), [
+        "appDir",
+        "name", 
+      ]);
+      should(rb.appDir).equal(appDir);
+      should(rb.uribase).equal("/test");
+    });
+    it("TESTTESTRestBundle can be extended", async()=>{
       class TestBundle extends RestBundle {
         constructor(name, options = {}) {
-          super(name, options);
+          super(Object.assign({name}, options));
           Object.defineProperty(this, "handlers", {
             value: super.handlers.concat([
               this.resourceMethod("get", "color", this.getColor),
@@ -45,7 +57,7 @@ typeof describe === "function" &&
     it("RestBundle resources should be unique", ()=>{
       class TestBundle extends RestBundle {
         constructor(name, options = {}) {
-          super(name, options);
+          super(Object.assign({name}, options));
           Object.defineProperty(this, "handlers", {
             value: super.handlers.concat([
               this.resourceMethod("get", "state", this.getState), // duplicate
@@ -57,10 +69,10 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("RestBundle returns 500 for bad responses", async()=>{
+    it("TESTTESTRestBundle returns 500 for bad responses", async()=>{
       class TestBundle extends RestBundle {
         constructor(name, options = {}) {
-          super(name, options);
+          super(Object.assign({name}, options));
           Object.defineProperty(this, "handlers", {
             value: super.handlers.concat([
               this.resourceMethod("get", "bad-json", this.getBadJson),
@@ -77,10 +89,9 @@ typeof describe === "function" &&
       }
       var app = express();
       var tb = await (new TestBundle("testBadJSON").bindExpress(app));
-      tb.initialize()
-        .then((r) => async.next(r))
-        .catch((e) => async.throw(e));
       logger.warn("Expected error (BEGIN)");
+      let logLevel = logger.level;
+      logger.logLevel = "error";
       supertest(app)
         .get("/testBadJSON/bad-json")
         .expect((res) => {
@@ -91,24 +102,12 @@ typeof describe === "function" &&
           );
         })
         .end((err, res) => {
+          logger.logLevel = logLevel;
           if (err) throw err;
         });
     });
     /*
-    it("TESTTESTGET /state returns RestBundle singleton state", async()=>{
-      var r = await supertest(app)
-        .get("/test/state")
-        .expect((res) => {
-          res.statusCode.should.equal(200);
-          res.headers["content-type"].should.match(/json/);
-          res.headers["content-type"].should.match(/utf-8/);
-          should(res.headers["x-powered-by"]).equal(undefined);
-        })
-        .end((e, r) => {
-          (e && async.throw(e)) || async.next(r);
-        });
-    });
-    it("diskusage", async () => {
+    it("TESTTESTdiskusage", async () => {
       var execPromise = util.promisify(exec);
       var cmd = "df --total -B 1 /";
       var execOpts = {
@@ -122,6 +121,7 @@ typeof describe === "function" &&
       let total = used + avail;
       //console.log(`dbg diskusage`, {used, avail, total});
 
+      let app = express();
       var rb = testRb(app);
       var res = await rb.getIdentity();
       should(res.diskavail).equal(avail);
@@ -242,7 +242,8 @@ typeof describe === "function" &&
       kebab("aBC").should.equal("a-b-c");
     });
     it("apiModelPath() returns RestBundle api model path", function () {
-      var rb = new RestBundle("TestApiModelPath", {
+      var rb = new RestBundle({
+        name: "TestApiModelPath",
         srcPkg: {
           name: "testPackage",
           version: "1.0",
@@ -256,7 +257,7 @@ typeof describe === "function" &&
     it("loadApiModel() returns RestBundle apiModel Promise", function (done) {
       let async = (function* () {
         try {
-          var rb = new RestBundle("TestLoadApiModel");
+          var rb = new RestBundle({name:"TestLoadApiModel"});
           var result = yield rb
             .loadApiModel("NoApiModel")
             .then((r) => async.next(r))
@@ -272,7 +273,7 @@ typeof describe === "function" &&
     it("saveApiModel(apiModel) saves RestBundle api model", function (done) {
       let async = (function* () {
         try {
-          var rb = new RestBundle("TestSaveApiModel");
+          var rb = new RestBundle({name: "TestSaveApiModel"});
           var apiModel = {
             color: "purple",
           };
@@ -298,7 +299,7 @@ typeof describe === "function" &&
         try {
           const rbh = new RbHash();
           var name = "TestPutApiModel";
-          var rb = new RestBundle(name);
+          var rb = new RestBundle({name});
           var fileName = `rest-bundle.${name}.json`;
           var filePath = path.join(__dirname, "..", "api-model", fileName);
           fs.existsSync(filePath) && fs.unlinkSync(filePath);
@@ -387,7 +388,7 @@ typeof describe === "function" &&
       var async = (function* () {
         try {
           var app = express();
-          var rb = new RestBundle("test").bindExpress(app);
+          var rb = new RestBundle({name:"test"}).bindExpress(app);
           var response = yield supertest(app)
             .get("/test/app/stats/heap")
             .expect((res) => {
@@ -429,7 +430,8 @@ typeof describe === "function" &&
       }
       var async = (function* () {
         try {
-          var rb = new TestBundle("testInitialize", {
+          var rb = new TestBundle({
+            name: "testInitialize", 
             apiModelDir: __dirname,
           });
           should(count).equal(0);

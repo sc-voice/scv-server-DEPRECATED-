@@ -14,6 +14,7 @@ import jwt from 'express-jwt';
 import { logger, } from 'log-instance';
 import pkgScApi from 'suttacentral-api';
 const { ScApi } = pkgScApi;
+import RestBundle from './rest-bundle.js';
 //TBD import ScvRest from "./scv-rest.js";
 
 //TBD import pkgRestBundle from "rest-bundle";
@@ -23,13 +24,14 @@ const MS_MINUTE = 60*1000;
 const portMap = {};
 var instance = 1;
 
-
-export default class ScvServer {
+export default class ScvServer extends RestBundle {
   constructor(opts={}) {
+    super(Object.assign({
+      name: opts.name || `ScvServer${instance++}`,
+    }, opts));
     logger.logInstance(this)
 
     // configuration
-    this.name = opts.name || `ScvServer${instance++}`;
     this.appDir = opts.appDir || APP_DIR;
     this.distDir = opts.distDir || path.join(APP_DIR, 'dist');
     this.initialized = undefined;
