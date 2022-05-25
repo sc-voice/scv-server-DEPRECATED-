@@ -1,7 +1,7 @@
 const supertest = require("supertest");
 
 typeof describe === "function" &&
-  describe("RestBundle", function () {
+  describe("rest-bundle", function () {
     const should = require("should");
     const pkg = require("../package.json");
     const RestBundle = require("../src/rest-bundle");
