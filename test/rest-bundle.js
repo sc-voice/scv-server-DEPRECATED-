@@ -17,10 +17,25 @@ typeof describe === "function" &&
     const testApp = express();
     const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";
-    function testRb(app) {
-      return app.locals.restBundles.filter((rb) => rb.name === "test")[0];
+    function testRb(app, name="test") {
+      return app.locals.restBundles.filter((rb) => rb.name === name)[0];
     }
     this.timeout(5 * 1000);
+
+    class TestBundle extends RestBundle {
+      constructor(name, options = {}) {
+        super(Object.assign({name}, options));
+        Object.defineProperty(this, "handlers", {
+          value: super.handlers.concat([
+            this.resourceMethod("get", "color", this.getColor),
+          ]),
+        });
+      }
+
+      getColor(req, res, next) {
+        return { color: "blue" };
+      }
+    }
 
     it("default ctor", ()=>{
       let rb = new RestBundle();
@@ -32,20 +47,7 @@ typeof describe === "function" &&
       should(rb.appDir).equal(appDir);
       should(rb.uribase).equal("/test");
     });
-    it("RestBundle can be extended", async()=>{
-      class TestBundle extends RestBundle {
-        constructor(name, options = {}) {
-          super(Object.assign({name}, options));
-          Object.defineProperty(this, "handlers", {
-            value: super.handlers.concat([
-              this.resourceMethod("get", "color", this.getColor),
-            ]),
-          });
-        }
-        getColor(req, res, next) {
-          return { color: "blue" };
-        }
-      }
+    it("TESTTESTRestBundle can be extended", async()=>{
       var app = express();
       var tb = new TestBundle("extended").bindExpress(app);
       let res = await supertest(app)
@@ -54,7 +56,7 @@ typeof describe === "function" &&
 
       should.deepEqual(res.body, { color: "blue", });
     });
-    it("RestBundle resources should be unique", ()=>{
+    it("TESTTESTRestBundle resources should be unique", ()=>{
       class TestBundle extends RestBundle {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -101,7 +103,6 @@ typeof describe === "function" &&
         logger.logLevel = logLevel;
       }
     });
-    /*
     it("TESTTESTdiskusage", async () => {
       var execPromise = util.promisify(exec);
       var cmd = "df --total -B 1 /";
@@ -114,48 +115,51 @@ typeof describe === "function" &&
       let used = Number(stats[2]);
       let avail = Number(stats[3]);
       let total = used + avail;
+      let name="testDiskUsage";
       //console.log(`dbg diskusage`, {used, avail, total});
 
-      let app = express();
-      var rb = testRb(app);
+      let rb = new RestBundle({ name, });
+      let rootApp = express();
+      rb.bindExpress(rootApp);
+      should(testRb(rootApp, name)).equal(rb);
       var res = await rb.getIdentity();
       should(res.diskavail).equal(avail);
       should(res.diskfree).equal(avail);
       should(res.disktotal).equal(total);
       //console.log(`dbg getIdientity`, res);
     });
-    it("GET /identity generates HTTP200 response", function (done) {
-      supertest(app)
-        .get("/test/identity")
-        .expect((res) => {
-          res.statusCode.should.equal(200);
-          res.headers["content-type"].should.match(/json/);
-          res.headers["content-type"].should.match(/utf-8/);
-          res.body.should.properties({
-            name: "test",
-            package: pkg.name,
-          });
-          res.body.should.properties([
-            "version",
-            "hostname",
-            "uptime",
-            "loadavg",
-            "totalmem",
-            "freemem",
-            "diskfree",
-            "diskavail",
-            "disktotal",
-          ]);
-          should(res.body.diskavail).below(res.body.diskfree + 1);
-          should(res.body.diskfree).below(res.body.disktotal);
-          should(res.body.totalmem).below(res.body.disktotal);
-          res.body.version.should.match(/\d+.\d+.\d+/);
-        })
-        .end((err, res) => {
-          if (err) throw err;
-          else done();
-        });
+    it("TESTTESTGET /identity generates HTTP200 response", async()=>{
+      let rootApp = express();
+      let name = "testIdentity";
+      let rb = new RestBundle({ name });
+      rb.bindExpress(rootApp);
+      should(testRb(rootApp, name)).equal(rb);
+      let res = await supertest(rootApp)
+        .get(`/${name}/identity`);
+      res.statusCode.should.equal(200);
+      res.headers["content-type"].should.match(/json/);
+      res.headers["content-type"].should.match(/utf-8/);
+      res.body.should.properties({
+        name,
+        package: pkg.name,
+      });
+      res.body.should.properties([
+        "version",
+        "hostname",
+        "uptime",
+        "loadavg",
+        "totalmem",
+        "freemem",
+        "diskfree",
+        "diskavail",
+        "disktotal",
+      ]);
+      should(res.body.diskavail).below(res.body.diskfree + 1);
+      should(res.body.diskfree).below(res.body.disktotal);
+      should(res.body.totalmem).below(res.body.disktotal);
+      res.body.version.should.match(/\d+.\d+.\d+/);
     });
+    /*
     it("POST /echo generates HTTP200 response with a Promise", function (done) {
       var service = testRb(app);
       service.taskBag.length.should.equal(0);

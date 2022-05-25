@@ -72,7 +72,7 @@ typeof describe === "function" &&
         sslPath: path.join(APP_DIR, "local", "ssl"),
       });
     })
-    it("TESTTESTcustom ctor()", async()=>{ 
+    it("custom ctor()", async()=>{ 
       let port = 3000;
       let name = "testCustom";
       let appDir = "testAppDir";
@@ -111,7 +111,7 @@ typeof describe === "function" &&
       should(scv.app).equal(app);
       should(scv.scApi).equal(scApi);
     })
-    it("TESTTESTcustom ctor() protocol and port", async()=>{ 
+    it("custom ctor() protocol and port", async()=>{ 
       let appDir = "testAppDir";
       let distDir = "testDistDir";
       let apiUrl = "http://apiUrl";
@@ -181,7 +181,7 @@ typeof describe === "function" &&
           .expect("Location", indexUrl),
       ]
     })
-    it("TESTTESTGET SSL /index.html", async()=>{ 
+    it("GET SSL /index.html", async()=>{ 
       let port = 3443;
       let sslPath = path.join(APP_DIR, 'test', 'ssl');
       let scv = await testServer({protocol: 'https', port, sslPath});
@@ -195,7 +195,7 @@ typeof describe === "function" &&
         .expect(200)
         .expect("Content-Type", /html/);
     })
-    it("TESTTESTGET port conflict", async()=>{ 
+    it("GET port conflict", async()=>{ 
       //logger.logLevel = 'info';
       let port = 3001;
       let scv1 = new ScvServer({port});

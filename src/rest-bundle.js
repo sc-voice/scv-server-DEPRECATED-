@@ -29,7 +29,7 @@
       let privateProps = {
         uribase: options.uribase || "/" + this.name,
         scvDir: options.scvDir || path.join(__dirname, ".."),
-        node_modules: path.join(this.appDir, "node_modules"),
+        //node_modules: path.join(this.appDir, "node_modules"),
         $onRequestSuccess: 
           options.onRequestSuccess || RestBundle.onRequestSuccess,
         $onRequestFail:
@@ -266,9 +266,12 @@
 
     bindExpress(rootApp, restHandlers = this.handlers) {
       var app = (this.app = express());
-      this.rootApp = rootApp;
-      rootApp.use("/node_modules", express.static(this.node_modules));
+      let { locals } = rootApp;
+      Object.assign(this, "rootApp", {value: rootApp});
+      //rootApp.use("/node_modules", express.static(this.node_modules));
       app.use(bodyParser.json());
+      let restBundles = locals.restBundles = locals.restBundles || [];
+      restBundles.push(this);
       restHandlers.sort((a, b) => {
         var cmp = a.method.localeCompare(b.method);
         if (cmp === 0) {
