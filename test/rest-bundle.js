@@ -22,7 +22,7 @@ typeof describe === "function" &&
     }
     this.timeout(5 * 1000);
 
-    it("TESTTESTdefault ctor", ()=>{
+    it("default ctor", ()=>{
       let rb = new RestBundle();
       let appDir = APPDIR;
       should.deepEqual(Object.keys(rb).sort(), [
@@ -32,7 +32,7 @@ typeof describe === "function" &&
       should(rb.appDir).equal(appDir);
       should(rb.uribase).equal("/test");
     });
-    it("TESTTESTRestBundle can be extended", async()=>{
+    it("RestBundle can be extended", async()=>{
       class TestBundle extends RestBundle {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -69,7 +69,7 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("TESTTESTRestBundle returns 500 for bad responses", async()=>{
+    it("RestBundle returns 500 for bad responses", async()=>{
       class TestBundle extends RestBundle {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -89,22 +89,17 @@ typeof describe === "function" &&
       }
       var app = express();
       var tb = await (new TestBundle("testBadJSON").bindExpress(app));
-      logger.warn("Expected error (BEGIN)");
-      let logLevel = logger.level;
+      let logLevel = logger.logLevel;
       logger.logLevel = "error";
-      supertest(app)
-        .get("/testBadJSON/bad-json")
-        .expect((res) => {
-          logger.warn("Expected error (END)");
-          res.statusCode.should.equal(500);
-          should(res.body.error).match(
-            /Converting circular structure to JSON/
-          );
-        })
-        .end((err, res) => {
-          logger.logLevel = logLevel;
-          if (err) throw err;
-        });
+      try {
+        logger.warn("Expected error (BEGIN)");
+        let res = await supertest(app) .get("/testBadJSON/bad-json")
+        should(res.statusCode).equal(500);
+        should(res.body.error).match(/Converting circular structure to JSON/);
+      } finally {
+        logger.warn("Expected error (END)");
+        logger.logLevel = logLevel;
+      }
     });
     /*
     it("TESTTESTdiskusage", async () => {
