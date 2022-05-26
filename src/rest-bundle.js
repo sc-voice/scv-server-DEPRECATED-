@@ -127,7 +127,6 @@
 
     taskBegin(name) {
       this.taskBag.push(name);
-      this.pushState();
     }
 
     taskEnd(name) {
@@ -141,7 +140,6 @@
         throw new Error("taskEnd() could not locate pending task:" + name);
       }
       this.taskBag.splice(iName, 1);
-      this.pushState();
     }
 
     getAppStats(req, res, next) {
@@ -265,6 +263,7 @@
     }
 
     bindExpress(rootApp, restHandlers = this.handlers) {
+      let { name, uribase } = this;
       var app = (this.app = express());
       let { locals } = rootApp;
       Object.assign(this, "rootApp", {value: rootApp});
@@ -291,11 +290,11 @@
         logger.debug(
           "RestBundle.bindExpress:",
           resource.method,
-          "/" + this.name + "/" + resource.name + " => " + resource.mime
+          `/${name}/${resource.name} => ${resource.mime}`
         );
         this.bindResource(app, resource);
       });
-      rootApp.use(this.uribase, app); // don't pollute client's app
+      rootApp.use(uribase, app); // don't pollute client's app
       rootApp.disable("x-powered-by"); // suppress header warning
       app.disable("x-powered-by"); // suppress header warning
       return this;

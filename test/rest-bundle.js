@@ -159,30 +159,52 @@ typeof describe === "function" &&
       should(res.body.totalmem).below(res.body.disktotal);
       res.body.version.should.match(/\d+.\d+.\d+/);
     });
-    /*
-    it("POST /echo generates HTTP200 response with a Promise", function (done) {
-      var service = testRb(app);
-      service.taskBag.length.should.equal(0);
-      service.taskBegin("testTask");
-      service.taskBag.length.should.equal(1);
-      supertest(app)
-        .post("/test/echo")
-        .send({ greeting: "smile" })
-        .expect((res) => {
-          res.statusCode.should.equal(200);
-          res.headers["content-type"].should.match(/json/);
-          res.headers["content-type"].should.match(/utf-8/);
-          should.deepEqual(res.body, {
-            greeting: "smile",
-          });
-          service.taskBag.length.should.equal(1);
-          service.taskBag[0].should.equal("testTask");
-        })
-        .end((err, res) => {
-          if (err) throw err;
-          else done();
-        });
+    it("TESTTESTPOST /echo => HTTP200 response with a Promise", async()=>{
+      let rootApp = express();
+      let name = "testEcho";
+      let rb = new RestBundle({ name });
+      rb.bindExpress(rootApp);
+      var service = testRb(rootApp, name);
+      rb.taskBag.length.should.equal(0);
+      rb.taskBegin("testTask");
+      rb.taskBag.length.should.equal(1);
+      let echoJson = { greeting: "smile" }
+      await supertest(rootApp)
+        .post(`/${name}/echo`)
+        .send(echoJson)
+        .expect(200)
+        .expect('content-type', /json/)
+        .expect('content-type', /utf-8/)
+        .expect(echoJson);
     });
+    it("TESTTESTtaskBegin/taskEnd", async()=>{
+      let rootApp = express();
+      let name = "testTask";
+      let rb = new RestBundle({ name });
+      rb.bindExpress(rootApp);
+      rb.taskBag.length.should.equal(0);
+
+      // Begin server task
+      rb.taskBegin("testTask");
+      rb.taskBag.length.should.equal(1);
+      await supertest(rootApp).get(`/${name}/state`)
+        .expect(200)
+        .expect('content-type', /json/)
+        .expect('content-type', /utf-8/)
+        .expect({tasks:['testTask']});
+      rb.taskBag.length.should.equal(1);
+      rb.taskBag[0].should.equal("testTask");
+
+      // End server task
+      rb.taskEnd("testTask");
+      rb.taskBag.length.should.equal(0);
+      await supertest(rootApp).get(`/${name}/state`)
+        .expect(200)
+        .expect('content-type', /json/)
+        .expect('content-type', /utf-8/)
+        .expect({tasks:[]});
+    });
+    /*
     it("POST generates HTTP500 response for thrown exception", function (done) {
       logger.warn("Expected error (BEGIN)");
       supertest(app)
