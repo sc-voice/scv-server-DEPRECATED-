@@ -14,17 +14,17 @@ import jwt from 'express-jwt';
 import { logger, } from 'log-instance';
 import pkgScApi from 'suttacentral-api';
 const { ScApi } = pkgScApi;
-import RestBundle from './rest-bundle.js';
+import RestApi from './rest-api.js';
 //TBD import ScvRest from "./scv-rest.js";
 
-//TBD import pkgRestBundle from "rest-bundle";
-//TBD const { RestBundle, RbServer, } = pkgRestBundle;
+//TBD import pkgRestApi from "rest-api";
+//TBD const { RestApi, RbServer, } = pkgRestApi;
 const MS_MINUTE = 60*1000;
 
 const portMap = {};
 var instance = 1;
 
-export default class ScvServer extends RestBundle {
+export default class ScvServer extends RestApi {
   constructor(opts={}) {
     super(Object.assign({
       name: opts.name || `ScvServer${instance++}`,
@@ -185,7 +185,7 @@ export default class ScvServer extends RestBundle {
     //TBD await scApi.initialize();
     //TBD var rbServer =  app.locals.rbServer = new RbServer();
 
-    // create RestBundles
+    // create RestApis
     //TBD let restBundles = app.locals.restBundles = [];
     //TBD var opts = {
         //TBD scApi,

@@ -1,10 +1,10 @@
 const supertest = require("supertest");
 
 typeof describe === "function" &&
-  describe("rest-bundle", function () {
+  describe("rest-api", function () {
     const should = require("should");
     const pkg = require("../package.json");
-    const RestBundle = require("../src/rest-bundle");
+    const RestApi = require("../src/rest-api");
     const supertest = require("supertest");
     const express = require("express");
     const fs = require("fs");
@@ -22,7 +22,7 @@ typeof describe === "function" &&
     }
     this.timeout(5 * 1000);
 
-    class TestBundle extends RestBundle {
+    class TestBundle extends RestApi {
       constructor(name, options = {}) {
         super(Object.assign({name}, options));
         Object.defineProperty(this, "handlers", {
@@ -38,7 +38,7 @@ typeof describe === "function" &&
     }
 
     it("default ctor", ()=>{
-      let rb = new RestBundle();
+      let rb = new RestApi();
       let appDir = APPDIR;
       should.deepEqual(Object.keys(rb).sort(), [
         "appDir",
@@ -47,7 +47,7 @@ typeof describe === "function" &&
       should(rb.appDir).equal(appDir);
       should(rb.uribase).equal("/test");
     });
-    it("TESTTESTRestBundle can be extended", async()=>{
+    it("TESTTESTRestApi can be extended", async()=>{
       var app = express();
       var tb = new TestBundle("extended").bindExpress(app);
       let res = await supertest(app)
@@ -56,8 +56,8 @@ typeof describe === "function" &&
 
       should.deepEqual(res.body, { color: "blue", });
     });
-    it("TESTTESTRestBundle resources should be unique", ()=>{
-      class TestBundle extends RestBundle {
+    it("TESTTESTRestApi resources should be unique", ()=>{
+      class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
           Object.defineProperty(this, "handlers", {
@@ -71,8 +71,8 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("RestBundle returns 500 for bad responses", async()=>{
-      class TestBundle extends RestBundle {
+    it("RestApi returns 500 for bad responses", async()=>{
+      class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
           Object.defineProperty(this, "handlers", {
@@ -118,7 +118,7 @@ typeof describe === "function" &&
       let name="testDiskUsage";
       //console.log(`dbg diskusage`, {used, avail, total});
 
-      let rb = new RestBundle({ name, });
+      let rb = new RestApi({ name, });
       let rootApp = express();
       rb.bindExpress(rootApp);
       should(testRb(rootApp, name)).equal(rb);
@@ -131,7 +131,7 @@ typeof describe === "function" &&
     it("TESTTESTGET /identity generates HTTP200 response", async()=>{
       let rootApp = express();
       let name = "testIdentity";
-      let rb = new RestBundle({ name });
+      let rb = new RestApi({ name });
       rb.bindExpress(rootApp);
       should(testRb(rootApp, name)).equal(rb);
       let res = await supertest(rootApp)
@@ -162,7 +162,7 @@ typeof describe === "function" &&
     it("TESTTESTPOST /echo => HTTP200 response with a Promise", async()=>{
       let rootApp = express();
       let name = "testEcho";
-      let rb = new RestBundle({ name });
+      let rb = new RestApi({ name });
       rb.bindExpress(rootApp);
       var service = testRb(rootApp, name);
       rb.taskBag.length.should.equal(0);
@@ -180,7 +180,7 @@ typeof describe === "function" &&
     it("TESTTESTtaskBegin/taskEnd", async()=>{
       let rootApp = express();
       let name = "testTask";
-      let rb = new RestBundle({ name });
+      let rb = new RestApi({ name });
       rb.bindExpress(rootApp);
       rb.taskBag.length.should.equal(0);
 
@@ -262,8 +262,8 @@ typeof describe === "function" &&
       kebab("abc").should.equal("abc");
       kebab("aBC").should.equal("a-b-c");
     });
-    it("apiModelPath() returns RestBundle api model path", function () {
-      var rb = new RestBundle({
+    it("apiModelPath() returns RestApi api model path", function () {
+      var rb = new RestApi({
         name: "TestApiModelPath",
         srcPkg: {
           name: "testPackage",
@@ -272,13 +272,13 @@ typeof describe === "function" &&
       });
       var amp = rb.apiModelPath();
       should(amp).match(/.*\/api-model\/testPackage.TestApiModelPath.json/);
-      var amp = rb.apiModelPath("MyRestBundle");
-      should(amp).match(/.*\/api-model\/testPackage.MyRestBundle.json/);
+      var amp = rb.apiModelPath("MyRestApi");
+      should(amp).match(/.*\/api-model\/testPackage.MyRestApi.json/);
     });
-    it("loadApiModel() returns RestBundle apiModel Promise", function (done) {
+    it("loadApiModel() returns RestApi apiModel Promise", function (done) {
       let async = (function* () {
         try {
-          var rb = new RestBundle({name:"TestLoadApiModel"});
+          var rb = new RestApi({name:"TestLoadApiModel"});
           var result = yield rb
             .loadApiModel("NoApiModel")
             .then((r) => async.next(r))
@@ -291,10 +291,10 @@ typeof describe === "function" &&
       })();
       async.next();
     });
-    it("saveApiModel(apiModel) saves RestBundle api model", function (done) {
+    it("saveApiModel(apiModel) saves RestApi api model", function (done) {
       let async = (function* () {
         try {
-          var rb = new RestBundle({name: "TestSaveApiModel"});
+          var rb = new RestApi({name: "TestSaveApiModel"});
           var apiModel = {
             color: "purple",
           };
@@ -320,8 +320,8 @@ typeof describe === "function" &&
         try {
           const rbh = new RbHash();
           var name = "TestPutApiModel";
-          var rb = new RestBundle({name});
-          var fileName = `rest-bundle.${name}.json`;
+          var rb = new RestApi({name});
+          var fileName = `rest-api.${name}.json`;
           var filePath = path.join(__dirname, "..", "api-model", fileName);
           fs.existsSync(filePath) && fs.unlinkSync(filePath);
 
@@ -409,7 +409,7 @@ typeof describe === "function" &&
       var async = (function* () {
         try {
           var app = express();
-          var rb = new RestBundle({name:"test"}).bindExpress(app);
+          var rb = new RestApi({name:"test"}).bindExpress(app);
           var response = yield supertest(app)
             .get("/test/app/stats/heap")
             .expect((res) => {
@@ -434,7 +434,7 @@ typeof describe === "function" &&
     it("initialize() loads apiModel", function (done) {
       var count = 0;
       var apiModels = [];
-      class TestBundle extends RestBundle {
+      class TestBundle extends RestApi {
         constructor(name = "test", options = {}) {
           super(name, options);
         }

@@ -13,9 +13,9 @@
         Pali,
     } = require("scv-bilara");
     const {
-        RestBundle,
+        RestApi,
         UserStore,
-    } = require('rest-bundle');
+    } = require('rest-api');
     const { logger } = require('log-instance');
     const srcPkg = require("../../package.json");
 
@@ -60,7 +60,7 @@
 
     var fwsEn;
 
-    class ScvRest extends RestBundle { 
+    class ScvRest extends RestApi { 
         constructor(opts = {
             audioFormat: 'mp3',
         }) {

@@ -14,13 +14,13 @@
   const util = require("util");
   const v8 = require("v8");
 
-  class RestBundle {
+  class RestApi {
     constructor(options = {}) {
       let { name="test" } = options;
       if (typeof name !== "string") {
         throw new Error(`bundle name is required: ${name}`);
       }
-      logger.info(`RestBundle.ctor(${name})`);
+      logger.info(`RestApi.ctor(${name})`);
       this.name = name;
       this.appDir =
         options.appDir || 
@@ -31,9 +31,9 @@
         scvDir: options.scvDir || path.join(__dirname, ".."),
         //node_modules: path.join(this.appDir, "node_modules"),
         $onRequestSuccess: 
-          options.onRequestSuccess || RestBundle.onRequestSuccess,
+          options.onRequestSuccess || RestApi.onRequestSuccess,
         $onRequestFail:
-         options.onRequestFail || RestBundle.onRequestFail,
+         options.onRequestFail || RestApi.onRequestFail,
         taskBag: [], // unordered task collection with duplicates
       };
       Object.keys(privateProps).forEach(prop=>{
@@ -92,7 +92,7 @@
     }
 
     pushState() {
-      logger.warn("RestBundle.pushState() ignored (no web socket)");
+      logger.warn("RestApi.pushState() ignored (no web socket)");
     }
 
     taskPromise(name, cbPromise) {
@@ -207,7 +207,7 @@
     }
 
     handleRequestError(req, res, err, next) {
-      logger.warn(`RestBundle.handleRequestError(${req.method} ${req.url})`);
+      logger.warn(`RestApi.handleRequestError(${req.method} ${req.url})`);
       logger.warn(err.stack);
       this.$onRequestFail(req, res, err, next);
     }
@@ -288,7 +288,7 @@
       });
       restHandlers.forEach((resource) => {
         logger.debug(
-          "RestBundle.bindExpress:",
+          "RestApi.bindExpress:",
           resource.method,
           `/${name}/${resource.name} => ${resource.mime}`
         );
@@ -300,7 +300,7 @@
       return this;
     }
 
-  } // class RestBundle
+  } // class RestApi
 
-  module.exports = exports.RestBundle = RestBundle;
+  module.exports = exports.RestApi = RestApi;
 })(typeof exports === "object" ? exports : (exports = {}));
