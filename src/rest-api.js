@@ -15,25 +15,25 @@
   const v8 = require("v8");
 
   class RestApi {
-    constructor(options = {}) {
-      let { name="test" } = options;
+    constructor(opts = {}) {
+      let { name="test" } = opts;
       if (typeof name !== "string") {
         throw new Error(`bundle name is required: ${name}`);
       }
       logger.info(`RestApi.ctor(${name})`);
       this.name = name;
       this.appDir =
-        options.appDir || 
+        opts.appDir || 
         require.resolve("scv-bilara").split("/node_modules")[0];
 
       let privateProps = {
-        uribase: options.uribase || "/" + this.name,
-        scvDir: options.scvDir || path.join(__dirname, ".."),
-        //node_modules: path.join(this.appDir, "node_modules"),
+        handlers: opts.handlers || [],
+        uribase: opts.uribase || `/${name}`,
+        scvDir: opts.scvDir || path.join(__dirname, ".."),
         $onRequestSuccess: 
-          options.onRequestSuccess || RestApi.onRequestSuccess,
+          opts.onRequestSuccess || RestApi.onRequestSuccess,
         $onRequestFail:
-         options.onRequestFail || RestApi.onRequestFail,
+         opts.onRequestFail || RestApi.onRequestFail,
         taskBag: [], // unordered task collection with duplicates
       };
       Object.keys(privateProps).forEach(prop=>{
@@ -60,7 +60,7 @@
       return new ResourceMethod(method, name, thatHandler, mime);
     }
 
-    get handlers() {
+    get testHandlers() {
       return [
         this.resourceMethod("get", "identity", this.getIdentity),
         this.resourceMethod("get", "state", this.getState),
@@ -262,16 +262,16 @@
       }
     }
 
-    bindExpress(rootApp, restHandlers = this.handlers) {
-      let { name, uribase } = this;
+    bindExpress(rootApp, restHandlers) {
+      let { name, uribase, handlers} = this;
+      restHandlers && restHandlers.forEach(h=>handlers.push(h));
       var app = (this.app = express());
       let { locals } = rootApp;
       Object.assign(this, "rootApp", {value: rootApp});
-      //rootApp.use("/node_modules", express.static(this.node_modules));
       app.use(bodyParser.json());
       let restBundles = locals.restBundles = locals.restBundles || [];
       restBundles.push(this);
-      restHandlers.sort((a, b) => {
+      handlers.sort((a, b) => {
         var cmp = a.method.localeCompare(b.method);
         if (cmp === 0) {
           cmp = a.name.localeCompare(b.name);
@@ -286,7 +286,7 @@
         }
         return cmp;
       });
-      restHandlers.forEach((resource) => {
+      handlers.forEach((resource) => {
         logger.debug(
           "RestApi.bindExpress:",
           resource.method,
