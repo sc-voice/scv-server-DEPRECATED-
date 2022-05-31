@@ -116,9 +116,10 @@ typeof describe === "function" &&
       ra.bindExpress(rootApp);
       should(testRb(rootApp, name)).equal(ra);
       var res = await ra.getIdentity();
-      should(res.diskavail).equal(avail);
-      should(res.diskfree).equal(avail);
-      should(res.disktotal).equal(total);
+      let prec = 10E6;
+      should(Math.round(res.diskavail/prec)).equal(Math.round(avail/prec));
+      should(Math.round(res.diskfree/prec)).equal(Math.round(avail/prec));
+      should(Math.round(res.disktotal/prec)).equal(Math.round(total/prec));
       //console.log(`dbg getIdientity`, res);
     });
     it("TESTTESTGET /identity generates HTTP200 response", async()=>{
