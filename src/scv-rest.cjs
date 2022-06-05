@@ -71,6 +71,39 @@
       this.downloadMap = {};
       this.mj = new MerkleJson();
     }
+
+    async getSearch(req, res, next) {
+      try {
+        var language = req.params.lang || "en";
+        LANG_MAP[language] && (language = LANG_MAP[language]);
+
+        var pattern = req.params.pattern;
+        if (!pattern) {
+          throw new Error("Search pattern is required");
+        }
+        var maxResults = Number(
+          req.query.maxResults || this.suttaStore.maxResults
+        );
+        if (isNaN(maxResults)) {
+          throw new Error("Expected number for maxResults");
+        }
+        var srOpts = {
+          pattern,
+          language,
+          maxResults,
+        };
+        var sr = await this.suttaStore.search(srOpts);
+        var { method, results, mlDocs } = sr;
+        this.info(
+          `GET search(${pattern}) ${language} ${method}`,
+          `=> ${results.map((r) => r.uid)}`
+        );
+        return sr;
+      } catch (e) {
+        this.warn(`getSearch(${JSON.stringify(srOpts)})`, e.message);
+        throw e;
+      }
+    }
   }
 
   module.exports = exports.ScvRest = ScvRest;
