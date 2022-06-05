@@ -33,7 +33,7 @@ typeof describe === "function" &&
       }
     }
 
-    it("TESTTESTdefault ctor", ()=>{
+    it("default ctor", ()=>{
       let ra = new RestApi();
       let appDir = APPDIR;
       should.deepEqual(Object.keys(ra).sort(), [
@@ -44,7 +44,7 @@ typeof describe === "function" &&
       should(ra.name).equal("test");
       should(ra.uribase).equal("/test");
     });
-    it("TESTTESTRestApi can be extended", async()=>{
+    it("RestApi can be extended", async()=>{
       var app = express();
       let name = "testExtended";
       var tb = new TestBundle(name).bindExpress(app);
@@ -54,7 +54,7 @@ typeof describe === "function" &&
 
       should.deepEqual(res.body, { color: "blue", });
     });
-    it("TESTTESTRestApi resources should be unique", ()=>{
+    it("RestApi resources should be unique", ()=>{
       class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -66,7 +66,7 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("TESTTESTRestApi returns 500 for bad responses", async()=>{
+    it("RestApi returns 500 for bad responses", async()=>{
       class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -96,7 +96,7 @@ typeof describe === "function" &&
         logger.logLevel = logLevel;
       }
     });
-    it("TESTTESTdiskusage", async () => {
+    it("diskusage", async () => {
       var execPromise = util.promisify(exec);
       var cmd = "df --total -B 1 /";
       var execOpts = {
@@ -122,7 +122,7 @@ typeof describe === "function" &&
       should(Math.round(res.disktotal/prec)).equal(Math.round(total/prec));
       //console.log(`dbg getIdientity`, res);
     });
-    it("TESTTESTGET /identity generates HTTP200 response", async()=>{
+    it("GET /identity generates HTTP200 response", async()=>{
       let rootApp = express();
       let name = "testIdentity";
       let ra = new RestApi({ name});
@@ -153,7 +153,7 @@ typeof describe === "function" &&
       should(res.body.totalmem).below(res.body.disktotal);
       res.body.version.should.match(/\d+.\d+.\d+/);
     });
-    it("TESTTESTPOST /echo => HTTP200 response with a Promise", async()=>{
+    it("POST /echo => HTTP200 response with a Promise", async()=>{
       let rootApp = express();
       let name = "testEcho";
       let ra = new RestApi({ name });
@@ -171,7 +171,7 @@ typeof describe === "function" &&
         .expect('content-type', /utf-8/)
         .expect(echoJson);
     });
-    it("TESTTESTtaskBegin/taskEnd", async()=>{
+    it("taskBegin/taskEnd", async()=>{
       let rootApp = express();
       let name = "testTask";
       let ra = new RestApi({ name });
@@ -198,7 +198,7 @@ typeof describe === "function" &&
         .expect('content-type', /utf-8/)
         .expect({tasks:[]});
     });
-    it("TESTTESTPOST => HTTP500 response for thrown exception", async()=>{
+    it("POST => HTTP500 response for thrown exception", async()=>{
       let name = "test500";
       let app = express();
       let ra = new RestApi({ name });
@@ -219,7 +219,7 @@ typeof describe === "function" &&
       res.body.error.should.match(/POST not supported/);
       res.body.error.should.match(/{"greeting":"whoa"}/);
     });
-    it("TESTTESTkebab(id) => kebab case of id", function () {
+    it("kebab(id) => kebab case of id", function () {
       var kebab = (id) =>
         id
           .replace(/([A-Z])/g, "-$1")
@@ -230,7 +230,7 @@ typeof describe === "function" &&
       kebab("abc").should.equal("abc");
       kebab("aBC").should.equal("a-b-c");
     });
-    it("TESTTESTGET /app/stats/heap => v8.getHeapSpaceStatistics", async()=>{
+    it("GET /app/stats/heap => v8.getHeapSpaceStatistics", async()=>{
       let app = express();
       let ra = new RestApi({name:"test"});
       ra.bindExpress(app, ra.testHandlers);

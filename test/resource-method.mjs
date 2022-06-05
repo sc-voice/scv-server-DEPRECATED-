@@ -3,7 +3,7 @@ import ResourceMethod from "../src/resource-method.js"
 
 typeof describe === "function" &&
   describe("resource-method", function() {
-    it("TESTTESTdefault ctor()", async()=>{
+    it("default ctor()", async()=>{
       let rm = new ResourceMethod();
       should(rm).properties({
         method: 'get',
@@ -18,7 +18,7 @@ typeof describe === "function" &&
       }
       should(eCaught).properties({message: "HTTP500 not implemented"});
     })
-    it("TESTTESTcustom ctor()", async()=>{
+    it("custom ctor()", async()=>{
       let name = 'testName';
       let method = 'testMethod';
       let mime = 'testMime';
