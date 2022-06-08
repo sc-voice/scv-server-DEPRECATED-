@@ -32,7 +32,8 @@ typeof describe === "function" &&
       }); 
     })
 
-    it("default ctor", function () {
+    /*
+    it("TESTTESTdefault ctor", function () {
       var store = new SoundStore();
       should(store).instanceof(SoundStore);
       should(store).instanceof(GuidStore);
@@ -428,4 +429,5 @@ typeof describe === "function" &&
         }
       })();
     });
+  */
   });
