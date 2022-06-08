@@ -1,7 +1,6 @@
 import should from "should";
 import fs from "fs";
 import path from "path";
-import running from "why-is-node-running";
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_DIR = path.dirname(__dirname);

@@ -5,7 +5,7 @@ import { MerkleJson } from "merkle-json";
 typeof describe === "function" &&
   describe("scv-rest", function() {
 
-    it ("TESTTESTdefault ctor", ()=>{
+    it ("default ctor", ()=>{
       let rest = new ScvRest();
       should(rest).properties({
         name: 'scv',

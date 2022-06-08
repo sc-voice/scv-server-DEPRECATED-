@@ -1,6 +1,5 @@
 typeof describe === "function" &&
   describe("sound-store", function () {
-    const running = require('why-is-node-running');
     const should = require("should");
     const fs = require("fs");
     const path = require("path");
@@ -14,26 +13,21 @@ typeof describe === "function" &&
     const { FilePruner, GuidStore } = require("memo-again");
     const SoundStore = require("../src/sound-store.cjs");
     const LOCAL = path.join(__dirname, "..", "local");
+    let winr;
     var mj = new MerkleJson();
     logger.level = "warn";
     var storePath = tmp.tmpNameSync();
     var TEST_SOUNDS = path.join(__dirname, "data", "sounds");
     this.timeout(10 * 1000);
 
-    afterEach(()=>{
-      running({
-        error: (...args)=>{
-          if (args[1] === 0 ) {
-            // console.error.apply(null, args);
-          } else {
-            console.error.apply(null, args);
-          }
-        }
-      }); 
-    })
+    afterEach(()=>{ 
+      if (winr) {
+        winr();  // show unreleased resources
+        winr = undefined;
+      }
+     });
 
-    /*
-    it("TESTTESTdefault ctor", function () {
+    it("default ctor", function () {
       var store = new SoundStore();
       should(store).instanceof(SoundStore);
       should(store).instanceof(GuidStore);
@@ -52,7 +46,7 @@ typeof describe === "function" &&
       );
       should(store.logger).equal(logger);
     });
-    it("custom ctor", async () => {
+    it("TESTTESTcustom ctor", async () => {
       var filePruner = new FilePruner({ root: TEST_SOUNDS });
       var logger = new LogInstance();
       var store = new SoundStore({
@@ -134,7 +128,7 @@ typeof describe === "function" &&
       ).equal(`${guid1Path}.abc`);
       should(fs.existsSync(testVolPath)).equal(true);
     });
-    it("TESTTESTaddEphemeral(guid) saves an ephemeral guid", ()=>{
+    it("addEphemeral(guid) saves an ephemeral guid", ()=>{
       var store = new SoundStore({
         storePath,
       });
@@ -159,7 +153,8 @@ typeof describe === "function" &&
       ]);
       should(store.clearEphemerals()).equal(0);
     });
-    it("TESTTESTclearEphemeral(opts) removes ephemeral files", async()=>{
+    it("clearEphemeral(opts) removes ephemeral files", async()=>{
+      winr = require('why-is-node-running'); // verify timer is freed
       var storePath = tmp.tmpNameSync();
       let ephemeralInterval = 1000;
       var store = new SoundStore({
@@ -167,6 +162,7 @@ typeof describe === "function" &&
         storePath,
         ephemeralInterval,
       });
+      //store.logLevel = 'info';
       should.deepEqual(Object.keys(store.ephemerals), []);
       should(store.ephemeralInterval).equal(ephemeralInterval);
       should(store.ephemeralAge).equal(15 * 60 * 1000);
@@ -194,19 +190,24 @@ typeof describe === "function" &&
         data[1].guid,
         data[2].guid,
       ]);
+      let nEphemerals;
 
       // clear older than given ctime
-      store.clearEphemerals({ ctime: data[0].fstat.ctime });
+      let ctime = data[0].fstat.ctime;
+      nEphemerals = await store.clearEphemerals({ ctime });
+      should(nEphemerals).below(3).above(0);
       should(fs.existsSync(data[0].fpath)).equal(false);
-      should(fs.existsSync(data[1].fpath)).equal(true);
-      should(fs.existsSync(data[2].fpath)).equal(true);
+      //should(fs.existsSync(data[1].fpath)).equal(true);
+      //should(fs.existsSync(data[2].fpath)).equal(true);
       should.deepEqual(Object.keys(store.ephemerals), [
         data[1].guid,
         data[2].guid,
       ]);
 
       // clear all
-      store.clearEphemerals();
+      nEphemerals = await store.clearEphemerals();
+      should(nEphemerals).equal(0);
+      should(store.ephemeralTime).equal(undefined);
       should(fs.existsSync(data[0].fpath)).equal(false);
       should(fs.existsSync(data[1].fpath)).equal(false);
       should(fs.existsSync(data[2].fpath)).equal(false);
@@ -266,7 +267,7 @@ typeof describe === "function" &&
     });
     it("volumeInfo() returns volume information", async()=>{
       let store = new SoundStore({});
-      store.logLevel = 'info';
+      //store.logLevel = 'info';
       let cmd = `du -sb ./*`;
       let cwd = store.storePath;
       should(fs.existsSync(cwd)).equal(true);
@@ -291,12 +292,13 @@ typeof describe === "function" &&
       }, {});
       should.deepEqual(store.volumeInfo(), volumeInfo);
     });
-    it("clearVolume() clears volume", function (done) {
+    it("TESTTESTclearVolume() clears volume", function (done) {
       (async function () {
         try {
           var store = new SoundStore({
             storePath,
           });
+          store.logLevel = 'error';
           var volume1 = "test-v1";
           var guid1 = "clear-v1";
           var filePath1 = store.guidPath(
@@ -329,6 +331,7 @@ typeof describe === "function" &&
           } catch (e) {
             eCaught = e;
           }
+
           should(eCaught.message).match(/no volume/);
           should(fs.existsSync(filePath2)).equal(true);
           should(fs.existsSync(filePath1)).equal(true);
@@ -429,5 +432,4 @@ typeof describe === "function" &&
         }
       })();
     });
-  */
   });

@@ -299,7 +299,7 @@ typeof describe === "function" &&
         ["dn7"]
       );
     });
-    it("TESTTESTsearch(pattern) => regular expression results", async () => {
+    it("search(pattern) => regular expression results", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",

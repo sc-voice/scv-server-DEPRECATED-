@@ -92,7 +92,7 @@
       let { ephemeralInterval, ephemeralTimer } = this;
       let that = this;
       if (ephemeralInterval && ephemeralTimer == null) {
-        logger.info(`creating ephemeralTimer @ ${ephemeralInterval}ms`);
+        this.info(`addEphemeral() new ephemeralTimer@${ephemeralInterval}ms`);
         this.ephemeralTimer = setInterval(() => {
           var ctime = new Date(Date.now() - that.ephemeralAge);
           that.clearEphemerals({
@@ -100,7 +100,9 @@
           });
         }, ephemeralInterval);
       }
-      this.ephemerals[guid] = Date.now();
+      let now = Date.now();
+      this.ephemerals[guid] = now;
+      this.debug(`addEphemeral() add entry ${guid}:${now}`);
     }
 
     clearEphemerals(opts = {}) {
@@ -114,19 +116,25 @@
             var fstat = fs.statSync(fpath);
             if (fstat.ctime <= ctime) {
               fs.unlinkSync(fpath);
-              logger.info(`clearEphemerals unlinkSync:${fpath}`);
+              this.debug(`clearEphemerals() unlinkSync:${fpath}`);
             } else if (ephemerals[guid] == null) {
-              ephemerals[guid] = Date.now();
+              let now = Date.now();
+              ephemerals[guid] = now;
+              this.debug(`clearEphemerals() update entry ${guid}:${now}`);
             }
           }
         });
       });
       let nEphemerals = Object.keys(ephemerals).length;
-      this.info(`nEphemerals:${nEphemerals}`);
       if (nEphemerals === 0 && this.ephemeralTimer) {
-        this.info("clearEphemerals() all clear");
         clearInterval(this.ephemeralTimer);
         this.ephemeralTimer = null;
+        this.info("clearEphemerals()", { 
+          ephemeralTimer:this.ephemeralTimer, 
+          nEphemerals,
+        });
+      } else {
+        this.info(`clearEphemerals nEphemerals:${nEphemerals}`);
       }
       this.ephemerals = ephemerals;
       return nEphemerals;
@@ -187,7 +195,7 @@
       var volpath = path.join(this.storePath, volume + "");
       if (!fs.existsSync(volpath)) {
         var e = new Error(`${context} no volume:${volume}`);
-        logger.warn(e);
+        this.warn(e);
         return Promise.reject(e);
       }
       return new Promise((resolve, reject) => {
