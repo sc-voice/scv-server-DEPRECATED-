@@ -4,7 +4,7 @@
   const { logger } = require("log-instance");
   const { GuidStore } = require("memo-again");
   const { AwsConfig, SayAgain } = require("say-again");
-  const LOCAL = path.join(__dirname, "../../local");
+  const LOCAL = path.join(__dirname, "../local");
   const VSMPATH = path.join(LOCAL, "vsm-s3.json");
 
   class S3Creds {
@@ -14,21 +14,20 @@
         ? JSON.parse(fs.readFileSync(configPath))
         : {};
 
-      var config = (this.awsConfig = opts.awsConfig || new AwsConfig(vsmCreds));
+      var config = opts.awsConfig || new AwsConfig(vsmCreds);
+      this.awsConfig = config;
       let s3 = (config.s3 = config.s3 || {});
       let polly = (config.polly = config.polly || {});
       let sayAgain = (config.sayAgain = config.sayAgain || {});
 
-      config.region = config.region || polly.region || s3.region || "us-west-1";
-      //polly.region = polly.region || config.region;
+      config.region = config.region || 
+        polly.region || s3.region || "us-west-1";
 
-      config.secretAccessKey =
-        config.secretAccessKey || polly.secretAccessKey || s3.secretAccessKey;
-      //polly.secretAccessKey = polly.secretAccessKey || config.secretAccessKey;
+      config.secretAccessKey = config.secretAccessKey || 
+        polly.secretAccessKey || s3.secretAccessKey;
 
-      config.accessKeyId =
-        config.accessKeyId || polly.accessKeyId || s3.accessKeyId;
-      //polly.accessKeyId = polly.accessKeyId || config.accessKeyId;
+      config.accessKeyId = config.accessKeyId || 
+        polly.accessKeyId || s3.accessKeyId;
 
       config.Bucket = config.Bucket || vsmCreds.Bucket || "sc-voice-vsm";
       sayAgain.Bucket = "say-again.sc-voice";

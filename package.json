@@ -35,6 +35,7 @@
     "test": "npm run test:verbose",
     "test:test": "mocha --config test/mocha-config.json -g TESTTEST",
     "test:verbose": "mocha --inline-diffs",
+    "test:one": "mocha --inline-diffs -g TESTTEST",
     "test:watch": "mocha -w --inline-diffs"
   },
   "repository": {
