@@ -3,7 +3,7 @@
   const path = require("path");
   const { SayAgain } = require("say-again");
   const AbstractTTS = require("./abstract-tts.cjs");
-  const LOCAL_DIR = path.join(__dirname, "..", "..", "local");
+  const LOCAL_DIR = path.join(__dirname, "..", "local");
   const AWS_CFG_PATH = path.join(LOCAL_DIR, "vsm-s3.json");
   const AWS = require("aws-sdk");
   const { logger } = require("log-instance");

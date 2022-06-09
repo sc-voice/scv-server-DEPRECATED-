@@ -154,7 +154,6 @@ typeof describe === "function" &&
       should(store.clearEphemerals()).equal(0);
     });
     it("clearEphemeral(opts) removes ephemeral files", async()=>{
-      winr = require('why-is-node-running'); // verify timer is freed
       var storePath = tmp.tmpNameSync();
       let ephemeralInterval = 1000;
       var store = new SoundStore({
