@@ -3,8 +3,15 @@
 DIR=`dirname $0`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
+echo -e "${SCRIPT}: BEGIN `date` (OK)"
+
+echo -e "${SCRIPT}: apt update; apt upgrade..."
+sudo apt update -y
+sudo apt upgrade -y
+
 ${DIR}/install-node16 &&
 ${DIR}/update-npm &&
 ${DIR}/install-ripgrep &&
+${DIR}/install-audio-tools &&
 npm install && 
-echo -e "${SCRIPT}: completed (OK)"
+echo -e "${SCRIPT}: END `date` (OK)"
