@@ -22,7 +22,7 @@ typeof describe === "function" &&
       return ph;
     }
 
-    it("TESTTESTcustom ctor", (done) => {
+    it("custom ctor", (done) => {
       (async function () {
         try {
           var soundStore = new SoundStore();
@@ -39,7 +39,7 @@ typeof describe === "function" &&
         }
       })();
     });
-    it("TESTTESTloadVoices(voicePath) should return voices", () => {
+    it("loadVoices(voicePath) should return voices", () => {
       var voices = Voice.loadVoices();
       should(voices).instanceOf(Array);
       should(voices.length).greaterThan(0);
@@ -97,7 +97,7 @@ typeof describe === "function" &&
       should(!!amy.ipa).equal(true);
       should(!!amy.ipa.pli).equal(true);
     });
-    it("TESTTESTcreateVoice(opts) returns voice for a language", function () {
+    it("createVoice(opts) returns voice for a language", function () {
       // Default
       var voice = Voice.createVoice();
       should(voice).instanceOf(Voice);
@@ -136,7 +136,7 @@ typeof describe === "function" &&
       });
       should(sujato_pli.altTts.voice).equal("Aditi");
     });
-    it("TESTTESTcreateVoice(voiceName) returns a default voice", function () {
+    it("createVoice(voiceName) returns a default voice", function () {
       var voice = Voice.createVoice("aditi");
       should(voice).instanceOf(Voice);
       should(voice.locale).equal("hi-IN");
@@ -174,7 +174,7 @@ typeof describe === "function" &&
       should(voice.stripNumbers).equal(false);
       should(voice.stripQuotes).equal(false);
     });
-    it("TESTTESTcreateVoice(opts) => recite Voice instance", ()=>{
+    it("createVoice(opts) => recite Voice instance", ()=>{
       var reciteVoice = Voice.createVoice({
         locale: "en",
         usage: "recite",
@@ -256,7 +256,7 @@ typeof describe === "function" &&
         usage: "navigate",
       });
     });
-    it("TESTTESTspeak(...) => sound file for array of text", async () => {
+    it("speak(...) => sound file for array of text", async () => {
       var raveena = Voice.createVoice({ locale: "en-IN" });
       var text = ["Tomatoes are", "red.", "Tomatoes are red."];
       var cache = true;
@@ -283,7 +283,7 @@ typeof describe === "function" &&
       should(fs.statSync(files[2]).size).greaterThan(1000); // Tomatoes are red.
       should(fs.statSync(result.file).size).greaterThan(5000);
     });
-    it("TESTTESTplaceholder words are expanded with voice ipa", ()=>{
+    it("placeholder words are expanded with voice ipa", ()=>{
       /*
        * TTS services such as AWS Polly tend to speak IPA phonemes
        * in a voice-dependent manner. For example, the lower greek
@@ -347,7 +347,7 @@ typeof describe === "function" &&
         `<phoneme alphabet="ipa" ph="s\u0250\u014bgʰa">Saṅgha</phoneme>${BREAK}`
       );
     });
-    it("TESTTESTplaceholder words are expanded with voice ipa", ()=>{
+    it("placeholder words are expanded with voice ipa", ()=>{
       var raveena = Voice.createVoice("raveena");
       should(raveena).properties({
         name: "Raveena",
@@ -374,7 +374,7 @@ typeof describe === "function" &&
           `<phoneme alphabet="ipa" ph="he\u03b8u">hetu</phoneme>${BREAK}?`,
       ]);
     });
-    it("TESTTESTspeak(text) trim German trailing en-dash", async()=>{
+    it("speak(text) trim German trailing en-dash", async()=>{
       var vicki = Voice.createVoice({
         name: "Vicki",
       });
@@ -382,7 +382,7 @@ typeof describe === "function" &&
       var result = await vicki.speak(text, { usage: "recite" });
       should(result.signature.text).match(/>Von hier geht er zur Hölle</);
     });
-    it("TESTTESTspeak(text) speaks Pali", async()=>{
+    it("speak(text) speaks Pali", async()=>{
       var raveena = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",
@@ -399,7 +399,7 @@ typeof describe === "function" &&
       should(result.signature.text).match(/ph="ekɐcco"/);
       should(result.signature.text).match(/ph="dʊk.kʰɐssa"/);
     });
-    it("TESTTESTspeak(text) can handle lengthy Pali", async()=>{
+    it("speak(text) can handle lengthy Pali", async()=>{
       var aditi = Voice.createVoice({
         name: "aditi",
         usage: "recite",
@@ -414,7 +414,7 @@ typeof describe === "function" &&
       should(result.signature.api).equal("ffmegConcat");
       should(result.signature.files.length).equal(30);
     });
-    it("TESTTESTAmy phonemes", ()=>{
+    it("Amy phonemes", ()=>{
       var amy = Voice.createVoice({
         locale: "en-GB",
         localeIPA: "pli",
@@ -424,7 +424,7 @@ typeof describe === "function" &&
       should(recite.wordSSML("self-mortifiers")).equal("self-mortifiers");
       should(recite.wordSSML(`bow`)).equal(phoneme("baʊ", "bow"));
     });
-    it("TESTTESTRaveena phonemes", ()=>{
+    it("Raveena phonemes", ()=>{
       var raveena = Voice.createVoice({
         locale: "en-IN",
         localeIPA: "pli",
@@ -437,7 +437,7 @@ typeof describe === "function" &&
       should(recite.wordSSML(`Atthi`)).match(/"ɐˈθθhɪ"/);
       should(recite.wordSSML(`hoti`)).match(/"hoθɪ"/);
     });
-    it("TESTTESTAditi phonemes", ()=>{
+    it("Aditi phonemes", ()=>{
       var aditi = Voice.createVoice({
         name: "aditi",
         localeIPA: "pli",
@@ -453,7 +453,7 @@ typeof describe === "function" &&
       should(recite.wordSSML(`Atthi`)).match(/"ət̪.t̪ʰɪ"/);
       should(recite.wordSSML(`hoti`)).match(/"hot̪ɪ"/);
     });
-    it("TESTTESTspeak(text) can ignore numbers", async()=>{
+    it("speak(text) can ignore numbers", async()=>{
       var raveena = Voice.createVoice({
         name: "raveena",
         stripNumbers: true,
@@ -469,7 +469,7 @@ typeof describe === "function" &&
       should(result.signature.api).equal("aws-polly");
       should(result.signature.text).not.match(/\(.*\)/);
     });
-    it("TESTTESTspeak(text) can ignore quotes", async()=>{
+    it("speak(text) can ignore quotes", async()=>{
       var raveena = Voice.createVoice({
         name: "raveena",
         stripQuotes: true,
@@ -480,7 +480,7 @@ typeof describe === "function" &&
       should(result.signature.api).equal("aws-polly");
       should(result.signature.text).not.match(/[“'‘'”]/);
     });
-    it("TESTTESTspeakSegment(opts) trims segment", async()=>{
+    it("speakSegment(opts) trims segment", async()=>{
       var vicki = Voice.createVoice({
         name: "vicki",
       });
@@ -503,7 +503,7 @@ typeof describe === "function" &&
       should(api).equal("aws-polly");
       should(text).match(/>Von hier geht er zur Hölle</);
     });
-    it("TESTTESTspeakSegment(opts) speaks aws-polly", async()=>{
+    it("speakSegment(opts) speaks aws-polly", async()=>{
       var aditi = Voice.createVoice({
         name: "aditi",
       });
@@ -527,7 +527,7 @@ typeof describe === "function" &&
         guid: "23aba87c0acf41410b14e1de1658a7ae",
       });
     });
-    it("TESTTESTspeakSegment(opts) human-tts requires SCAudio", async()=>{
+    it("speakSegment(opts) human-tts requires SCAudio", async()=>{
       var sutta_uid = "sn1.9999"; // not a sutta
       var language = "pli";
       var translator = "sujato";
@@ -555,7 +555,7 @@ typeof describe === "function" &&
       should(eCaught).instanceOf(Error);
       should(eCaught.message).match(/scAudio is required/);
     });
-    it("TESTTESTspeakSegment(opts) human-tts uses altTts", async()=>{
+    it("speakSegment(opts) human-tts uses altTts", async()=>{
       var sutta_uid = "sn1.9999"; // not a sutta
       var language = "pli";
       var translator = "sujato";
@@ -594,7 +594,7 @@ typeof describe === "function" &&
       should(resSpeak.file).match(/sn_pli_mahasangiti_aditi.*/);
       should(fs.existsSync(resSpeak.file)).equal(true);
     });
-    it("TESTTESTspeakSegment(opts) downloads human-tts", async()=>{
+    it("speakSegment(opts) downloads human-tts", async()=>{
       var sutta_uid = "sn1.9";
       var storePath = tmp.tmpNameSync();
       var soundStore = new SoundStore({
@@ -654,7 +654,7 @@ typeof describe === "function" &&
       should(resSpeak.file).match(new RegExp(resSpeak.signature.guid));
       should(fs.existsSync(resSpeak.file)).equal(true);
     });
-    it("TESTTESTvoiceOfName(name) returns voice of name", ()=>{
+    it("voiceOfName(name) returns voice of name", ()=>{
       should(Voice.voiceOfName("amy")).properties({ name: "Amy" });
       should(Voice.voiceOfName("Amy")).properties({ name: "Amy" });
       should(Voice.voiceOfName("0")).properties({ name: "Amy" });
@@ -667,7 +667,7 @@ typeof describe === "function" &&
         name: "sujato_pli",
       });
     });
-    it("TESTTESTsynthesizeBreak() for HumanTts uses altTts", async()=>{
+    it("synthesizeBreak() for HumanTts uses altTts", async()=>{
       var scAudio = new SCAudio();
       var voice = Voice.createVoice({
         name: "sujato_en",
@@ -686,7 +686,7 @@ typeof describe === "function" &&
         /5a4ddf6b9c5cfd7e1ad8cf8a36e96c0f/
       );
     });
-    it("TESTTESTspeak(text) => ellipsis in AN2.17:3.1 (pli)", async()=>{
+    it("speak(text) => ellipsis in AN2.17:3.1 (pli)", async()=>{
       var deVoices = ["aditi"];
       deVoices.forEach((name) => {
         var v = Voice.createVoice({ name });
@@ -702,7 +702,7 @@ typeof describe === "function" &&
         should(segmented.length).equal(7);
       });
     });
-    it("TESTTESTspeak(text) => ellipsis in AN2.17:3.1 (de)", async()=>{
+    it("speak(text) => ellipsis in AN2.17:3.1 (de)", async()=>{
       var deVoices = ["marlene", "vicki", "hans"];
       deVoices.forEach((name) => {
         //console.log(`test ellipsis ${name}`);
@@ -719,7 +719,7 @@ typeof describe === "function" &&
         should(segmented.length).equal(3);
       });
     });
-    it("TESTTESTspeak(text) => ellipsis in AN2.17:3.1 (en)", async()=>{
+    it("speak(text) => ellipsis in AN2.17:3.1 (en)", async()=>{
       var enVoices = ["amy", "raveena", "matthew", "brian"];
       enVoices.forEach((name) => {
         //console.log(`test ellipsis ${name}`);
@@ -736,7 +736,7 @@ typeof describe === "function" &&
         should(segmented.length).equal(3);
       });
     });
-    it("TESTTESTspeak(text) => ellipsis with period", async()=>{
+    it("speak(text) => ellipsis with period", async()=>{
       var v = Voice.createVoice({ name: "vicki" });
       var text = `akkosatipi, āpatti thullaccayassa …pe….`;
       var { segments } = await v.speak(text);
