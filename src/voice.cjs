@@ -90,7 +90,7 @@
         return voicesCache;
       }
       voicePath == null &&
-        (voicePath = path.join(__dirname, "../../words/voices.json"));
+        (voicePath = path.join(__dirname, "../words/voices.json"));
       var json = JSON5.parse(fs.readFileSync(voicePath).toString());
       voicesCache = json.map((voiceOpts) => {
         var voice = new Voice(Object.assign({}, voiceOpts, opts));

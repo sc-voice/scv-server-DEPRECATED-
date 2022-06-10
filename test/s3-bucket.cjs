@@ -29,7 +29,7 @@ typeof describe === "function" &&
       Bucket: TEST_BUCKET,
     };
 
-    it("TESTTESTctor() constructor", ()=>{
+    it("ctor() constructor", ()=>{
       // default constructor
       var bucket = new S3Bucket();
       should(bucket.s3).instanceOf(AWS.S3);
@@ -50,7 +50,7 @@ typeof describe === "function" &&
       });
       should(bucket.initialized).equal(false);
     });
-    it("TESTTESTinitialize() must be called", async () => {
+    it("initialize() must be called", async () => {
       var bucket = new S3Bucket(BUCKET_OPTS);
       //bucket.logLevel = "info";
       should(await bucket.initialize()).equal(bucket);

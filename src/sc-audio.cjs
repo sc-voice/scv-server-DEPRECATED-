@@ -17,6 +17,7 @@
 
   class SCAudio {
     constructor(opts = {}) {
+      logger.logInstance(this);
       this.language = opts.language || "en";
       this.urlRaw = opts.urlRaw || URL_RAW;
       this.urlSegments =
@@ -110,8 +111,8 @@
                 }
                 if (error) {
                   res.resume(); // consume response data to free up memory
-                  logger.warn(`url:${url}`);
-                  logger.warn(error.stack);
+                  that.warn(`url:${url}`);
+                  that.warn(error.stack);
                   reject(error);
                   return;
                 }
@@ -126,7 +127,7 @@
                     var result = JSON.parse(rawData);
                     resolve(result);
                   } catch (e) {
-                    logger.warn(e.stack);
+                    that.warn(e.stack);
                     reject(e);
                   }
                 });
@@ -135,7 +136,7 @@
                 reject(e);
               })
               .on("timeout", (e) => {
-                logger.warn(e.stack);
+                that.warn(e.stack);
                 req.abort();
               });
           } catch (e) {
@@ -312,6 +313,7 @@
     convertResponse(response, resolve, reject) {
       var { url, audioPath, contentType } = response;
       var { convertTo } = this;
+      var that = this;
       var convertErr = new Error("convertResponse() Error");
       (async function () {
         try {
@@ -339,14 +341,14 @@
             ].join(" ");
             cmd = `${cmd}; rm ${srcFile}`;
             exec(cmd, execOpts, (error, stdout, stderr) => {
-              logger.debug(stdout);
+              that.debug(stdout);
               if (error) {
-                logger.warn(stderr);
-                logger.warn(convertErr);
+                that.warn(stderr);
+                that.warn(convertErr);
                 reject(error);
                 return;
               }
-              logger.debug(stderr);
+              that.debug(stderr);
               if (contentType === "video/webm") {
                 response.audioPath = audioPath.replace(srcFile, dstFile);
                 resolve(response);
@@ -354,7 +356,7 @@
                 var e = new Error(
                   `download failed for url:${url} error:${audioPath}`
                 );
-                logger.warn(e.stack);
+                that.warn(e.stack);
                 fs.existsSync(audioPath) && fs.unlinkSync(audioPath);
                 reject(e);
               }
