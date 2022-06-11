@@ -44,6 +44,7 @@
 
   class AudioUrls {
     constructor(opts = {}) {
+      logger.logInstance(this);
       this.sources = opts.sources || [SUJATO_SRC_PLI, SUJATO_SRC_EN, WIKI_SRC];
       this.map = {};
       this.maxResultAge = (opts.maxResultAge || DEFAULT_MAX_RESULT_AGE) * 1000;
@@ -110,18 +111,18 @@
                     break;
                   case 301: // permanent redirect
                     result.url = res.headers.location;
-                    logger.info(`audioUrl(${url}) redirect:${result.url}`);
+                    that.info(`audioUrl(${url}) redirect:${result.url}`);
                     resolve(result);
                     break;
                   case 302: // temporary redirect (e.g., non-existent github wiki)
                   case 404: // not found
-                    logger.info(`audioUrl(${url}) not found HTTP${statusCode}`);
+                    that.info(`audioUrl(${url}) not found HTTP${statusCode}`);
                     result.urlUnavailable = url;
                     result.url = null;
                     resolve(result);
                     break;
                   default:
-                    logger.warn(`audioUrl(${url}) HTTP${statusCode}`);
+                    that.warn(`audioUrl(${url}) HTTP${statusCode}`);
                     result.urlUnavailable = url;
                     result.url = null;
                     resolve(result);
@@ -129,17 +130,17 @@
                 }
               })
               .on("error", (e) => {
-                logger.warn(`audioUrl(${url}) error:${e.message}`);
+                that.warn(`audioUrl(${url}) error:${e.message}`);
                 result.urlUnavailable = url;
                 result.url = null;
                 resolve(result);
               })
               .on("timeout", (e) => {
-                logger.warn(`audioUrl(${url}) timeout:${e.message}`);
+                that.warn(`audioUrl(${url}) timeout:${e.message}`);
                 req.abort();
               });
           } catch (e) {
-            logger.warn(`audioUrl`, JSON.stringify(opts), e);
+            that.warn(`audioUrl`, JSON.stringify(opts), e);
             reject(e);
           }
         })();

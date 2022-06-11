@@ -80,7 +80,7 @@ typeof describe === "function" &&
         `xRoot/xLang/sn/sn1/sn1.1-xLang-xAuthor-xSpeaker.xExtension`
       );
     });
-    it("TESTTESTaudioUrl(...) returns verified audio url", async()=>{
+    it("audioUrl(...) returns verified audio url", async()=>{
       var audio = new AudioUrls();
 
       // good url
@@ -103,7 +103,7 @@ typeof describe === "function" &&
         statusCode: 200,
       });
     });
-    it("TESTTESTaudioUrl(...) handles bad url", async()=>{
+    it("audioUrl(...) handles bad url", async()=>{
       var audio = new AudioUrls();
 
       // bad url
@@ -116,12 +116,10 @@ typeof describe === "function" &&
         statusCode: 404,
       });
     });
-    it("TESTTESTaudioUrl(...) handle bad host null", async()=>{
-      //return; // TBD  takes too long with some DNS servers
-      var audio = new AudioUrls();
-      let rootUrl = "https://nosuchdomain.google.com";
-      // bad root
+    it("audioUrl(...) handle bad host null", async()=>{
+      let rootUrl = "https://nosuchdomain.google.com"; // bad root
       var audio = new AudioUrls({ sources: [ { rootUrl }, ], });
+      audio.logLevel = "error";
       var result = await audio.audioUrl("sn1.23");
       should.deepEqual(result, {
         url: null,

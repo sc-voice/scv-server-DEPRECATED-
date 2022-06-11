@@ -196,7 +196,7 @@ typeof describe === "function" &&
         `${ph("'nɪ v\\e sẽ t̪əb bɑː", "nivesetabbā")}${brk}`,
       ]);
     });
-    it("TESTTESTtokensSSML(text) handles ellipsis", async()=>{
+    it("tokensSSML(text) handles ellipsis", async()=>{
       var aditi = Voice.createVoice(ADITI_OPTS);
       var res = await aditi.speak("… ");
       should(res.signature.text).match(/break time/);

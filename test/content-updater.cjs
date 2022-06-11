@@ -13,6 +13,7 @@ typeof describe === "function" &&
     const SC_STAGING = "http://staging.suttacentral.net/api";
     const PRODUCTION = "http://suttacentral.net/api";
     this.timeout(10 * 1000);
+    logger.logLevel = "warn";
 
     it("constructor(opts)", function () {
       var updater = new ContentUpdater();
