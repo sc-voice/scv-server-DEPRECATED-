@@ -75,7 +75,7 @@ typeof describe === "function" &&
       var ssml = recite.segmentSSML("dakkhiṇeyyaṃ");
       should.deepEqual(ssml, ["dakkhiṇeyyaṃ"]);
     });
-    it("TESTTESTspeak([text],opts) returns empty sound file", async()=>{
+    it("speak([text],opts) returns empty sound file", async()=>{
       this.timeout(5 * 1000);
       var voice = Voice.createVoice({
         name: "sujato_pli",

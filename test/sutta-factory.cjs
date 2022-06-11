@@ -145,7 +145,7 @@ typeof describe === "function" &&
         }
       })();
     });
-    it("TESTTESTloadSutta(...) automatically sections a Sutta", async () => {
+    it("loadSutta(...) automatically sections a Sutta", async () => {
       await suttaStore.initialize();
       var factory = new SuttaFactory({
         autoSection: true,
