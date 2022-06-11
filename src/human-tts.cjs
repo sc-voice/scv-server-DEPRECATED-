@@ -29,7 +29,7 @@
       this.prosody = {
         rate: "0%",
       };
-      logger.info(
+      this.info(
         [
           `HumanTts.ctor()`,
           `voice:${this.voice}`,
@@ -76,7 +76,7 @@
         VoiceId: that.voice,
         LanguageCode: that.language,
       };
-      logger.info(
+      this.info(
         `HumanTts.serviceSynthesize(` +
           `${this.voice}) ${JSON.stringify(request)}`
       );
@@ -138,7 +138,8 @@
         signature,
       };
       var guid = (signature[mj.hashTag] = mj.hash(signature));
-      var audioPath = soundStore.signaturePath(signature, scAudio.extSeg); // .webm
+      var audioPath =
+        soundStore.signaturePath(signature, scAudio.extSeg); // .webm
       var soundPath = soundStore.signaturePath(signature); // .mp3
       var stats = fs.existsSync(soundPath) && fs.statSync(soundPath);
       if (stats && stats.size > this.ERROR_SIZE) {
@@ -186,7 +187,7 @@
               }
             } catch (e) {
               if (altTts == null) {
-                logger.warn(`synthesizeSegment() failed ` + `with no altTts`);
+                that.warn(`synthesizeSegment() failed ` + `with no altTts`);
                 reject(e);
               } else {
                 var resAlt = await altTts.synthesizeText(text, altArgs);

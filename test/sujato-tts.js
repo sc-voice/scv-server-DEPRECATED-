@@ -4,7 +4,7 @@ typeof describe === "function" &&
     const fs = require("fs");
     const path = require("path");
     const { logger } = require("log-instance");
-    logger.logLevel = "error";
+    logger.logLevel = "warn";
     const SCAudio = require("../src/sc-audio.cjs");
     const SoundStore = require("../src/sound-store.cjs");
     const Voice = require("../src/voice.cjs");
@@ -75,17 +75,19 @@ typeof describe === "function" &&
       var ssml = recite.segmentSSML("dakkhiṇeyyaṃ");
       should.deepEqual(ssml, ["dakkhiṇeyyaṃ"]);
     });
-    it("speak([text],opts) returns empty sound file", async()=>{
+    it("TESTTESTspeak([text],opts) returns empty sound file", async()=>{
       this.timeout(5 * 1000);
+      let usage = "recite";
       var voice = Voice.createVoice({
         name: "sujato_pli",
         noAudioPath: BREAK_PATH,
+        usage,
       });
+      voice.services.recite.logLevel = "error";
       var text = "Tomatoes are red. Broccoli is green";
       var cache = true;
       var opts = {
         cache,
-        usage: "recite",
         volume: "test",
         chapter: "voice",
       };
@@ -106,100 +108,86 @@ typeof describe === "function" &&
       should(files[0]).match(/break500/); // Bhante Sujato never said Tomatoes
       should(fs.statSync(result.file).size).greaterThan(5000);
     });
-    it("speakSegment([text],opts) returns human Pali audio", function (done) {
+    it("speakSegment([text],opts) returns human Pali audio", async()=>{
       this.timeout(5 * 1000);
-      (async function () {
-        try {
-          var usage = "recite";
-          var translator = "sujato";
-          var soundStore = new SoundStore();
-          var audioFormat = soundStore.audioFormat;
-          var audioSuffix = soundStore.audioSuffix;
-          var language = "pli";
-          var localeIPA = "pli";
-          var scAudio = new SCAudio();
-          var voice = Voice.createVoice({
-            name: "sujato_pli",
-            usage,
-            soundStore,
-            localeIPA,
-            audioFormat,
-            audioSuffix,
-            scAudio,
-          });
-          var sutta_uid = "sn1.1";
-          var scid = "sn1.1:1.1";
-          var segment = {
-            scid,
-            pli: "Evaṃ me sutaṃ—",
-          };
-          var cache = false;
-          var opts = {
-            cache,
-            usage: "recite",
-            volume: "test",
-            chapter: "voice",
-          };
-          var result = await voice.speakSegment({
-            sutta_uid,
-            segment,
-            language,
-            translator,
-            usage,
-          });
-          should(result.file).match(/4238ffac1b51a0c7ab5551b98a776ebc/);
-          done();
-        } catch (e) {
-          done(e);
-        }
-      })();
+      var usage = "recite";
+      var translator = "sujato";
+      var soundStore = new SoundStore();
+      var audioFormat = soundStore.audioFormat;
+      var audioSuffix = soundStore.audioSuffix;
+      var language = "pli";
+      var localeIPA = "pli";
+      var scAudio = new SCAudio();
+      var voice = Voice.createVoice({
+        name: "sujato_pli",
+        usage,
+        soundStore,
+        localeIPA,
+        audioFormat,
+        audioSuffix,
+        scAudio,
+      });
+      var sutta_uid = "sn1.1";
+      var scid = "sn1.1:1.1";
+      var segment = {
+        scid,
+        pli: "Evaṃ me sutaṃ—",
+      };
+      var cache = false;
+      var opts = {
+        cache,
+        usage: "recite",
+        volume: "test",
+        chapter: "voice",
+      };
+      var result = await voice.speakSegment({
+        sutta_uid,
+        segment,
+        language,
+        translator,
+        usage,
+      });
+      should(result.file).match(/4238ffac1b51a0c7ab5551b98a776ebc/);
     });
-    it("speakSegment([text],opts) returns human English audio", function (done) {
+    it("speakSegment([text],opts) returns human English audio", async()=>{
       this.timeout(5 * 1000);
-      (async function () {
-        try {
-          var usage = "recite";
-          var translator = "sujato";
-          var soundStore = new SoundStore();
-          var audioFormat = soundStore.audioFormat;
-          var audioSuffix = soundStore.audioSuffix;
-          var language = "en";
-          var localeIPA = "en";
-          var scAudio = new SCAudio();
-          var voice = Voice.createVoice({
-            name: "sujato_pli",
-            usage,
-            soundStore,
-            localeIPA,
-            audioFormat,
-            audioSuffix,
-            scAudio,
-          });
-          var sutta_uid = "sn1.1";
-          var scid = "sn1.1:1.1";
-          var segment = {
-            scid,
-            pli: "So I have heard. ",
-          };
-          var cache = false;
-          var opts = {
-            cache,
-            usage: "recite",
-            volume: "test",
-            chapter: "voice",
-          };
-          var result = await voice.speakSegment({
-            sutta_uid,
-            segment,
-            language,
-            translator,
-            usage,
-          });
-          should(result.file).match(/f46d257294ca9bbffbb38d5a105cf84a/);
-          done();
-        } catch (e) {
-          done(e);
-        }
-      })();
+      var usage = "recite";
+      var translator = "sujato";
+      var soundStore = new SoundStore();
+      var audioFormat = soundStore.audioFormat;
+      var audioSuffix = soundStore.audioSuffix;
+      var language = "en";
+      var localeIPA = "en";
+      var scAudio = new SCAudio();
+      var voice = Voice.createVoice({
+        name: "sujato_pli",
+        usage,
+        soundStore,
+        localeIPA,
+        audioFormat,
+        audioSuffix,
+        scAudio,
+      });
+      var sutta_uid = "sn1.1";
+      var scid = "sn1.1:1.1";
+      var segment = {
+        scid,
+        pli: "So I have heard. ",
+      };
+      var cache = false;
+      var opts = {
+        cache,
+        usage: "recite",
+        volume: "test",
+        chapter: "voice",
+      };
+      var result = await voice.speakSegment({
+        sutta_uid,
+        segment,
+        language,
+        translator,
+        usage,
+      });
+      should(result.file).match(/f46d257294ca9bbffbb38d5a105cf84a/);
     });
   });

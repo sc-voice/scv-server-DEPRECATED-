@@ -6,8 +6,6 @@
   const http = require("http");
   const https = require("https");
   const AudioUrls = require("./audio-urls.cjs");
-  const SuttaStore = require("./sutta-store.cjs");
-  const SoundStore = require("./sound-store.cjs");
   const LOCAL = path.join(__dirname, "..", "local");
   const URL_RAW =
     "https://raw.githubusercontent.com/sujato/sc-audio/master/flac";

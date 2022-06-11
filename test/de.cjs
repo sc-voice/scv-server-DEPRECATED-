@@ -16,6 +16,7 @@ typeof describe === "function" &&
     const ELLIPSIS_BREAK = '<break time="1.000s"/>';
     const BREAK = `<break time="0.001s"/>`;
     const tmp = require("tmp");
+    logger.logLevel = "warn";
     this.timeout(10 * 1000);
 
     function phoneme(ph, word) {
@@ -328,7 +329,7 @@ typeof describe === "function" &&
       should(eCaught).instanceOf(Error);
       should(eCaught.message).match(/scAudio is required/);
     });
-    it("speakSegment(opts) human-tts uses altTts", async()=>{
+    it("TESTTESTspeakSegment(opts) human-tts uses altTts", async()=>{
       var sutta_uid = "sn1.9999"; // not a sutta
       var language = "pli";
       var translator = "sujato";
@@ -348,14 +349,16 @@ typeof describe === "function" &&
 
       // sutta has no human audio
       var scAudio = new SCAudio();
+      scAudio.logLevel = "error";
       var voice = Voice.createVoice({
         name: "sujato_pli",
         scAudio,
       });
+      voice.logLevel = "error";
       should(voice.altTts.voice).equal("Aditi");
-      logger.warn("EXPECTED WARNING BEGIN");
+      voice.warn("EXPECTED WARNING BEGIN");
       var resSpeak = await voice.speakSegment(args);
-      logger.warn("EXPECTED WARNING END");
+      voice.warn("EXPECTED WARNING END");
       should(resSpeak).properties(["file", "signature"]);
       should(resSpeak.signature).properties({
         api: "aws-polly",
