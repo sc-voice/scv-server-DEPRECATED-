@@ -98,7 +98,7 @@ typeof describe === "function" &&
         ],
       }),
     ];
-    it("TESTTESTplaylist() constructs a playlist", function () {
+    it("playlist() constructs a playlist", function () {
       var pl = new Playlist();
       should(pl).instanceOf(Playlist);
       should.deepEqual(pl.languages, ["pli", "en"]);
@@ -213,7 +213,7 @@ typeof describe === "function" &&
         duration: 2,
       });
     });
-    it("TESTTESTspeak(opts) adds voice audio", async () => {
+    it("speak(opts) adds voice audio", async () => {
       var factory = await testSuttaFactory();
       var sutta = await factory.loadSutta("an1.31-40");
       var voices = {
