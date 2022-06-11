@@ -19,7 +19,7 @@ typeof describe === "function" &&
       var updater = new ContentUpdater();
       should(updater.isInitialized).equal(false);
     });
-    it("TESTTESTinitialize() initializes ContentUpdater", async()=>{
+    it("initialize() initializes ContentUpdater", async()=>{
       var updater = new ContentUpdater();
       var resInit = await updater.initialize();
       should(updater.suttaStore).instanceOf(SuttaStore);

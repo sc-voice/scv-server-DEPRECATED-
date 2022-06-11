@@ -6,8 +6,7 @@
   const AbstractTTS = require("./abstract-tts.cjs");
   const SoundStore = require("./sound-store.cjs");
   const SCAudio = require("./sc-audio.cjs");
-  const SRC = path.join(__dirname, "..");
-  const NOAUDIOPATH = path.join(SRC, "data", "no_audio.mp3");
+  const NOAUDIOPATH = path.join(__dirname, "data", "no_audio.mp3");
 
   class HumanTts extends AbstractTTS {
     constructor(opts = {}) {

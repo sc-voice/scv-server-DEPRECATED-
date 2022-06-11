@@ -329,7 +329,7 @@ typeof describe === "function" &&
       should(eCaught).instanceOf(Error);
       should(eCaught.message).match(/scAudio is required/);
     });
-    it("TESTTESTspeakSegment(opts) human-tts uses altTts", async()=>{
+    it("speakSegment(opts) human-tts uses altTts", async()=>{
       var sutta_uid = "sn1.9999"; // not a sutta
       var language = "pli";
       var translator = "sujato";
