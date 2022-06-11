@@ -196,12 +196,6 @@ typeof describe === "function" &&
       nEphemerals = await store.clearEphemerals({ ctime });
       should(nEphemerals).below(3).above(-1);
       should(fs.existsSync(data[0].fpath)).equal(false);
-      //should(fs.existsSync(data[1].fpath)).equal(true);
-      //should(fs.existsSync(data[2].fpath)).equal(true);
-      should.deepEqual(Object.keys(store.ephemerals), [
-        data[1].guid,
-        data[2].guid,
-      ]);
 
       // clear all
       nEphemerals = await store.clearEphemerals();
