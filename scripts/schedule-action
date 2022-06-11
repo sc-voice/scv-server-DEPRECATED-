@@ -5,7 +5,11 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
 git pull
-npm install --save scv-bilara@latest
+npm install --save scv-bilara@latest\
+  just-simple\
+  say-again@latest\
+  suttacentral-api@latest\
+  oya-ann@latest
 
 #TODO: solve github action AWS credential challenge
 #npm run test; RC=$?; 
