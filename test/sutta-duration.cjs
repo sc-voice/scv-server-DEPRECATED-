@@ -232,7 +232,6 @@ typeof describe === "function" &&
       var sutta = await factory.loadSutta("mn1");
       sutta = factory.sectionSutta(sutta);
 
-      // unexpanded
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
         text: 14237,
@@ -242,17 +241,5 @@ typeof describe === "function" &&
         nEmptySegments: 9,
       });
       testTolerance(resMeasure.seconds, 1250);
-
-      // expanded
-      sutta = factory.expandSutta(sutta);
-      var resMeasure = scd.measure(sutta);
-      should(resMeasure).properties({
-        text: 76660,
-        lang: "en",
-        nSegments: 840,
-        nSections: 10,
-        nEmptySegments: 9,
-      });
-      testTolerance(resMeasure.seconds, 12051);
     });
   });

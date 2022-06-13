@@ -347,7 +347,7 @@ typeof describe === "function" &&
         `<phoneme alphabet="ipa" ph="s\u0250\u014bgʰa">Saṅgha</phoneme>${BREAK}`
       );
     });
-    it("placeholder words are expanded with voice ipa", ()=>{
+    it("TESTTESTplaceholder words are expanded with voice ipa", ()=>{
       var raveena = Voice.createVoice("raveena");
       should(raveena).properties({
         name: "Raveena",
