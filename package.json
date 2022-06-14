@@ -1,6 +1,6 @@
 {
   "name": "scv-server",
-  "version": "1.30.4",
+  "version": "1.30.5",
   "description": "SuttaCentral Voice Server",
   "main": "index.js",
   "private": false,
@@ -16,7 +16,7 @@
     "oya-ann": "^0.3.0",
     "promise-queue": "^2.2.5",
     "say-again": "^0.4.0",
-    "scv-bilara": "^3.37.1",
+    "scv-bilara": "^3.38.1",
     "serve-favicon": "^2.5.0",
     "suttacentral-api": "^2.2.57"
   },
