@@ -7,7 +7,6 @@ typeof describe === "function" &&
     const { ScApi } = require("suttacentral-api");
     const { logger } = require("log-instance");
     const Section = require("../src/section.cjs");
-    const SectionParser = require("../src/section-parser.cjs");
     const Sutta = require("../src/sutta.cjs");
     const SuttaFactory = require("../src/sutta-factory.cjs");
     const SuttaStore = require("../src/sutta-store.cjs");

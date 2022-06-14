@@ -7,7 +7,6 @@
   const Words = require("./words.cjs");
   const Sutta = require("./sutta.cjs");
   const Section = require("./section.cjs");
-  const SectionParser = require("./section-parser.cjs");
   const RE_ELLIPSIS = new RegExp(`${Words.U_ELLIPSIS}$`);
   const OPTS_EN = {
     prop: "en",
@@ -254,9 +253,6 @@
         return sutta;
       }
       var segments = sutta.segments.slice();
-      var parser = new SectionParser({
-        prop: this.prop,
-      });
       var sections = [];
 
       var header = [];
@@ -271,27 +267,7 @@
         );
       }
 
-      while (segments.length) {
-        var section = parser.parseExpandableSection(segments);
-        if (section == null) {
-          sections.push(
-            new Section({
-              segments,
-            })
-          );
-          break;
-        }
-        var index = segments.indexOf(section.segments[0]);
-        if (index) {
-          sections.push(
-            new Section({
-              segments: segments.slice(0, index),
-            })
-          );
-        }
-        sections.push(section);
-        segments = segments.slice(index + section.segments.length);
-      }
+      sections.push( new Section({ segments, }));
       return new Sutta(
         Object.assign({}, sutta, {
           sections,
