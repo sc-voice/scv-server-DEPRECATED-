@@ -235,9 +235,6 @@
         if (plainText) {
           sutta = this.stripHtml(sutta);
         }
-        if (o.expand && EXPANDABLE_SUTTAS[sutta.sutta_uid]) {
-          sutta = this.expandSutta(this.parseSutta(sutta));
-        }
         if (autoSection) {
           sutta = this.sectionSutta(sutta);
         }
@@ -275,21 +272,6 @@
       );
     }
 
-    expandSutta(sutta) {
-      var parsedSutta = this.parseSutta(sutta);
-      var sections = parsedSutta.sections.map((sect) => {
-        if (sect.expandable) {
-          return sect.expandAll();
-        }
-        return sect;
-      });
-      return new Sutta(
-        Object.assign({}, sutta, {
-          sections,
-          prop: this.prop,
-        })
-      );
-    }
   }
 
   module.exports = exports.SuttaFactory = SuttaFactory;
