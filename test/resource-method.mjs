@@ -1,5 +1,5 @@
 import should from "should";
-import ResourceMethod from "../src/resource-method.js"
+import ResourceMethod from "../src/resource-method.cjs"
 
 typeof describe === "function" &&
   describe("resource-method", function() {

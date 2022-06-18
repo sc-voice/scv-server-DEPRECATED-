@@ -4,7 +4,7 @@ typeof describe === "function" &&
   describe("rest-api", function () {
     const should = require("should");
     const pkg = require("../package.json");
-    const RestApi = require("../src/rest-api");
+    const RestApi = require("../src/rest-api.cjs");
     const supertest = require("supertest");
     const express = require("express");
     const fs = require("fs");
@@ -12,7 +12,7 @@ typeof describe === "function" &&
     const { exec } = require("child_process");
     const util = require("util");
     const { logger } = require("log-instance");
-    const RbHash = require("../src/rb-hash");
+    const RbHash = require("../src/rb-hash.cjs");
     const testApp = express();
     const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";

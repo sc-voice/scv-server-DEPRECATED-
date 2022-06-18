@@ -3,7 +3,7 @@ typeof describe === "function" &&
     const should = require("should");
     const fs = require("fs");
     const path = require("path");
-    const RbHash = exports.RbHash || require("../src/rb-hash.js");
+    const RbHash = exports.RbHash || require("../src/rb-hash.cjs");
 
     it("hash(string) calculates hash code", function () {
       var rbh = new RbHash();

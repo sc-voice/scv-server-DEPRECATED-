@@ -1,7 +1,7 @@
 (function (exports) {
-  const ResourceMethod = require("./resource-method");
+  const ResourceMethod = require("./resource-method.cjs");
   const EventEmitter = require("events");
-  const RbHash = require("./rb-hash");
+  const RbHash = require("./rb-hash.cjs");
   const srcPkg = require("../package.json");
   const path = require("path");
   const os = require("os");

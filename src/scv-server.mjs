@@ -14,7 +14,8 @@ import jwt from 'express-jwt';
 import { logger, } from 'log-instance';
 import pkgScApi from 'suttacentral-api';
 const { ScApi } = pkgScApi;
-import RestApi from './rest-api.js';
+import RestApi from './rest-api.cjs';
+import ScvRest from './scv-rest.cjs';
 //TBD import ScvRest from "./scv-rest.js";
 
 //TBD import pkgRestApi from "rest-api";
@@ -48,6 +49,8 @@ export default class ScvServer extends RestApi {
     Object.defineProperty(this, "app", {value: app});
     let scApi = opts.scApi || new ScApi({apiUrl});
     Object.defineProperty(this, "scApi", {value: scApi});
+    let scvRest = opts.scvRest || new ScvRest({});
+    Object.defineProperty(this, "scvRest", {value: scvRest});
     //TBD let rbServer = opts.rbServer || new RbServer();
     //TBD Object.defineProperty(this, "rbServer", {value: rbServer});
 
@@ -56,6 +59,15 @@ export default class ScvServer extends RestApi {
   }
 
   static get portMap() { return portMap }
+
+  addHandlers() {
+    let { handlers } = this;
+    handlers.push(this.resourceMethod( "get", "color", this.getColor));
+  }
+
+  getColor(req, res, next) {
+    return { color: "blue" };
+  }
 
   async listenSSL(restBundles=[], sslOpts) {
     let { port, app, sslPath } = this;
