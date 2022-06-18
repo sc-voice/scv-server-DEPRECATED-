@@ -35,6 +35,7 @@
         $onRequestFail:
          opts.onRequestFail || RestApi.onRequestFail,
         taskBag: [], // unordered task collection with duplicates
+        app: opts.app || express(),
       };
       Object.keys(privateProps).forEach(prop=>{
         Object.defineProperty(this, prop, {
@@ -263,9 +264,9 @@
     }
 
     bindExpress(rootApp, restHandlers) {
-      let { name, uribase, handlers} = this;
+      let { app, name, uribase, handlers} = this;
       restHandlers && restHandlers.forEach(h=>handlers.push(h));
-      var app = (this.app = express());
+      //var app = (this.app = express());
       let { locals } = rootApp;
       Object.assign(this, "rootApp", {value: rootApp});
       app.use(bodyParser.json());

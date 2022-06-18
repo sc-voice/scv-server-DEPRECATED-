@@ -7,7 +7,7 @@ const APP_DIR = path.dirname(__dirname);
 import express from "express";
 import supertest from "supertest";
 import { logger } from "log-instance";
-logger.logLevel = 'warn';
+logger.logLevel = 'info';
 
 import { 
   ScvServer,
@@ -16,7 +16,7 @@ import {
 typeof describe === "function" &&
   describe("scv-server", function() {
     const TEST_SERVERS = {};
-    this.timeout(10*1000);
+    this.timeout(5*1000);
 
     after(()=>{
       Object.keys(TEST_SERVERS).forEach(port=>{
@@ -57,12 +57,12 @@ typeof describe === "function" &&
       return scv;
     }
 
-    it("default ctor()", async()=>{ 
+    it("TESTTESTdefault ctor()", async()=>{ 
       let port = 80;
       let scv = new ScvServer();
       should(scv).instanceOf(ScvServer);
       should(scv).properties({
-        name: "ScvServer1",
+        name: "scv",
         port,
         apiUrl: "http://suttacentral.net/api",
         appDir: path.dirname(__dirname),
@@ -71,7 +71,7 @@ typeof describe === "function" &&
         sslPath: path.join(APP_DIR, "local", "ssl"),
       });
     })
-    it("custom ctor()", async()=>{ 
+    it("TESTTESTcustom ctor()", async()=>{ 
       let port = 3000;
       let name = "testCustom";
       let appDir = "testAppDir";

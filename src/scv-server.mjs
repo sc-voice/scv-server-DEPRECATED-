@@ -23,12 +23,11 @@ import ScvRest from './scv-rest.cjs';
 const MS_MINUTE = 60*1000;
 
 const portMap = {};
-var instance = 1;
 
 export default class ScvServer extends RestApi {
   constructor(opts={}) {
     super(Object.assign({
-      name: opts.name || `ScvServer${instance++}`,
+      name: opts.name || "scv",
     }, opts));
     logger.logInstance(this)
 
@@ -45,8 +44,8 @@ export default class ScvServer extends RestApi {
     this.apiUrl = apiUrl;
 
     // injection
-    let app = opts.app || express();
-    Object.defineProperty(this, "app", {value: app});
+    let rootApp = opts.rootApp || express();
+    Object.defineProperty(this, "rootApp", {value: rootApp});
     let scApi = opts.scApi || new ScApi({apiUrl});
     Object.defineProperty(this, "scApi", {value: scApi});
     let scvRest = opts.scvRest || new ScvRest({});
@@ -61,8 +60,9 @@ export default class ScvServer extends RestApi {
   static get portMap() { return portMap }
 
   addHandlers() {
-    let { handlers } = this;
+    let { handlers, rootApp } = this;
     handlers.push(this.resourceMethod( "get", "color", this.getColor));
+    this.bindExpress(rootApp, handlers);
   }
 
   getColor(req, res, next) {
@@ -143,6 +143,7 @@ export default class ScvServer extends RestApi {
       return this;
     }
     this.initialized = false;
+    //this.addHandlers();
 
     app.get('/test', function(req, res) {
       res.status(200).json({ test: 'TEST OK' });
