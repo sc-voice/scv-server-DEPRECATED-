@@ -12,12 +12,18 @@
   const { logger } = require("log-instance");
   const { MerkleJson } = require("merkle-json");
   const srcPkg = require("../package.json");
+  const AudioUrls = require("./audio-urls.cjs");
+  const SoundStore = require("./sound-store.cjs");
+  const SuttaStore = require("./sutta-store.cjs");
 
   const LOCAL = path.join(__dirname, "../local");
+  const LANG_MAP = {
+    ja: "jpn",
+  };
+
 /*
   const { RestBundle, UserStore } = require("rest-bundle");
 
-  const AudioUrls = require("./audio-urls");
   const ContentUpdater = require("./content-updater");
   const { FilePruner } = require("memo-again");
   const { GuidStore } = require("memo-again");
@@ -27,20 +33,15 @@
   const S3Creds = require("./s3-creds");
   const SCAudio = require("./sc-audio");
   const Section = require("./section");
-  const SoundStore = require("./sound-store");
   const { ScApi, SuttaCentralId } = require("suttacentral-api");
   const SuttaFactory = require("./sutta-factory");
   const Sutta = require("./sutta");
-  const SuttaStore = require("./sutta-store");
   const Task = require("./task");
   const VoiceFactory = require("./voice-factory");
   const Voice = require("./voice");
   const VsmStore = require("./vsm-store");
   const Words = require("./words");
 
-  const LANG_MAP = {
-    ja: "jpn",
-  };
   const PATH_SOUNDS = path.join(LOCAL, "sounds/");
   const DEFAULT_USER = {
     username: "admin",
@@ -48,7 +49,7 @@
     credentials:
       '{"hash":"13YYGuRGjiQad/G1+MOOmxmLC/1znGYBcHWh2vUgkdq7kzTAZ6dk76S3zpP0OwZq1eofgUUJ2kq45+TxOx5tvvag","salt":"Qf1NbN3Jblo8sCL9bo32yFmwiApHSeRkr3QOJZu3KJ0Q8hbWMXAaHdoQLUWceW83tOS0jN4tuUXqWQWCH2lNCx0S","keyLength":66,"hashMethod":"pbkdf2","iterations":748406}',
   };
-  */
+*/
 
   const JWT_SECRET = `JWT${Math.random()}`;
   const APP_NAME = "scv"; // DO NOT CHANGE THIS
@@ -70,32 +71,75 @@
       this.jwtExpires = opts.jwtExpires || "1h";
       this.downloadMap = {};
       this.mj = new MerkleJson();
+      var soundStore = opts.soundStore || new SoundStore(opts);
+      this.audioMIME = soundStore.audioMIME;
+
+      Object.defineProperty(this, "audioUrls", {
+        value: opts.audioUrls || new AudioUrls(),
+      });
+      Object.defineProperty(this, "soundStore", {
+        value: soundStore,
+      });
+      Object.defineProperty(this, "suttaStore", {
+        value: new SuttaStore({
+          scApi: this.scApi,
+          suttaFactory: this.suttaFactory,
+          voice: null,
+        }),
+      });
     }
 
-    async getSearch(req, res, next) {
+    async initialize() {
       try {
+        if (this.initialized) {
+          return this;
+        }
+        this.initialized = false;
+        this.info(`ScvRest initialize() BEGIN`);
+        //await this.scApi.initialize();
+        //await this.suttaFactory.initialize();
+        await this.suttaStore.initialize();
+        //this.voices = Voice.loadVoices();
+        this.info(`ScvRest initialize() COMPLETED`);
+        this.initialized = true;
+        return this;
+      } catch (e) {
+        this.warn(e);
+        throw e;
+      }
+    }
+
+    static checkReq(req) {
+      let { query, params } = req;
+      if (query == null) { 
+        throw new Error(`query is required:${res}`);
+      }
+      if (params == null) { 
+        throw new Error(`params is required:${res}`);
+      }
+      return req;
+    }
+
+    async getSearch(req) {
+      try {
+        let { suttaStore } = this;
+        req = ScvRest.checkReq(req);
+        let { pattern } = req.params;
+        let { maxResults=suttaStore.maxResults } = req.query;
         var language = req.params.lang || "en";
         LANG_MAP[language] && (language = LANG_MAP[language]);
+        var srOpts = { pattern, language, maxResults, };
 
-        var pattern = req.params.pattern;
         if (!pattern) {
           throw new Error("Search pattern is required");
         }
-        var maxResults = Number(
-          req.query.maxResults || this.suttaStore.maxResults
-        );
         if (isNaN(maxResults)) {
           throw new Error("Expected number for maxResults");
         }
-        var srOpts = {
-          pattern,
-          language,
-          maxResults,
-        };
-        var sr = await this.suttaStore.search(srOpts);
+        var sr = await suttaStore.search(srOpts);
         var { method, results, mlDocs } = sr;
         this.info(
-          `GET search(${pattern}) ${language} ${method}`,
+          `getSearch(${pattern}) ${language} ${method}`,
           `=> ${results.map((r) => r.uid)}`
         );
         return sr;
@@ -160,11 +204,6 @@
           defaultUser: DEFAULT_USER,
         });
       this.mdAria = opts.mdAria || new MdAria();
-      this.suttaStore = new SuttaStore({
-        scApi: this.scApi,
-        suttaFactory: this.suttaFactory,
-        voice: null,
-      });
       English.wordSet().then((fws) => (fwsEn = fws));
       this.mj = new MerkleJson();
       this.bilaraData = this.suttaStore.bilaraData;
@@ -302,23 +341,6 @@
       Object.defineProperty(this, "handlers", {
         value: super.handlers.concat(handlers),
       });
-    }
-
-    async initialize() {
-      try {
-        this.info(`ScvRest initialize() BEGIN`);
-        var superInit = super.initialize;
-        await this.scApi.initialize();
-        await this.suttaFactory.initialize();
-        await this.suttaStore.initialize();
-        this.voices = Voice.loadVoices();
-        var result = await superInit.call(this);
-        this.info(`ScvRest initialize() COMPLETED`);
-        return result;
-      } catch (e) {
-        this.warn(e);
-        throw e;
-      }
     }
 
     async getAudio(req, res, next) {
