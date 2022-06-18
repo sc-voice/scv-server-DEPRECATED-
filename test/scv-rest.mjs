@@ -35,7 +35,7 @@ typeof describe === "function" &&
       should(rest.mj).instanceOf(MerkleJson);
       should(rest.soundStore).instanceOf(SoundStore);
     });
-    it("TESTTESTScvRest must be initialized", async()=>{
+    it("ScvRest must be initialized", async()=>{
       let rest = new ScvRest();
       should(rest.initialized).equal(undefined);
 
@@ -47,7 +47,7 @@ typeof describe === "function" &&
 
       should(res).equal(rest);
     });
-    it("TESTTESTgetSearch() => dn7/de", async()=>{
+    it("getSearch() => dn7/de", async()=>{
       let rest = await testScvRest();
       let params = { lang: 'de', pattern: 'dn7' }; 
       let res = await rest.getSearch({params, query});
@@ -60,7 +60,7 @@ typeof describe === "function" &&
       should(results[0].sutta.author_uid).equal('sabbamitta');
       should(method).equal('sutta_uid');
     });
-    it("TESTTESTgetSearch(invalid)", async()=>{
+    it("getSearch(invalid)", async()=>{
       let rest = await testScvRest();
       var eCaught;
 
@@ -82,11 +82,11 @@ typeof describe === "function" &&
       }
       should(eCaught.message).match(/expected number for maxResults/i);
     });
-    it("TESTTESTgetSearch() => suttaplexes", async()=>{
+    it("getSearch() => root of suffering", async()=>{
       let rest = await testScvRest();
       let params = {pattern: "root of suffering"};
       
-      { 
+      { // maxResults: 3
         let query = {maxResults:3};
         let { method, results } = await rest.getSearch({params,query});
         should(method).equal('phrase');
@@ -99,7 +99,7 @@ typeof describe === "function" &&
           [ 5.091, 3.016, 2.006  ]);
       }
 
-      { // use default maxResults
+      { // default maxResults
         let query = {};
         let { method, results } = await rest.getSearch({params,query});
         should(method).equal('phrase');
