@@ -16,8 +16,8 @@ typeof describe === "function" &&
     const testApp = express();
     const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";
-    function testRb(app, name="test") {
-      return app.locals.restBundles.filter((ra) => ra.name === name)[0];
+    function testRb(rootApp, name="test") {
+      return rootApp.locals.restBundles.filter((ra) => ra.name === name)[0];
     }
     this.timeout(5 * 1000);
 
@@ -45,10 +45,10 @@ typeof describe === "function" &&
       should(ra.uribase).equal("/test");
     });
     it("RestApi can be extended", async()=>{
-      var app = express();
+      var rootApp = express();
       let name = "testExtended";
-      var tb = new TestBundle(name).bindExpress(app);
-      let res = await supertest(app)
+      var tb = new TestBundle(name).bindExpress(rootApp);
+      let res = await supertest(rootApp)
         .get(`/${name}/color`)
         .expect(200);
 
@@ -63,8 +63,8 @@ typeof describe === "function" &&
           handlers.push(this.resourceMethod( "get", "state", this.getState));
         }
       }
-      var app = express();
-      should.throws(() => tb.bindExpress(app));
+      var rootApp = express();
+      should.throws(() => tb.bindExpress(rootApp));
     });
     it("RestApi returns 500 for bad responses", async()=>{
       class TestBundle extends RestApi {
@@ -82,13 +82,13 @@ typeof describe === "function" &&
           return badJson;
         }
       }
-      var app = express();
-      var tb = (new TestBundle("testBadJSON").bindExpress(app));
+      var rootApp = express();
+      var tb = (new TestBundle("testBadJSON").bindExpress(rootApp));
       let logLevel = logger.logLevel;
       logger.logLevel = "error";
       try {
         logger.warn("Expected error (BEGIN)");
-        let res = await supertest(app) .get("/testBadJSON/bad-json")
+        let res = await supertest(rootApp) .get("/testBadJSON/bad-json")
         should(res.statusCode).equal(500);
         should(res.body.error).match(/Converting circular structure to JSON/);
       } finally {
@@ -200,13 +200,13 @@ typeof describe === "function" &&
     });
     it("POST => HTTP500 response for thrown exception", async()=>{
       let name = "test500";
-      let app = express();
+      let rootApp = express();
       let ra = new RestApi({ name });
-      ra.bindExpress(app, ra.testHandlers);
+      ra.bindExpress(rootApp, ra.testHandlers);
       let logLevel = logger.logLevel;
       logger.logLevel = "error";
       logger.warn("Expected error (BEGIN)");
-      let res = await supertest(app)
+      let res = await supertest(rootApp)
         .post(`/${name}/identity`)
         .send({ greeting: "whoa" })
         .expect(500)
@@ -231,10 +231,10 @@ typeof describe === "function" &&
       kebab("aBC").should.equal("a-b-c");
     });
     it("GET /app/stats/heap => v8.getHeapSpaceStatistics", async()=>{
-      let app = express();
+      let rootApp = express();
       let ra = new RestApi({name:"test"});
-      ra.bindExpress(app, ra.testHandlers);
-      let res = await supertest(app)
+      ra.bindExpress(rootApp, ra.testHandlers);
+      let res = await supertest(rootApp)
         .get("/test/app/stats/heap")
         .expect(200)
       let { body:stats } = res;
