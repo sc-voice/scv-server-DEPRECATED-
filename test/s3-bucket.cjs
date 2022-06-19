@@ -22,7 +22,7 @@ typeof describe === "function" &&
       accessKeyId: S3_CREDS.awsConfig.accessKeyId,
     };
     var s3 = new AWS.S3(S3_OPTS);
-    this.timeout(10 * 1000);
+    this.timeout(15 * 1000);
 
     const BUCKET_OPTS = {
       s3,
