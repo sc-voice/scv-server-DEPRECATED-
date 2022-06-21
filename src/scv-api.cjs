@@ -56,7 +56,7 @@
 
   var fwsEn;
 
-  class ScvRest {
+  class ScvApi {
     constructor(
       opts = {
         audioFormat: "mp3",
@@ -64,7 +64,7 @@
     ) {
       (opts.logger || logger).logInstance(this);
       this.name = APP_NAME;
-      this.info(`ScvRest.ctor(${this.name})`);
+      this.info(`ScvApi.ctor(${this.name})`);
       this.wikiUrl =
         opts.wikiUrl || "https://github.com/sc-voice/sc-voice/wiki";
       this.examples = opts.examples;
@@ -95,12 +95,12 @@
           return this;
         }
         this.initialized = false;
-        this.info(`ScvRest initialize() BEGIN`);
+        this.info(`ScvApi initialize() BEGIN`);
         //await this.scApi.initialize();
         //await this.suttaFactory.initialize();
         await this.suttaStore.initialize();
         //this.voices = Voice.loadVoices();
-        this.info(`ScvRest initialize() COMPLETED`);
+        this.info(`ScvApi initialize() COMPLETED`);
         this.initialized = true;
         return this;
       } catch (e) {
@@ -123,7 +123,7 @@
     async getSearch(req) {
       try {
         let { suttaStore } = this;
-        req = ScvRest.checkReq(req);
+        req = ScvApi.checkReq(req);
         let { pattern } = req.params;
         let { maxResults=suttaStore.maxResults } = req.query;
         var language = req.params.lang || "en";
@@ -150,12 +150,12 @@
     }
   }
 
-  module.exports = exports.ScvRest = ScvRest;
+  module.exports = exports.ScvApi = ScvApi;
 })(typeof exports === "object" ? exports : (exports = {}));
 
   /*
 
-  class ScvRest extends RestBundle {
+  class ScvApi extends RestBundle {
     constructor(
       opts = {
         audioFormat: "mp3",
@@ -1747,6 +1747,6 @@
     }
   }
 
-  module.exports = exports.ScvRest = ScvRest;
+  module.exports = exports.ScvApi = ScvApi;
 })(typeof exports === "object" ? exports : (exports = {}));
 */

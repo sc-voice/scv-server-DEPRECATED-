@@ -15,8 +15,8 @@ import { logger, } from 'log-instance';
 import pkgScApi from 'suttacentral-api';
 const { ScApi } = pkgScApi;
 import RestApi from './rest-api.cjs';
-import ScvRest from './scv-rest.cjs';
-//TBD import ScvRest from "./scv-rest.js";
+import ScvApi from './scv-api.cjs';
+//TBD import ScvApi from "./scv-rest.js";
 
 //TBD import pkgRestApi from "rest-api";
 //TBD const { RestApi, RbServer, } = pkgRestApi;
@@ -48,8 +48,8 @@ export default class ScvServer extends RestApi {
     Object.defineProperty(this, "rootApp", {value: rootApp});
     let scApi = opts.scApi || new ScApi({apiUrl});
     Object.defineProperty(this, "scApi", {value: scApi});
-    let scvRest = opts.scvRest || new ScvRest({});
-    Object.defineProperty(this, "scvRest", {value: scvRest});
+    let scvApi = opts.scvApi || new ScvApi({});
+    Object.defineProperty(this, "scvApi", {value: scvApi});
     //TBD let rbServer = opts.rbServer || new RbServer();
     //TBD Object.defineProperty(this, "rbServer", {value: rbServer});
 
@@ -164,7 +164,7 @@ export default class ScvServer extends RestApi {
     });
    
     //TBD app.get('/scv/auth/*',
-        //TBD jwt({secret: ScvRest.JWT_SECRET, algorithms:['HS256']}),
+        //TBD jwt({secret: ScvApi.JWT_SECRET, algorithms:['HS256']}),
         //TBD (req, res, next) => {
             //TBD this.debug(`authenticated path:${req.path}`);
             //TBD next();
@@ -205,10 +205,10 @@ export default class ScvServer extends RestApi {
         //TBD scApi,
         //TBD ephemeralAge: 60*MS_MINUTE,
     //TBD };
-    //TBD let scvRest = new ScvRest(opts);
-    //TBD app.locals.scvRest = scvRest;
-    //TBD await scvRest.initialize();
-    //TBD restBundles.push(scvRest);
+    //TBD let scvApi = new ScvApi(opts);
+    //TBD app.locals.scvApi = scvApi;
+    //TBD await scvApi.initialize();
+    //TBD restBundles.push(scvApi);
 
     let httpServer = protocol === "https"
       ? await this.listenSSL()

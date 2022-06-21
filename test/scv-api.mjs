@@ -1,4 +1,4 @@
-import ScvRest from "../src/scv-rest.cjs";
+import ScvApi from "../src/scv-api.cjs";
 import AudioUrls from "../src/audio-urls.cjs";
 import SoundStore from "../src/sound-store.cjs";
 import SuttaStore from "../src/sutta-store.cjs";
@@ -6,26 +6,26 @@ import SuttaStore from "../src/sutta-store.cjs";
 import { MerkleJson } from "merkle-json";
 
 typeof describe === "function" &&
-  describe("scv-rest", function() {
+  describe("scv-api", function() {
     this.timeout(5*1000);
     let params = {};              // testing default
     let query = { maxResults: 3}; // testing default
 
     // Create a test singleton to speed up testing
     const TESTSINGLETON = 1;
-    var scvRest; 
-    async function testScvRest(singleton=TESTSINGLETON) {
+    var scvApi; 
+    async function testScvApi(singleton=TESTSINGLETON) {
       if (!singleton) {
-        return await new ScvRest().initialize();
+        return await new ScvApi().initialize();
       }
-      if (scvRest == null) {
-        scvRest = new ScvRest();
+      if (scvApi == null) {
+        scvApi = new ScvApi();
       }
-      return await scvRest.initialize();
+      return await scvApi.initialize();
     }
 
     it ("default ctor", ()=>{
-      let rest = new ScvRest();
+      let rest = new ScvApi();
       should(rest).properties({
         name: 'scv',
         wikiUrl: 'https://github.com/sc-voice/sc-voice/wiki',
@@ -35,8 +35,8 @@ typeof describe === "function" &&
       should(rest.mj).instanceOf(MerkleJson);
       should(rest.soundStore).instanceOf(SoundStore);
     });
-    it("ScvRest must be initialized", async()=>{
-      let rest = new ScvRest();
+    it("ScvApi must be initialized", async()=>{
+      let rest = new ScvApi();
       should(rest.initialized).equal(undefined);
 
       let res = await rest.initialize();  // actual initialization
@@ -48,7 +48,7 @@ typeof describe === "function" &&
       should(res).equal(rest);
     });
     it("getSearch() => dn7/de", async()=>{
-      let rest = await testScvRest();
+      let rest = await testScvApi();
       let params = { lang: 'de', pattern: 'dn7' }; 
       let res = await rest.getSearch({params, query});
       let { method, results } = res;
@@ -61,7 +61,7 @@ typeof describe === "function" &&
       should(method).equal('sutta_uid');
     });
     it("getSearch(invalid)", async()=>{
-      let rest = await testScvRest();
+      let rest = await testScvApi();
       var eCaught;
 
       try { // Missing pattern
@@ -83,7 +83,7 @@ typeof describe === "function" &&
       should(eCaught.message).match(/expected number for maxResults/i);
     });
     it("getSearch() => root of suffering", async()=>{
-      let rest = await testScvRest();
+      let rest = await testScvApi();
       let params = {pattern: "root of suffering"};
       
       { // maxResults: 3
@@ -130,7 +130,7 @@ typeof describe === "function" &&
     } = require('suttacentral-api');
     const {
         SCAudio,
-        ScvRest,
+        ScvApi,
         Section,
         SoundStore,
         Sutta,
@@ -159,7 +159,7 @@ typeof describe === "function" &&
     var testInitialize = sleep(2000);
 
     function testAuthPost(url, data) {
-        var token = jwt.sign(TEST_ADMIN, ScvRest.JWT_SECRET);
+        var token = jwt.sign(TEST_ADMIN, ScvApi.JWT_SECRET);
         return supertest(app).post(url)
             .set("Authorization", `Bearer ${token}`)
             .set('Content-Type', 'application/json')
@@ -168,7 +168,7 @@ typeof describe === "function" &&
     }
 
     async function testAuthGet(url, contentType='application/json', accept=contentType) {
-        var token = jwt.sign(TEST_ADMIN, ScvRest.JWT_SECRET);
+        var token = jwt.sign(TEST_ADMIN, ScvApi.JWT_SECRET);
         await testInitialize;
         return supertest(app).get(url)
             .set("Authorization", `Bearer ${token}`)
@@ -186,19 +186,19 @@ typeof describe === "function" &&
             ;
     }
 
-    async function testScvRest() {
+    async function testScvApi() {
         // Wait for server to start
         await testInitialize;
-        await app.locals.scvRest.initialize();
+        await app.locals.scvApi.initialize();
         await sleep(500);
     }
 
-    it("ScvRest maintains a SoundStore singleton", function() {
-        var scvRest = app.locals.scvRest;
-        should(scvRest).instanceOf(ScvRest);
-        var soundStore = scvRest.soundStore;
+    it("ScvApi maintains a SoundStore singleton", function() {
+        var scvApi = app.locals.scvApi;
+        should(scvApi).instanceOf(ScvApi);
+        var soundStore = scvApi.soundStore;
         should(soundStore).instanceOf(SoundStore);
-        var voiceFactory = scvRest.voiceFactory;
+        var voiceFactory = scvApi.voiceFactory;
         should(voiceFactory).instanceOf(VoiceFactory);
         should(voiceFactory.soundStore).equal(soundStore);
     });
@@ -220,8 +220,8 @@ typeof describe === "function" &&
     });
     it("GET download human audio playlist", async()=>{
         console.log(`TODO`, __filename); return; 
-        var scvRest = app.locals.scvRest;
-        var apiModel = await scvRest.initialize();
+        var scvApi = app.locals.scvApi;
+        var apiModel = await scvApi.initialize();
         var url = `/scv/download/playlist/en/sujato_en/sn2.3%2Fen%2Fsujato`;
         var res = await supertest(app)
             .get(url)
@@ -235,8 +235,8 @@ typeof describe === "function" &&
     });
     it("GET /download/playlist/pli+en/amy/an3.76-77 => mp3", async()=>{
         await testInitialize;
-        var scvRest = app.locals.scvRest;
-        var apiModel = await scvRest.initialize()
+        var scvApi = app.locals.scvApi;
+        var apiModel = await scvApi.initialize()
         var res = await supertest(app)
             .get("/scv/download/playlist/pli+en/amy/an3.76-77");
         should(res.headers).properties({
@@ -249,8 +249,8 @@ typeof describe === "function" &&
     });
     it("GET /download/playlist/de/vicki/thig1.10 => ogg", async()=>{
         await testInitialize;
-        var scvRest = app.locals.scvRest;
-        var apiModel = await scvRest.initialize()
+        var scvApi = app.locals.scvApi;
+        var apiModel = await scvApi.initialize()
         //logger.logLevel = 'info';
         var res = await supertest(app)
             .get("/scv/download/ogg/de/vicki/thig1.10");
@@ -264,8 +264,8 @@ typeof describe === "function" &&
     });
     it("GET /download/playlist/pli+de/vicki/thig1.10 => ogg", async()=>{
         await testInitialize;
-        var scvRest = app.locals.scvRest;
-        var apiModel = await scvRest.initialize()
+        var scvApi = app.locals.scvApi;
+        var apiModel = await scvApi.initialize()
         //logger.logLevel = 'info';
         var res = await supertest(app)
             .get("/scv/download/ogg/pli+de/vicki/thig1.10/Aditi");
@@ -279,8 +279,8 @@ typeof describe === "function" &&
     });
     it("GET /download/playlist/de/vicki/thig1.10 => opus", async()=>{
         await testInitialize;
-        var scvRest = app.locals.scvRest;
-        var apiModel = await scvRest.initialize()
+        var scvApi = app.locals.scvApi;
+        var apiModel = await scvApi.initialize()
         //logger.logLevel = 'info';
         var res = await supertest(app)
             .get("/scv/download/opus/de/vicki/thig1.10");
@@ -294,8 +294,8 @@ typeof describe === "function" &&
     });
     it("GET /download/playlist/pli+de/vicki/thig1.10 => opus", async()=>{
         await testInitialize;
-        var scvRest = app.locals.scvRest;
-        var apiModel = await scvRest.initialize()
+        var scvApi = app.locals.scvApi;
+        var apiModel = await scvApi.initialize()
         //logger.logLevel = 'info';
         var res = await supertest(app)
             .get("/scv/download/opus/pli+de/vicki/thig1.10/Aditi");
@@ -680,20 +680,20 @@ typeof describe === "function" &&
     it("GET auth/sound-store/volume-info return stats", function(done) {
         (async function() { try {
             var url = `/scv/auth/sound-store/volume-info`;
-            var scvRest = app.locals.scvRest;
-            var token = jwt.sign(TEST_ADMIN, ScvRest.JWT_SECRET);
+            var scvApi = app.locals.scvApi;
+            var token = jwt.sign(TEST_ADMIN, ScvApi.JWT_SECRET);
             var res = await supertest(app).get(url)
                 .set("Authorization", `Bearer ${token}`);
             res.statusCode.should.equal(200);
-            var soundStore = scvRest.soundStore;
+            var soundStore = scvApi.soundStore;
             should.deepEqual(res.body, soundStore.volumeInfo());
             done();
         } catch(e) {done(e);} })();
     });
     it("POST auth/sound-store/clear-volume clears volume cache", done=>{
         (async function() { try {
-            var scvRest = app.locals.scvRest;
-            var soundStore = scvRest.soundStore;
+            var scvApi = app.locals.scvApi;
+            var soundStore = scvApi.soundStore;
             var volume = 'test-clear-volume';
             var fpath = soundStore.guidPath({
                 volume,
@@ -702,8 +702,8 @@ typeof describe === "function" &&
             fs.writeFileSync(fpath, '12345data');
             should(fs.existsSync(fpath)).equal(true);
             var url = `/scv/auth/sound-store/clear-volume`;
-            var scvRest = app.locals.scvRest;
-            var token = jwt.sign(TEST_ADMIN, ScvRest.JWT_SECRET);
+            var scvApi = app.locals.scvApi;
+            var token = jwt.sign(TEST_ADMIN, ScvApi.JWT_SECRET);
 
             var data = { volume, };
             var res = await testAuthPost(url, data);
@@ -1022,8 +1022,8 @@ typeof describe === "function" &&
     });
     it("GET authors returns authors", function(done) {
         (async function() { try {
-            var scvRest = app.locals.scvRest;
-            await scvRest.initialize();
+            var scvApi = app.locals.scvApi;
+            await scvApi.initialize();
             var url = "/scv/authors";
             var res = await supertest(app).get(url)
             should(res.statusCode).equal(200);
@@ -1093,7 +1093,7 @@ typeof describe === "function" &&
         should(res.text).match(/Log file not found:asdf/);
     });
     it("POST auth/update-bilara", async()=>{
-        var scvRest = await(testScvRest());
+        var scvApi = await(testScvApi());
         var url = `/scv/auth/update-bilara`;
         var data = { };
         var res = await testAuthPost(url, data);
@@ -1105,7 +1105,7 @@ typeof describe === "function" &&
         should(res.body.elapsed).above(0);
     });
     it("GET audio info", async()=>{
-        var scvRest = await testScvRest();
+        var scvApi = await testScvApi();
         var guid = `e0bd9aadd84f3f353f17cceced97ff13`;
         var url = `/scv/auth/audio-info/an_en_sujato_amy/${guid}`;
         var res = await testAuthGet(url);
