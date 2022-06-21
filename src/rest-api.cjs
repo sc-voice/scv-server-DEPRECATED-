@@ -44,7 +44,7 @@
       });
     }
 
-    resourceMethod(method, name, handler, mime) {
+    deprecated_resourceMethod(method, name, handler, mime) {
       if (handler == null) {
         throw new Error(
           "resourceMethod(" +
@@ -63,11 +63,16 @@
 
     get testHandlers() {
       return [
-        this.resourceMethod("get", "identity", this.getIdentity),
-        this.resourceMethod("get", "state", this.getState),
-        this.resourceMethod("get", "app/stats/:stat", this.getAppStats),
-        this.resourceMethod("post", "identity", this.postIdentity),
-        this.resourceMethod("post", "echo", this.postEcho),
+        new ResourceMethod("get", "identity", 
+          (req,res,next)=>this.getIdentity(req,res,next)),
+        new ResourceMethod("get", "state", 
+          (req,res,next)=>this.getState(req,res,next)),
+        new ResourceMethod("get", "app/stats/:stat", 
+          (req,res,next)=>this.getAppStats(req,res,next)),
+        new ResourceMethod("post", "identity", 
+          (req,res,next)=>this.postIdentity(req,res,next)),
+        new ResourceMethod("post", "echo", 
+          (req,res,next)=>this.postEcho(req,res,next)),
       ];
     }
 

@@ -13,6 +13,7 @@ typeof describe === "function" &&
     const util = require("util");
     const { logger } = require("log-instance");
     const RbHash = require("../src/rb-hash.cjs");
+    const ResourceMethod = require("../src/resource-method.cjs");
     const testApp = express();
     const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";
@@ -25,7 +26,8 @@ typeof describe === "function" &&
       constructor(name, options = {}) {
         super(Object.assign({name}, options));
         let { handlers } = this;
-        handlers.push(this.resourceMethod( "get", "color", this.getColor));
+        handlers.push(new ResourceMethod( "get", "color", 
+          (req,res,next)=>this.getColor(req,res,next)));
       }
 
       getColor(req, res, next) {
@@ -33,7 +35,7 @@ typeof describe === "function" &&
       }
     }
 
-    it("default ctor", ()=>{
+    it("TESTTESTdefault ctor", ()=>{
       let ra = new RestApi();
       let appDir = APPDIR;
       should.deepEqual(Object.keys(ra).sort(), [
@@ -44,7 +46,7 @@ typeof describe === "function" &&
       should(ra.name).equal("test");
       should(ra.uribase).equal("/test");
     });
-    it("RestApi can be extended", async()=>{
+    it("TESTTESTRestApi can be extended", async()=>{
       var rootApp = express();
       let name = "testExtended";
       var tb = new TestBundle(name).bindExpress(rootApp);
@@ -54,25 +56,27 @@ typeof describe === "function" &&
 
       should.deepEqual(res.body, { color: "blue", });
     });
-    it("RestApi resources should be unique", ()=>{
+    it("TESTTESTRestApi resources should be unique", ()=>{
       class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
           let { handlers } = this;
-          handlers.push(this.resourceMethod( "get", "state", this.getState));
-          handlers.push(this.resourceMethod( "get", "state", this.getState));
+          handlers.push(new ResourceMethod( "get", "state", 
+            (req,res,next)=>this.getState(req,res,next)));
+          handlers.push(new ResourceMethod( "get", "state", 
+            (req,res,next)=>this.getState(req,res,next)));
         }
       }
       var rootApp = express();
       should.throws(() => tb.bindExpress(rootApp));
     });
-    it("RestApi returns 500 for bad responses", async()=>{
+    it("TESTTESTRestApi returns 500 for bad responses", async()=>{
       class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
           let { handlers } = this;
-          handlers.push(this.resourceMethod(
-            "get", "bad-json", this.getBadJson));
+          handlers.push(new ResourceMethod("get", "bad-json", 
+            (req,res,next)=>this.getBadJson(req,res,next)));
         }
         getBadJson(req, res, next) {
           var badJson = {
@@ -96,7 +100,7 @@ typeof describe === "function" &&
         logger.logLevel = logLevel;
       }
     });
-    it("diskusage", async () => {
+    it("TESTTESTdiskusage", async () => {
       var execPromise = util.promisify(exec);
       var cmd = "df --total -B 1 /";
       var execOpts = {
@@ -122,7 +126,7 @@ typeof describe === "function" &&
       should(Math.round(res.disktotal/prec)).equal(Math.round(total/prec));
       //console.log(`dbg getIdientity`, res);
     });
-    it("GET /identity generates HTTP200 response", async()=>{
+    it("TESTTESTGET /identity generates HTTP200 response", async()=>{
       let rootApp = express();
       let name = "testIdentity";
       let ra = new RestApi({ name});
@@ -153,7 +157,7 @@ typeof describe === "function" &&
       should(res.body.totalmem).below(res.body.disktotal);
       res.body.version.should.match(/\d+.\d+.\d+/);
     });
-    it("POST /echo => HTTP200 response with a Promise", async()=>{
+    it("TESTTESTPOST /echo => HTTP200 response with a Promise", async()=>{
       let rootApp = express();
       let name = "testEcho";
       let ra = new RestApi({ name });
@@ -171,7 +175,7 @@ typeof describe === "function" &&
         .expect('content-type', /utf-8/)
         .expect(echoJson);
     });
-    it("taskBegin/taskEnd", async()=>{
+    it("TESTTESTtaskBegin/taskEnd", async()=>{
       let rootApp = express();
       let name = "testTask";
       let ra = new RestApi({ name });

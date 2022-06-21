@@ -61,7 +61,8 @@ export default class ScvServer extends RestApi {
 
   addHandlers() {
     let { handlers, rootApp } = this;
-    handlers.push(this.resourceMethod( "get", "color", this.getColor));
+    handlers.push(new ResourceMethod( "get", "color", 
+      (req,res,next)=>this.getColor(req,res,next)));
     this.bindExpress(rootApp, handlers);
   }
 

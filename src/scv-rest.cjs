@@ -337,7 +337,7 @@
         ["post", "auth/reboot", this.postReboot],
         ["post", "auth/update-release", this.postUpdateRelease],
         ["get", "auth/audio-info/:volume/:guid", this.getAudioInfo],
-      ].map((h) => this.resourceMethod.apply(this, h));
+      ].map((h) => this.deprecated_resourceMethod.apply(this, h));
       Object.defineProperty(this, "handlers", {
         value: super.handlers.concat(handlers),
       });
