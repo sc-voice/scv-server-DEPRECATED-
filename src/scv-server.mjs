@@ -44,8 +44,8 @@ export default class ScvServer extends RestApi {
     this.apiUrl = apiUrl;
 
     // injection
-    let rootApp = opts.rootApp || express();
-    Object.defineProperty(this, "rootApp", {value: rootApp});
+    let app = opts.app || express();
+    Object.defineProperty(this, "app", {value: app});
     let scApi = opts.scApi || new ScApi({apiUrl});
     Object.defineProperty(this, "scApi", {value: scApi});
     let scvApi = opts.scvApi || new ScvApi({});
@@ -60,10 +60,10 @@ export default class ScvServer extends RestApi {
   static get portMap() { return portMap }
 
   addHandlers() {
-    let { handlers, rootApp } = this;
+    let { handlers, app } = this;
     handlers.push(new ResourceMethod( "get", "color", 
       (req,res,next)=>this.getColor(req,res,next)));
-    this.bindExpress(rootApp, handlers);
+    this.bindExpress(app, handlers);
   }
 
   getColor(req, res, next) {

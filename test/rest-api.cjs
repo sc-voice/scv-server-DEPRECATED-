@@ -17,7 +17,7 @@ typeof describe === "function" &&
     const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";
     function testRb(app, name="test") {
-      return app.locals.restBundles.filter((ra) => ra.name === name)[0];
+      return app.locals.restApis.filter((ra) => ra.name === name)[0];
     }
     this.timeout(5 * 1000);
 

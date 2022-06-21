@@ -35,7 +35,6 @@
         $onRequestFail:
          opts.onRequestFail || RestApi.onRequestFail,
         taskBag: [], // unordered task collection with duplicates
-        app: opts.app || express(),
         router: express.Router(),
       };
       Object.keys(privateProps).forEach(prop=>{
@@ -258,8 +257,8 @@
       restHandlers && restHandlers.forEach(h=>handlers.push(h));
       let { locals } = app;
       router.use(bodyParser.json());
-      let restBundles = locals.restBundles = locals.restBundles || [];
-      restBundles.push(this);
+      let restApis = locals.restApis = locals.restApis || [];
+      restApis.push(this);
       handlers.sort((a, b) => {
         var cmp = a.method.localeCompare(b.method);
         if (cmp === 0) {
