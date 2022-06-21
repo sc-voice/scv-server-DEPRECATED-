@@ -3,29 +3,34 @@ import ResourceMethod from "../src/resource-method.cjs"
 
 typeof describe === "function" &&
   describe("resource-method", function() {
-    it("default ctor()", async()=>{
-      let rm = new ResourceMethod();
-      should(rm).properties({
-        method: 'get',
-        mime: 'application/json',
-        name: undefined,
-      });
+    it("TESTTESTdefault ctor()", async()=>{
       let eCaught;
       try {
+        let rm = new ResourceMethod();
         rm.handler();
       } catch(e) {
         eCaught = e;
       }
-      should(eCaught).properties({message: "HTTP500 not implemented"});
+      should(eCaught.message).match(/expected: name/);
     })
-    it("custom ctor()", async()=>{
+    it("TESTTESTcustom ctor()", async()=>{
       let name = 'testName';
       let method = 'testMethod';
       let mime = 'testMime';
       let testResponse = {hello: 'testHandler'};
       let handler = (req, res, next)=>testResponse;
-      let rm = new ResourceMethod(method, name, handler, mime);
-      should(rm).properties({name, method, mime});
-      should(rm.handler()).equal(testResponse);
+
+      { // all custom
+        let rm = new ResourceMethod(method, name, handler, mime);
+        should(rm).properties({name, method, mime, handler});
+        should(rm.handler()).equal(testResponse);
+      }
+
+      { // mime is optional
+        let mime = "application/json";
+        let rm = new ResourceMethod(method, name, handler, );
+        should(rm).properties({name, method, mime, handler});
+        should(rm.handler()).equal(testResponse);
+      }
     })
   });

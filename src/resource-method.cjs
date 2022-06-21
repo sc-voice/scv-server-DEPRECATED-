@@ -7,13 +7,16 @@
       mime = "application/json",
       options = {}
     ) {
-      this.name = name;
-      this.mime = mime;
+      if (typeof name !== 'string') {
+        throw new Error("ResourceMethod() expected: name");
+      }
+      if (typeof handler !== 'function') {
+        throw new Error("ResourceMethod() expected: handler");
+      }
       this.method = method;
-      this.handler = handler || this.notImplemented;
-    }
-    notImplemented(req, res, next) {
-      throw new Error("HTTP500 not implemented");
+      this.name = name;
+      this.handler = handler;
+      this.mime = mime;
     }
   }
 
