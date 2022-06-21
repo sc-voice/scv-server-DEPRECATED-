@@ -36,29 +36,13 @@
          opts.onRequestFail || RestApi.onRequestFail,
         taskBag: [], // unordered task collection with duplicates
         app: opts.app || express(),
+        router: express.Router(),
       };
       Object.keys(privateProps).forEach(prop=>{
         Object.defineProperty(this, prop, {
           value: privateProps[prop],
         });
       });
-    }
-
-    deprecated_resourceMethod(method, name, handler, mime) {
-      if (handler == null) {
-        throw new Error(
-          "resourceMethod(" +
-            method +
-            ", " +
-            name +
-            ", ?handler?, ...) handler is required"
-        );
-      }
-
-      var thatHandler = (req, res, next) => {
-        return handler.call(this, req, res, next);
-      };
-      return new ResourceMethod(method, name, thatHandler, mime);
     }
 
     get testHandlers() {
@@ -239,28 +223,28 @@
       }
     }
 
-    bindResource(app, resource) {
+    bindResource(router, resource) {
       var mime = resource.mime || "application/json";
       var method = (resource.method || "get").toUpperCase();
       var path = "/" + resource.name;
       if (method === "GET") {
-        app.get(path, (req, res, next) =>
+        router.get(path, (req, res, next) =>
           this.processRequest(req, res, next, resource.handler, mime)
         );
       } else if (method === "POST") {
-        app.post(path, (req, res, next) =>
+        router.post(path, (req, res, next) =>
           this.processRequest(req, res, next, resource.handler, mime)
         );
       } else if (method === "PUT") {
-        app.put(path, (req, res, next) =>
+        router.put(path, (req, res, next) =>
           this.processRequest(req, res, next, resource.handler, mime)
         );
       } else if (method === "DELETE") {
-        app.delete(path, (req, res, next) =>
+        router.delete(path, (req, res, next) =>
           this.processRequest(req, res, next, resource.handler, mime)
         );
       } else if (method === "HEAD") {
-        app.head(path, (req, res, next) =>
+        router.head(path, (req, res, next) =>
           this.processRequest(req, res, next, resource.handler, mime)
         );
       } else {
@@ -268,13 +252,12 @@
       }
     }
 
-    bindExpress(rootApp, restHandlers) {
-      let { app, name, uribase, handlers} = this;
+    bindExpress(app, restHandlers) {
+      let { router, name, uribase, handlers} = this;
+
       restHandlers && restHandlers.forEach(h=>handlers.push(h));
-      //var app = (this.app = express());
-      let { locals } = rootApp;
-      Object.assign(this, "rootApp", {value: rootApp});
-      app.use(bodyParser.json());
+      let { locals } = app;
+      router.use(bodyParser.json());
       let restBundles = locals.restBundles = locals.restBundles || [];
       restBundles.push(this);
       handlers.sort((a, b) => {
@@ -298,10 +281,9 @@
           resource.method,
           `/${name}/${resource.name} => ${resource.mime}`
         );
-        this.bindResource(app, resource);
+        this.bindResource(router, resource);
       });
-      rootApp.use(uribase, app); // don't pollute client's app
-      rootApp.disable("x-powered-by"); // suppress header warning
+      app.use(uribase, router); // mount API
       app.disable("x-powered-by"); // suppress header warning
       return this;
     }
