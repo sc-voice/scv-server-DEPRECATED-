@@ -14,11 +14,10 @@ typeof describe === "function" &&
     const { logger } = require("log-instance");
     const RbHash = require("../src/rb-hash.cjs");
     const ResourceMethod = require("../src/resource-method.cjs");
-    const testApp = express();
     const APPDIR = path.join(__dirname, '..');
     logger.level = "warn";
-    function testRb(rootApp, name="test") {
-      return rootApp.locals.restBundles.filter((ra) => ra.name === name)[0];
+    function testRb(app, name="test") {
+      return app.locals.restBundles.filter((ra) => ra.name === name)[0];
     }
     this.timeout(5 * 1000);
 
@@ -47,10 +46,10 @@ typeof describe === "function" &&
       should(ra.uribase).equal("/test");
     });
     it("TESTTESTRestApi can be extended", async()=>{
-      var rootApp = express();
+      var app = express();
       let name = "testExtended";
-      var tb = new TestBundle(name).bindExpress(rootApp);
-      let res = await supertest(rootApp)
+      var tb = new TestBundle(name).bindExpress(app);
+      let res = await supertest(app)
         .get(`/${name}/color`)
         .expect(200);
 
@@ -67,8 +66,8 @@ typeof describe === "function" &&
             (req,res,next)=>this.getState(req,res,next)));
         }
       }
-      var rootApp = express();
-      should.throws(() => tb.bindExpress(rootApp));
+      var app = express();
+      should.throws(() => tb.bindExpress(app));
     });
     it("TESTTESTRestApi returns 500 for bad responses", async()=>{
       class TestBundle extends RestApi {
@@ -86,13 +85,13 @@ typeof describe === "function" &&
           return badJson;
         }
       }
-      var rootApp = express();
-      var tb = (new TestBundle("testBadJSON").bindExpress(rootApp));
+      var app = express();
+      var tb = (new TestBundle("testBadJSON").bindExpress(app));
       let logLevel = logger.logLevel;
       logger.logLevel = "error";
       try {
         logger.warn("Expected error (BEGIN)");
-        let res = await supertest(rootApp) .get("/testBadJSON/bad-json")
+        let res = await supertest(app) .get("/testBadJSON/bad-json")
         should(res.statusCode).equal(500);
         should(res.body.error).match(/Converting circular structure to JSON/);
       } finally {
@@ -116,9 +115,9 @@ typeof describe === "function" &&
       //console.log(`dbg diskusage`, {used, avail, total});
 
       let ra = new RestApi({ name, });
-      let rootApp = express();
-      ra.bindExpress(rootApp);
-      should(testRb(rootApp, name)).equal(ra);
+      let app = express();
+      ra.bindExpress(app);
+      should(testRb(app, name)).equal(ra);
       var res = await ra.getIdentity();
       let prec = 10E6;
       should(Math.round(res.diskavail/prec)).equal(Math.round(avail/prec));
@@ -127,12 +126,12 @@ typeof describe === "function" &&
       //console.log(`dbg getIdientity`, res);
     });
     it("TESTTESTGET /identity generates HTTP200 response", async()=>{
-      let rootApp = express();
+      let app = express();
       let name = "testIdentity";
       let ra = new RestApi({ name});
-      ra.bindExpress(rootApp, ra.testHandlers);
-      should(testRb(rootApp, name)).equal(ra);
-      let res = await supertest(rootApp)
+      ra.bindExpress(app, ra.testHandlers);
+      should(testRb(app, name)).equal(ra);
+      let res = await supertest(app)
         .get(`/${name}/identity`)
         .expect(200)
         .expect("content-type", /json/)
@@ -158,16 +157,16 @@ typeof describe === "function" &&
       res.body.version.should.match(/\d+.\d+.\d+/);
     });
     it("TESTTESTPOST /echo => HTTP200 response with a Promise", async()=>{
-      let rootApp = express();
+      let app = express();
       let name = "testEcho";
       let ra = new RestApi({ name });
-      ra.bindExpress(rootApp, ra.testHandlers);
-      var service = testRb(rootApp, name);
+      ra.bindExpress(app, ra.testHandlers);
+      var service = testRb(app, name);
       ra.taskBag.length.should.equal(0);
       ra.taskBegin("testTask");
       ra.taskBag.length.should.equal(1);
       let echoJson = { greeting: "smile" }
-      await supertest(rootApp)
+      await supertest(app)
         .post(`/${name}/echo`)
         .send(echoJson)
         .expect(200)
@@ -176,16 +175,16 @@ typeof describe === "function" &&
         .expect(echoJson);
     });
     it("TESTTESTtaskBegin/taskEnd", async()=>{
-      let rootApp = express();
+      let app = express();
       let name = "testTask";
       let ra = new RestApi({ name });
-      ra.bindExpress(rootApp, ra.testHandlers);
+      ra.bindExpress(app, ra.testHandlers);
       ra.taskBag.length.should.equal(0);
 
       // Begin server task
       ra.taskBegin("testTask");
       ra.taskBag.length.should.equal(1);
-      await supertest(rootApp).get(`/${name}/state`)
+      await supertest(app).get(`/${name}/state`)
         .expect(200)
         .expect('content-type', /json/)
         .expect('content-type', /utf-8/)
@@ -196,7 +195,7 @@ typeof describe === "function" &&
       // End server task
       ra.taskEnd("testTask");
       ra.taskBag.length.should.equal(0);
-      await supertest(rootApp).get(`/${name}/state`)
+      await supertest(app).get(`/${name}/state`)
         .expect(200)
         .expect('content-type', /json/)
         .expect('content-type', /utf-8/)
@@ -204,13 +203,13 @@ typeof describe === "function" &&
     });
     it("POST => HTTP500 response for thrown exception", async()=>{
       let name = "test500";
-      let rootApp = express();
+      let app = express();
       let ra = new RestApi({ name });
-      ra.bindExpress(rootApp, ra.testHandlers);
+      ra.bindExpress(app, ra.testHandlers);
       let logLevel = logger.logLevel;
       logger.logLevel = "error";
       logger.warn("Expected error (BEGIN)");
-      let res = await supertest(rootApp)
+      let res = await supertest(app)
         .post(`/${name}/identity`)
         .send({ greeting: "whoa" })
         .expect(500)
@@ -235,10 +234,10 @@ typeof describe === "function" &&
       kebab("aBC").should.equal("a-b-c");
     });
     it("GET /app/stats/heap => v8.getHeapSpaceStatistics", async()=>{
-      let rootApp = express();
+      let app = express();
       let ra = new RestApi({name:"test"});
-      ra.bindExpress(rootApp, ra.testHandlers);
-      let res = await supertest(rootApp)
+      ra.bindExpress(app, ra.testHandlers);
+      let res = await supertest(app)
         .get("/test/app/stats/heap")
         .expect(200)
       let { body:stats } = res;
