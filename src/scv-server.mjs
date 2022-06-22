@@ -146,10 +146,6 @@ export default class ScvServer extends RestApi {
     this.initialized = false;
     //this.addHandlers();
 
-    app.get('/test', function(req, res) {
-      res.status(200).json({ test: 'TEST OK' });
-    });
-
     app.use(compression());
     app.all('*', function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");

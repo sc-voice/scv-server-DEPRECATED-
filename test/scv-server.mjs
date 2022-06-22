@@ -7,7 +7,7 @@ const APP_DIR = path.dirname(__dirname);
 import express from "express";
 import supertest from "supertest";
 import { logger } from "log-instance";
-logger.logLevel = 'info';
+logger.logLevel = 'warn';
 
 import { 
   ScvServer,
@@ -147,15 +147,22 @@ typeof describe === "function" &&
       should(scv.app).equal(app);
       should(scv.scApi).equal(scApi);
     })
-    it("GET /test", async()=>{ 
+    it("TESTTESTScvServer() =>  express instance ", async()=>{ 
       //logger.logLevel = 'info';
       let scv = await testServer();
+      let { app } = scv;
+      let testPath = '/testExpress';
+      let testResponse = { testExpress: 'TEST OK' };
+      app.get(testPath, (req, res, next)=>{
+        res.status(200).json(testResponse);
+      });
+
       var res = await supertest(scv.app)
-        .get('/test')
+        .get(testPath)
         .set('Accept', 'application/json')
         .expect(200)
         .expect("Content-Type", /json/)
-        .expect({test:"TEST OK"});
+        .expect(testResponse);
     })
     it("GET /favicon", async()=>{ 
       let scv = await testServer();
