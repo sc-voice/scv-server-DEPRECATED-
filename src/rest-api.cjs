@@ -61,9 +61,8 @@
 
     static onRequestSuccess(req, res, data, next, mime) {
       try {
-        res.status(res.locals.status);
         res.type(res.locals.mime);
-        res.send(data);
+        res.status(res.locals.status).send(data);
       } catch (err) {
         logger.warn(err.stack);
         res.status(500);
@@ -265,7 +264,7 @@
           cmp = a.name.localeCompare(b.name);
           if (cmp === 0) {
             var msg =
-              "REST resources must have unique handlers: " +
+              "duplicate REST resource handler: " +
               a.method +
               " " +
               a.name;
@@ -282,8 +281,8 @@
         );
         this.bindResource(router, resource);
       });
-      app.use(uribase, router); // mount API
       app.disable("x-powered-by"); // suppress header warning
+      app.use(uribase, router); // mount API
       return this;
     }
 

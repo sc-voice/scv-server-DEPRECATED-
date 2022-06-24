@@ -16,6 +16,7 @@ import pkgScApi from 'suttacentral-api';
 const { ScApi } = pkgScApi;
 import RestApi from './rest-api.cjs';
 import ScvApi from './scv-api.cjs';
+import ResourceMethod from './resource-method.cjs';
 //TBD import ScvApi from "./scv-rest.js";
 
 //TBD import pkgRestApi from "rest-api";
@@ -58,17 +59,6 @@ export default class ScvServer extends RestApi {
   }
 
   static get portMap() { return portMap }
-
-  addHandlers() {
-    let { handlers, app } = this;
-    handlers.push(new ResourceMethod( "get", "color", 
-      (req,res,next)=>this.getColor(req,res,next)));
-    this.bindExpress(app, handlers);
-  }
-
-  getColor(req, res, next) {
-    return { color: "blue" };
-  }
 
   async listenSSL(restBundles=[], sslOpts) {
     let { port, app, sslPath } = this;
@@ -144,7 +134,7 @@ export default class ScvServer extends RestApi {
       return this;
     }
     this.initialized = false;
-    //this.addHandlers();
+    this.bindExpress(app);
 
     app.use(compression());
     app.all('*', function(req, res, next) {
