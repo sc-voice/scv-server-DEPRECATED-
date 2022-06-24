@@ -4,6 +4,7 @@ typeof describe === "function" &&
     const fs = require("fs");
     const path = require("path");
     const { logger } = require("log-instance");
+    const logLevel = logger.logLevel = 'info';
     const { ScApi, SuttaCentralId } = require("suttacentral-api");
     const Sutta = require("../src/sutta.cjs");
     const SuttaStore = require("../src/sutta-store.cjs");
@@ -13,7 +14,6 @@ typeof describe === "function" &&
     const Words = require("../src/words.cjs");
     const LOCAL = path.join(__dirname, "../local");
     const SC = path.join(LOCAL, "sc");
-    const logLevel = false;
     this.timeout(20 * 1000);
 
     var suttaStore = new SuttaStore({ logLevel });

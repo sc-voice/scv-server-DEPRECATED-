@@ -172,25 +172,20 @@ typeof describe === "function" &&
       scv.close();
     })
     it("TESTTESTScvServer() testColor", async()=>{ 
-      console.log('dbg 0', Date.now()-msStart);
       logger.logLevel = 'info';
       let testResponse = { color: 'blue' };
       let endpoint = (req,res) => testResponse;
       let rm = new ResourceMethod("get", "color", endpoint);
-      let handlers = [ rm ];
       let port = 3001;
       let app = express();
       let router = express.Router();
-      router.get(`/${rm.name}`, async (req,res,next)=> {
-        await rm.processRequest(req,res);
-      });
+      rm.use(router);
       app.use('/scv', router);
+      //let handlers = [ rm ];
       //let scv = new ScvServer({port, app, handlers});
       //should(scv.handlers).equal(handlers);
       //await scv.initialize();
-      console.log('dbg 1', Date.now()-msStart);
-      let httpServer = await app.listen(port);
-      console.log('dbg 2', Date.now()-msStart);
+      let listener = await app.listen(port);
 
       var res = await supertest(app)
         .get('/scv/color')
@@ -198,9 +193,7 @@ typeof describe === "function" &&
         .expect(200)
         .expect("Content-Type", /json/)
         .expect(testResponse);
-      await new Promise((resolve, reject) => {
-        httpServer.close(()=>resolve());
-      });
+      await new Promise(resolve => listener.close(()=>resolve()));
     })
     it("GET /favicon", async()=>{ 
       let scv = await testServer();

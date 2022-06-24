@@ -1,7 +1,6 @@
 (function (exports) {
   const fs = require("fs");
   const path = require("path");
-  const { logger } = require("log-instance");
   const { MerkleJson } = require("merkle-json");
   const AbstractTTS = require("./abstract-tts.cjs");
   const SoundStore = require("./sound-store.cjs");
@@ -28,9 +27,9 @@
       this.prosody = {
         rate: "0%",
       };
-      this.info(
+      this.debug(
         [
-          `HumanTts.ctor()`,
+          `ctor()`,
           `voice:${this.voice}`,
           `language:${this.language}`,
           `noAudioPath:${this.noAudioPath}`,

@@ -4,6 +4,7 @@ typeof describe === "function" &&
     const fs = require("fs");
     const path = require("path");
     const { logger, LogInstance } = require("log-instance");
+    logger.logLevel = "warn";
     const { SayAgain } = require("say-again");
     const Polly = require("../src/polly.cjs");
     const S3Creds = require("../src/s3-creds.cjs");
@@ -14,7 +15,6 @@ typeof describe === "function" &&
     const BREAK = `<break time="0.001s"/>`;
     const ELLIPSIS_BREAK = `<break time="0.300s"/>`;
     const tmp = require("tmp");
-    logger.logLevel = "warn";
     this.timeout(5 * 1000);
 
     function phoneme(ph, word) {

@@ -3,6 +3,8 @@ typeof describe === "function" &&
     const should = require("should");
     const fs = require("fs");
     const path = require("path");
+    const { logger } = require('log-instance');
+    logger.logLevel = 'warn';
     const Words = require("../src/words.cjs");
     const ELLIPSIS = "\u2026";
     const { English } = require("scv-bilara");

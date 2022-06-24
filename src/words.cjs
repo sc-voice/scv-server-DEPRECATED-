@@ -16,7 +16,7 @@
       (opts.logger || logger).logInstance(this);
       this.name = `Words${++instances}`;
       this.language = opts.language || "en";
-      this.info(`language`, this.language);
+      this.debug(`language`, this.language);
       var commonJson = {};
       var commonPath = path.join(WORDS_PATH, `common.json`);
       if (fs.existsSync(commonPath)) {

@@ -4,6 +4,7 @@ typeof describe === "function" &&
     const fs = require("fs");
     const path = require("path");
     const { logger } = require("log-instance");
+    logger.logLevel = 'warn';
     const { ScApi } = require("suttacentral-api");
     const Sutta = require("../src/sutta.cjs");
     const SuttaDuration = require("../src/sutta-duration.cjs");
@@ -11,7 +12,6 @@ typeof describe === "function" &&
     const SuttaStore = require("../src/sutta-store.cjs");
     const scApi = new ScApi();
     const TOLERANCE = 33;
-    const logLevel = false;
     this.timeout(20 * 1000);
 
     function testTolerance(actual, expected, e = TOLERANCE) {
