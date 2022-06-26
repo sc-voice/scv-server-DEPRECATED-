@@ -200,56 +200,6 @@
       this.$onRequestFail(req, res, err, next);
     }
 
-    processRequest(req, res, next, handler, mime) {
-      res.locals.status = 200;
-      res.locals.mime = mime;
-      try {
-        var result = handler(req, res);
-        if (result instanceof Promise) {
-          result
-            .then((data) => {
-              this.$onRequestSuccess(req, res, data, next, mime);
-            })
-            .catch((err) => {
-              this.handleRequestError(req, res, err, next);
-            });
-        } else {
-          this.$onRequestSuccess(req, res, result, next, mime);
-        }
-      } catch (err) {
-        this.handleRequestError(req, res, err, next);
-      }
-    }
-
-    bindResource(router, resource) {
-      var mime = resource.mime || "application/json";
-      var method = (resource.method || "get").toUpperCase();
-      var path = "/" + resource.name;
-      if (method === "GET") {
-        router.get(path, (req, res, next) =>
-          this.processRequest(req, res, next, resource.handler, mime)
-        );
-      } else if (method === "POST") {
-        router.post(path, (req, res, next) =>
-          this.processRequest(req, res, next, resource.handler, mime)
-        );
-      } else if (method === "PUT") {
-        router.put(path, (req, res, next) =>
-          this.processRequest(req, res, next, resource.handler, mime)
-        );
-      } else if (method === "DELETE") {
-        router.delete(path, (req, res, next) =>
-          this.processRequest(req, res, next, resource.handler, mime)
-        );
-      } else if (method === "HEAD") {
-        router.head(path, (req, res, next) =>
-          this.processRequest(req, res, next, resource.handler, mime)
-        );
-      } else {
-        throw new Error("Unsupported HTTP method:", method);
-      }
-    }
-
     bindExpress(app, restHandlers) {
       let { router, name, uribase, handlers} = this;
 
@@ -279,7 +229,6 @@
           resource.method,
           `/${name}/${resource.name} => ${resource.mime}`
         );
-        //this.bindResource(router, resource);
         resource.use(router);
       });
       app.disable("x-powered-by"); // suppress header warning
