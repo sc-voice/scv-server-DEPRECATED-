@@ -29,7 +29,7 @@ typeof describe === "function" &&
       type(t) { this.mockType = t; }
     }
 
-    it("TESTTESTcustom ctor()", async()=>{
+    it("custom ctor()", async()=>{
       let name = 'testName';
       let method = 'testMethod';
       let METHOD = method.toUpperCase();
@@ -50,7 +50,7 @@ typeof describe === "function" &&
         should(rm.handler()).equal(testResponse);
       }
     })
-    it("TESTTESTprocessRequest() => HTTP response", async() => {
+    it("TESTTESTprocessRequest() => HTTP200 response", async() => {
       let name = "testProcessRequest";
       let testResponse = {[name]: 'OK'};
       let method = "get";
@@ -61,6 +61,22 @@ typeof describe === "function" &&
       let res = new MockResponse();
       await rm.processRequest(req,res);
       should.deepEqual(res, new MockResponse(testResponse, 200, mime));
+    })
+    it("TESTTESTprocessRequest() => HTTP500 response", async() => {
+      let name = "testHTTP500";
+      let errMsg = `error-message-${name}`;
+      let method = "get";
+      let mime = "text/html";
+      let handler = (req, res) => { 
+        throw new Error(errMsg); 
+      };
+      let rm = new ResourceMethod(method, name, handler, mime);
+      let req = {};
+      let res = new MockResponse();
+      await rm.processRequest(req,res);
+      let testResponse = { error: errMsg };
+      should.deepEqual(res, 
+        new MockResponse(testResponse, 500, "application/json"));
     })
     it("use() => bind to express get", async()=>{
       let name = "testUse";

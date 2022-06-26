@@ -1,4 +1,6 @@
 (function (exports) {
+  const { logger } = require("log-instance");
+
   class ResourceMethod {
     constructor(
       method = "get",
@@ -7,6 +9,7 @@
       mime = "application/json",
       options = {}
     ) {
+      logger.logInstance(this);
       if (typeof name !== 'string') {
         throw new Error("ResourceMethod() expected: name");
       }
@@ -20,15 +23,16 @@
     }
 
     async processRequest(req, res, next) {
+      let { method, name, mime, handler } = this;
       try {
-        let { method, name, mime, handler } = this;
         res.type(mime);
         let value = await handler(req, res);
         res.status(200);
         res.send(value);
       } catch(e) {
+        res.type("application/json");
         res.status(500);
-        logger.error('ResourceMethod.processRequest()',
+        this.error('ResourceMethod.processRequest()',
           method, name, 'HTTP500:', e.message);
         res.send({error:e.message});
       }

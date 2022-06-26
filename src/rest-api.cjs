@@ -279,7 +279,8 @@
           resource.method,
           `/${name}/${resource.name} => ${resource.mime}`
         );
-        this.bindResource(router, resource);
+        //this.bindResource(router, resource);
+        resource.use(router);
       });
       app.disable("x-powered-by"); // suppress header warning
       app.use(uribase, router); // mount API

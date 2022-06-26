@@ -69,7 +69,7 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("RestApi returns 500 for bad responses", async()=>{
+    it("TESTTESTRestApi returns 500 for bad responses", async()=>{
       class TestBundle extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -201,7 +201,7 @@ typeof describe === "function" &&
         .expect('content-type', /utf-8/)
         .expect({tasks:[]});
     });
-    it("POST => HTTP500 response for thrown exception", async()=>{
+    it("TESTTESTPOST => HTTP500 response for thrown exception", async()=>{
       let name = "test500";
       let app = express();
       let ra = new RestApi({ name });

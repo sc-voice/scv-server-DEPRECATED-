@@ -172,28 +172,31 @@ typeof describe === "function" &&
       scv.close();
     })
     it("TESTTESTScvServer() testColor", async()=>{ 
-      logger.logLevel = 'info';
-      let testResponse = { color: 'blue' };
+      //logger.logLevel = 'info';
+      let name = "testColor";
+      let testResponse = { [name]: 'blue' };
       let endpoint = (req,res) => testResponse;
-      let rm = new ResourceMethod("get", "color", endpoint);
+      let rm = new ResourceMethod("get", name, endpoint);
       let port = 3001;
       let app = express();
       let router = express.Router();
       rm.use(router);
       app.use('/scv', router);
-      //let handlers = [ rm ];
-      //let scv = new ScvServer({port, app, handlers});
-      //should(scv.handlers).equal(handlers);
-      //await scv.initialize();
-      let listener = await app.listen(port);
+      let handlers = [ rm ];
+      let scv = new ScvServer({port, handlers});
+      should(scv.handlers).equal(handlers);
+      await scv.initialize();
+      let listener = await app.listen(port+1);
 
+      app = scv.app;
       var res = await supertest(app)
-        .get('/scv/color')
+        .get(`/scv/${name}`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect("Content-Type", /json/)
         .expect(testResponse);
       await new Promise(resolve => listener.close(()=>resolve()));
+      await scv.close();
     })
     it("GET /favicon", async()=>{ 
       let scv = await testServer();

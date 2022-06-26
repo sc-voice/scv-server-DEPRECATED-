@@ -54,8 +54,8 @@ export default class ScvServer extends RestApi {
     //TBD let rbServer = opts.rbServer || new RbServer();
     //TBD Object.defineProperty(this, "rbServer", {value: rbServer});
 
-    this.info("ctor", opts);
-    this.debug("ctor", this);
+    this.debug("ctor", opts);
+    this.info("ctor", this);
   }
 
   static get portMap() { return portMap }
