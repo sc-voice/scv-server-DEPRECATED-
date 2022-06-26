@@ -50,7 +50,7 @@ typeof describe === "function" &&
         should(rm.handler()).equal(testResponse);
       }
     })
-    it("TESTTESTprocessRequest() => HTTP200 response", async() => {
+    it("processRequest() => HTTP200 response", async() => {
       let name = "testProcessRequest";
       let testResponse = {[name]: 'OK'};
       let method = "get";
@@ -62,7 +62,7 @@ typeof describe === "function" &&
       await rm.processRequest(req,res);
       should.deepEqual(res, new MockResponse(testResponse, 200, mime));
     })
-    it("TESTTESTprocessRequest() => HTTP500 response", async() => {
+    it("processRequest() => HTTP500 response", async() => {
       let name = "testHTTP500";
       let errMsg = `error-message-${name}`;
       let method = "get";
@@ -71,6 +71,7 @@ typeof describe === "function" &&
         throw new Error(errMsg); 
       };
       let rm = new ResourceMethod(method, name, handler, mime);
+      rm.logLevel = 'warn';
       let req = {};
       let res = new MockResponse();
       await rm.processRequest(req,res);

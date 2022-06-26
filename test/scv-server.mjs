@@ -175,27 +175,20 @@ typeof describe === "function" &&
       //logger.logLevel = 'info';
       let name = "testColor";
       let testResponse = { [name]: 'blue' };
-      let endpoint = (req,res) => testResponse;
-      let rm = new ResourceMethod("get", name, endpoint);
+      let apiMethod = req => testResponse;
+      let rm = new ResourceMethod("get", name, apiMethod);
       let port = 3001;
-      let app = express();
-      let router = express.Router();
-      rm.use(router);
-      app.use('/scv', router);
       let handlers = [ rm ];
       let scv = new ScvServer({port, handlers});
       should(scv.handlers).equal(handlers);
       await scv.initialize();
-      let listener = await app.listen(port+1);
-
-      app = scv.app;
+      let { app } = scv;
       var res = await supertest(app)
         .get(`/scv/${name}`)
         .set('Accept', 'application/json')
         .expect(200)
         .expect("Content-Type", /json/)
         .expect(testResponse);
-      await new Promise(resolve => listener.close(()=>resolve()));
       await scv.close();
     })
     it("GET /favicon", async()=>{ 
