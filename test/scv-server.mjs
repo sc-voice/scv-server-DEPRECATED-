@@ -171,7 +171,7 @@ typeof describe === "function" &&
         .expect(testResponse);
       scv.close();
     })
-    it("TESTTESTScvServer() testColor", async()=>{ 
+    it("ScvServer() testColor", async()=>{ 
       //logger.logLevel = 'info';
       let name = "testColor";
       let testResponse = { [name]: 'blue' };

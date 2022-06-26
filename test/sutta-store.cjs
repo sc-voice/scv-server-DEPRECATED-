@@ -1,20 +1,17 @@
 typeof describe === "function" &&
   describe("sutta-store", function () {
-    /*
     const should = require("should");
     const fs = require("fs");
     const path = require("path");
     const { logger, LogInstance } = require("log-instance");
     logger.logLevel = "warn";
-    const {
-      Playlist,
-      Sutta,
-      SuttaFactory,
-      SuttaStore,
-      Voice,
-    } = require("../index");
     const { ScApi, SuttaCentralId } = require("suttacentral-api");
     const { BilaraData, Seeker } = require("scv-bilara");
+    const Playlist = require('../src/playlist.cjs');
+    const Sutta = require('../src/sutta.cjs');
+    const SuttaFactory = require('../src/sutta-factory.cjs');
+    const SuttaStore = require('../src/sutta-store.cjs');
+    const Voice = require('../src/voice.cjs');
     const LANG = "en";
     const LOCAL = path.join(__dirname, "..", "local");
     const EBT_DATA = path.join(LOCAL, "ebt-data");
@@ -261,7 +258,8 @@ typeof describe === "function" &&
       should(results[1].quote.en).match(/is the root of suffering/);
       should(results[2].quote.en).match(/is the root of suffering/);
       should(results[3].quote.en).match(/is the root of suffering/);
-      var jsonPath = path.join(__dirname, "../public/search/test");
+      var jsonPath = path.join(__dirname, 
+        "./data/search-root-of-suffering.json");
       fs.writeFileSync(
         jsonPath,
         JSON.stringify(
@@ -299,7 +297,7 @@ typeof describe === "function" &&
         ["dn7"]
       );
     });
-    it("search(pattern) => regular expression results", async () => {
+    it("TESTTESTsearch(pattern) => regular expression results", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",
@@ -312,12 +310,12 @@ typeof describe === "function" &&
       }).initialize();
 
       // regular expression
-      var { method, results } = await store.search("is.*root.*suffering");
+      var { method, results } = await store.search("is.*root .*suffering");
       should(results).instanceOf(Array);
       should(method).equal("phrase");
       should.deepEqual(
         results.map((r) => r.uid),
-        ["sn42.11", "mn105", "mn1", "an4.257", "mn66"]
+        ["sn42.11", "mn105", "mn1", "mn66"]
       );
     });
     it("search(pattern) => no results", async () => {
@@ -336,7 +334,7 @@ typeof describe === "function" &&
       var { method, results } = await store.search("not-in-suttas");
       should(results.length).equal(0);
     });
-    it("sanitizePattern(pattern) prevents code injection attacks", function () {
+    it("sanitizePattern(pattern) prevents code injection attacks", ()=>{
       var testPattern = (pattern, expected) => {
         should(SuttaStore.sanitizePattern(pattern)).equal(expected);
       };
@@ -388,63 +386,43 @@ typeof describe === "function" &&
         }
       })();
     });
-    it("search(pattern) handles long text", function (done) {
-      (async function () {
-        try {
-          var store = await new SuttaStore().initialize();
-          var longstring = new Array(100)
-            .fill("abcdefghijklmnopqrstuvwxyz")
-            .join(" ");
-          await store.search(longstring);
-          done(new Error("expected failure"));
-        } catch (e) {
-          if (/text too long/.test(e.message)) {
-            done();
-          } else {
-            done(e);
-          }
-        }
-      })();
+    it("search(pattern) handles long text", async()=>{
+      let eCaught;
+      try {
+        var store = await new SuttaStore().initialize();
+        store.logLevel = 'error';
+        var longstring = new Array(100)
+          .fill("abcdefghijklmnopqrstuvwxyz")
+          .join(" ");
+        await store.search(longstring);
+      } catch (e) { eCaught = e; }
+      should(eCaught.message).match(/text too long/);
     });
-    it("search(pattern) handles invalid regexp", function (done) {
-      (async function () {
-        try {
-          var store = await new SuttaStore().initialize();
-          await store.search("not[good");
-          done(new Error("expected failure"));
-        } catch (e) {
-          if (/Invalid regular expression/.test(e.message)) {
-            done();
-          } else {
-            done(e);
-          }
-        }
-      })();
+    it("search(pattern) handles invalid regexp", async()=>{
+      let eCaught;
+      try {
+        var store = await new SuttaStore().initialize();
+        store.logLevel = "error";
+        await store.search("not[good");
+      } catch (e) {eCaught = e}
+      should(eCaught.message).match(/Invalid regular expression/);
     });
-    it("search(pattern) returns voice guid", function (done) {
-      (async function () {
-        try {
-          var voice = Voice.createVoice({
-            language: "en",
-            localeIPA: "pli",
-            usage: "recite",
-          });
-          var store = await new SuttaStore({
-            voice,
-          }).initialize();
+    it("search(pattern) returns voice guid", async()=>{
+      var voice = Voice.createVoice({
+        language: "en",
+        localeIPA: "pli",
+        usage: "recite",
+      });
+      var store = await new SuttaStore({
+        voice,
+      }).initialize();
 
-          var { method, results } = await store.search("root of suffering");
-          should(results).instanceOf(Array);
-          should.deepEqual(
-            results.map((r) => r.count),
-            [5.091, 3.016, 2.006, 1.043, 1.01]
-          );
-
-          done();
-        } catch (e) {
-          done(e);
-        }
-      })();
+      var { method, results } = await store.search("root of suffering");
+      should(results).instanceOf(Array);
+      should.deepEqual(
+        results.map((r) => r.count),
+        [5.091, 3.016, 2.006, 1.043, 1.01]
+      );
     });
     it("search(pattern) sorts by numeric count", function (done) {
       (async function () {
@@ -815,7 +793,7 @@ typeof describe === "function" &&
       // nikaya an
       var ids = await store.nikayaSuttaIds("an");
       should(ids).instanceOf(Array);
-      should(ids.length).equal(1407);
+      should(ids.length).equal(1408);
 
       // nikaya sn
       var ids = await store.nikayaSuttaIds("sn");
@@ -937,5 +915,4 @@ typeof describe === "function" &&
         lang: "de",
       });
     });
-    */
   });
