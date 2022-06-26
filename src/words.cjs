@@ -113,7 +113,7 @@
       return "\u0101";
     }
     static get U_u_MACRON() {
-      return "\u016d"; /* UTF-8 c5ab */
+      return "\u016d"; // UTF-8 c5ab 
     }
 
     static levenshtein(s, t) {
@@ -175,10 +175,8 @@
         }
       }
 
-      /*
-       * Find longest common contiguous sequence.
-       * This algorithm is buggy.
-       */
+      // Find longest common contiguous sequence.
+      // This algorithm is buggy.
       while (1 < lcs.length) {
         if (lcs[0] == null || a.indexOf(`${lcs[0]} ${lcs[1]}`) < 0) {
           lcs.shift();

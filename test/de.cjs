@@ -93,17 +93,15 @@ typeof describe === "function" &&
       should(fs.statSync(result.file).size).above(15000).below(21000);
     });
     it("placeholder words are expanded with voice ipa", function () {
-      /*
-       * TTS services such as AWS Polly tend to speak IPA phonemes
-       * in a voice-dependent manner. For example, the lower greek
-       * letter theta will be voiced differently by en-IN and en-GB voices.
-       * Because of this, each voice has its own IPA lexicon ("ipa")
-       * for pronunciation. Because the voice IPA lexicon represents
-       * a dialect, it overrides the default locale IPA lexicon.
-       *
-       * This subtle change manifests via the wordSSML() function of
-       * abstractTTS.
-       */
+      // TTS services such as AWS Polly tend to speak IPA phonemes
+      // in a voice-dependent manner. For example, the lower greek
+      // letter theta will be voiced differently by en-IN and en-GB voices.
+      // Because of this, each voice has its own IPA lexicon ("ipa")
+      // for pronunciation. Because the voice IPA lexicon represents
+      // a dialect, it overrides the default locale IPA lexicon.
+      //
+      // This subtle change manifests via the wordSSML() function of
+      // abstractTTS.
       var raveena = Voice.createVoice({
         locale: "en-IN",
         localeIPA: "pli",

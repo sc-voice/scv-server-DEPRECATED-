@@ -58,14 +58,13 @@ typeof describe === "function" &&
       // rewrite this to just test playlist with cached audio
       console.log("mn1.speak()  may take 1-2 minutes...");
       this.timeout(120 * 1000);
-      /*
-       * This is real-world system test that exercises and requires:
-       * 1. AWS Polly
-       * 2. Internet connection
-       * 3. An actual section of MN1
-       * 4. The local sound cache
-       * 5. >5MB of local disk for sound storage
-       */
+
+      // This is real-world system test that exercises and requires:
+      // 1. AWS Polly
+      // 2. Internet connection
+      // 3. An actual section of MN1
+      // 4. The local sound cache
+      // 5. >5MB of local disk for sound storage
       var msStart = Date.now();
       var scApi = await new ScApi().initialize();
       this.suttaFactory = new SuttaFactory({

@@ -21,7 +21,7 @@
     ja: "jpn",
   };
 
-/*
+/*TODO
   const { RestBundle, UserStore } = require("rest-bundle");
 
   const ContentUpdater = require("./content-updater");
@@ -49,7 +49,7 @@
     credentials:
       '{"hash":"13YYGuRGjiQad/G1+MOOmxmLC/1znGYBcHWh2vUgkdq7kzTAZ6dk76S3zpP0OwZq1eofgUUJ2kq45+TxOx5tvvag","salt":"Qf1NbN3Jblo8sCL9bo32yFmwiApHSeRkr3QOJZu3KJ0Q8hbWMXAaHdoQLUWceW83tOS0jN4tuUXqWQWCH2lNCx0S","keyLength":66,"hashMethod":"pbkdf2","iterations":748406}',
   };
-*/
+TODO*/
 
   const JWT_SECRET = `JWT${Math.random()}`;
   const APP_NAME = "scv"; // DO NOT CHANGE THIS
@@ -153,7 +153,7 @@
   module.exports = exports.ScvApi = ScvApi;
 })(typeof exports === "object" ? exports : (exports = {}));
 
-  /*
+  /*TODO
 
   class ScvApi extends RestBundle {
     constructor(
@@ -1749,4 +1749,4 @@
 
   module.exports = exports.ScvApi = ScvApi;
 })(typeof exports === "object" ? exports : (exports = {}));
-*/
+TODO*/
