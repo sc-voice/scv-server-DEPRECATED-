@@ -27,7 +27,7 @@
         require.resolve("scv-bilara").split("/node_modules")[0];
 
       let privateProps = {
-        handlers: opts.handlers || [],
+        resourceMethods: opts.resourceMethods || [],
         uribase: opts.uribase || `/${name}`,
         scvDir: opts.scvDir || path.join(__dirname, ".."),
         $onRequestSuccess: 
@@ -201,14 +201,14 @@
     }
 
     bindExpress(app, restHandlers) {
-      let { router, name, uribase, handlers} = this;
+      let { router, name, uribase, resourceMethods} = this;
 
-      restHandlers && restHandlers.forEach(h=>handlers.push(h));
+      restHandlers && restHandlers.forEach(h=>resourceMethods.push(h));
       let { locals } = app;
       router.use(bodyParser.json());
       let restApis = locals.restApis = locals.restApis || [];
       restApis.push(this);
-      handlers.sort((a, b) => {
+      resourceMethods.sort((a, b) => {
         var cmp = a.method.localeCompare(b.method);
         if (cmp === 0) {
           cmp = a.name.localeCompare(b.name);
@@ -223,7 +223,7 @@
         }
         return cmp;
       });
-      handlers.forEach((resource) => {
+      resourceMethods.forEach((resource) => {
         logger.debug(
           "RestApi.bindExpress:",
           resource.method,

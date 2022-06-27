@@ -207,7 +207,7 @@ TODO*/
       English.wordSet().then((fws) => (fwsEn = fws));
       this.mj = new MerkleJson();
       this.bilaraData = this.suttaStore.bilaraData;
-      var handlers = [
+      var resourceMethods = [
         ["get", "audio/:guid", this.getAudio, this.audioMIME],
         ["get", "audio/:guid/:filename", this.getAudio, this.audioMIME],
         [
@@ -338,8 +338,8 @@ TODO*/
         ["post", "auth/update-release", this.postUpdateRelease],
         ["get", "auth/audio-info/:volume/:guid", this.getAudioInfo],
       ].map((h) => this.deprecated_resourceMethod.apply(this, h));
-      Object.defineProperty(this, "handlers", {
-        value: super.handlers.concat(handlers),
+      Object.defineProperty(this, "resourceMethods", {
+        value: super.resourceMethods.concat(resourceMethods),
       });
     }
 

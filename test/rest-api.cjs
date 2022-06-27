@@ -21,17 +21,32 @@ typeof describe === "function" &&
     }
     this.timeout(5 * 1000);
 
-    class TestBundle extends RestApi {
+    class TestApi extends RestApi {
       constructor(name, options = {}) {
         super(Object.assign({name}, options));
-        let { handlers } = this;
-        handlers.push(new ResourceMethod( "get", "color", 
+        let { resourceMethods } = this;
+        resourceMethods.push(new ResourceMethod( "get", "color", 
           (req,res,next)=>this.getColor(req,res,next)));
       }
 
       getColor(req, res, next) {
         return { color: "blue" };
       }
+    }
+
+    function testHandlers(restApi) {
+      return [
+        new ResourceMethod("get", "identity", 
+          (req,res,next)=>restApi.getIdentity(req,res,next)),
+        new ResourceMethod("get", "state", 
+          (req,res,next)=>restApi.getState(req,res,next)),
+        new ResourceMethod("get", "app/stats/:stat", 
+          (req,res,next)=>restApi.getAppStats(req,res,next)),
+        new ResourceMethod("post", "identity", 
+          (req,res,next)=>restApi.postIdentity(req,res,next)),
+        new ResourceMethod("post", "echo", 
+          (req,res,next)=>restApi.postEcho(req,res,next)),
+      ];
     }
 
     it("default ctor", ()=>{
@@ -48,7 +63,7 @@ typeof describe === "function" &&
     it("RestApi can be extended", async()=>{
       var app = express();
       let name = "testExtended";
-      var tb = new TestBundle(name).bindExpress(app);
+      var tb = new TestApi(name).bindExpress(app);
       let res = await supertest(app)
         .get(`/${name}/color`)
         .expect(200);
@@ -56,13 +71,13 @@ typeof describe === "function" &&
       should.deepEqual(res.body, { color: "blue", });
     });
     it("RestApi resources should be unique", ()=>{
-      class TestBundle extends RestApi {
+      class TestApi extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
-          let { handlers } = this;
-          handlers.push(new ResourceMethod( "get", "state", 
+          let { resourceMethods } = this;
+          resourceMethods.push(new ResourceMethod( "get", "state", 
             (req,res,next)=>this.getState(req,res,next)));
-          handlers.push(new ResourceMethod( "get", "state", 
+          resourceMethods.push(new ResourceMethod( "get", "state", 
             (req,res,next)=>this.getState(req,res,next)));
         }
       }
@@ -70,11 +85,11 @@ typeof describe === "function" &&
       should.throws(() => tb.bindExpress(app));
     });
     it("RestApi returns 500 for bad responses", async()=>{
-      class TestBundle extends RestApi {
+      class TestApi extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
-          let { handlers } = this;
-          handlers.push(new ResourceMethod("get", "bad-json", 
+          let { resourceMethods } = this;
+          resourceMethods.push(new ResourceMethod("get", "bad-json", 
             (req,res,next)=>this.getBadJson(req,res,next)));
         }
         getBadJson(req, res, next) {
@@ -86,7 +101,7 @@ typeof describe === "function" &&
         }
       }
       var app = express();
-      var tb = (new TestBundle("testBadJSON").bindExpress(app));
+      var tb = (new TestApi("testBadJSON").bindExpress(app));
       let logLevel = logger.logLevel;
       logger.logLevel = "error";
       try {
@@ -129,7 +144,7 @@ typeof describe === "function" &&
       let app = express();
       let name = "testIdentity";
       let ra = new RestApi({ name});
-      ra.bindExpress(app, ra.testHandlers);
+      ra.bindExpress(app, testHandlers(ra));
       should(testRb(app, name)).equal(ra);
       let res = await supertest(app)
         .get(`/${name}/identity`)
@@ -160,7 +175,7 @@ typeof describe === "function" &&
       let app = express();
       let name = "testEcho";
       let ra = new RestApi({ name });
-      ra.bindExpress(app, ra.testHandlers);
+      ra.bindExpress(app, testHandlers(ra));
       var service = testRb(app, name);
       ra.taskBag.length.should.equal(0);
       ra.taskBegin("testTask");
@@ -178,7 +193,7 @@ typeof describe === "function" &&
       let app = express();
       let name = "testTask";
       let ra = new RestApi({ name });
-      ra.bindExpress(app, ra.testHandlers);
+      ra.bindExpress(app, testHandlers(ra));
       ra.taskBag.length.should.equal(0);
 
       // Begin server task
@@ -205,7 +220,7 @@ typeof describe === "function" &&
       let name = "test500";
       let app = express();
       let ra = new RestApi({ name });
-      ra.bindExpress(app, ra.testHandlers);
+      ra.bindExpress(app, testHandlers(ra));
       let logLevel = logger.logLevel;
       logger.logLevel = "error";
       logger.warn("Expected error (BEGIN)");
@@ -236,7 +251,7 @@ typeof describe === "function" &&
     it("GET /app/stats/heap => v8.getHeapSpaceStatistics", async()=>{
       let app = express();
       let ra = new RestApi({name:"test"});
-      ra.bindExpress(app, ra.testHandlers);
+      ra.bindExpress(app, testHandlers(ra));
       let res = await supertest(app)
         .get("/test/app/stats/heap")
         .expect(200)

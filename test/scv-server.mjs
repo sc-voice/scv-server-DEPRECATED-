@@ -178,9 +178,9 @@ typeof describe === "function" &&
       let apiMethod = req => testResponse;
       let rm = new ResourceMethod("get", name, apiMethod);
       let port = 3001;
-      let handlers = [ rm ];
-      let scv = new ScvServer({port, handlers});
-      should(scv.handlers).equal(handlers);
+      let resourceMethods = [ rm ];
+      let scv = new ScvServer({port, resourceMethods});
+      should(scv.resourceMethods).equal(resourceMethods);
       await scv.initialize();
       let { app } = scv;
       var res = await supertest(app)
