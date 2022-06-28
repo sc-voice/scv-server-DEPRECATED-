@@ -30,10 +30,6 @@
         resourceMethods: opts.resourceMethods || [],
         uribase: opts.uribase || `/${name}`,
         scvDir: opts.scvDir || path.join(__dirname, ".."),
-        $onRequestSuccess: 
-          opts.onRequestSuccess || RestApi.onRequestSuccess,
-        $onRequestFail:
-         opts.onRequestFail || RestApi.onRequestFail,
         taskBag: [], // unordered task collection with duplicates
         router: express.Router(),
       };
@@ -42,41 +38,6 @@
           value: privateProps[prop],
         });
       });
-    }
-
-    get testHandlers() {
-      return [
-        new ResourceMethod("get", "identity", 
-          (req,res,next)=>this.getIdentity(req,res,next)),
-        new ResourceMethod("get", "state", 
-          (req,res,next)=>this.getState(req,res,next)),
-        new ResourceMethod("get", "app/stats/:stat", 
-          (req,res,next)=>this.getAppStats(req,res,next)),
-        new ResourceMethod("post", "identity", 
-          (req,res,next)=>this.postIdentity(req,res,next)),
-        new ResourceMethod("post", "echo", 
-          (req,res,next)=>this.postEcho(req,res,next)),
-      ];
-    }
-
-    static onRequestSuccess(req, res, data, next, mime) {
-      try {
-        res.type(res.locals.mime);
-        res.status(res.locals.status).send(data);
-      } catch (err) {
-        logger.warn(err.stack);
-        res.status(500);
-        res.send({ error: err.message });
-      }
-      next && next("route");
-    }
-
-    static onRequestFail(req, res, err, next) {
-      var status = (res.locals.status !== 200 && res.locals.status) || 500;
-      res.status(status);
-      res.type(res.locals.mime || "application/json");
-      res.send(res.locals.data || { error: err.message });
-      next && next("route");
     }
 
     pushState() {

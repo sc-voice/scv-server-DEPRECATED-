@@ -198,7 +198,6 @@ typeof describe === "function" &&
         .expect(200)
         .expect("Content-Type", /image/)
     })
-
     it("GET /index.html", async()=>{ 
       let scv = await testServer();
       let indexUrl = '/scv/index.html';
@@ -243,6 +242,66 @@ typeof describe === "function" &&
       await scv2.initialize();
       should(ScvServer.portMap).properties({[port]:scv2});
       await scv2.close();
+    })
+    it("GET /scv/search/:pattern", async()=>{
+      let scv = await testServer();
+      let pattern = encodeURI(`root of suffering`);
+
+      var maxResults = 5; // the default
+      var url = `/scv/search/${pattern}`;
+      var res = await supertest(scv.app).get(url)
+        .expect(200)
+        .expect("Content-Type", /application.json/);
+
+      // Default results
+      var { method, results, } = res.body;
+      should(method).equal('phrase');
+      should(results).instanceOf(Array);
+      should(results.length).equal(maxResults);
+      should.deepEqual(results.map(r => r.uid),[
+        'sn42.11', 'mn105', 'mn1', 'sn56.21', 'mn116',
+      ]);
+      should.deepEqual(results.map(r => r.count),
+        [ 5.091, 3.016, 2.006, 1.043, 1.01 ]);
+
+      // custom results
+      var maxResults = 3; // custom
+      var url = `/scv/search/${pattern}?maxResults=${maxResults}`;
+      var res = await supertest(scv.app).get(url)
+        .expect(200)
+        .expect("Content-Type", /application.json/);
+
+      var { method, results, } = res.body;
+      should(method).equal('phrase');
+      should(results).instanceOf(Array);
+      should(results.length).equal(3);
+      should.deepEqual(results.map(r => r.uid),[
+        'sn42.11', 'mn105', 'mn1',
+      ]);
+      should.deepEqual(results.map(r => r.count),
+        [ 5.091, 3.016, 2.006  ]);
+
+      await scv.close();
+    })
+    it("TESTTESTGET /scv/search/:pattern/:lang", async()=>{
+      let scv = await testServer();
+      let pattern = encodeURI(`wurzel des leidens`);
+      let lang = 'de';
+      let maxResults = 3; // custom
+      var url = `/scv/search/${pattern}/${lang}?maxResults=${maxResults}`;
+      var res = await supertest(scv.app).get(url)
+        .expect(200)
+        .expect("Content-Type", /application.json/);
+
+      var { method, results, } = res.body;
+      should(method).equal('phrase');
+      should(results).instanceOf(Array);
+      should(results.length).equal(3);
+      should.deepEqual(results.map(r => r.uid),[
+        'sn42.11', 'sn56.21', 'dn16',
+      ]);
+
+      await scv.close();
     })
 
   });

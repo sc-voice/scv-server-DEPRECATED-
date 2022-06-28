@@ -60,6 +60,17 @@ export default class ScvServer extends RestApi {
 
   static get portMap() { return portMap }
 
+  addResourceMethods() {
+    let { resourceMethods, scvApi } = this;
+    resourceMethods.push(new ResourceMethod(
+      "get", "search/:pattern", req=>scvApi.getSearch(req) ));
+    resourceMethods.push(new ResourceMethod(
+      "get", "search/:pattern/:lang", req=>scvApi.getSearch(req) ));
+
+    resourceMethods.forEach(rm => 
+      this.info('addResourceMethods', rm.method, rm.name));
+  }
+
   async listenSSL(restBundles=[], sslOpts) {
     let { port, app, sslPath } = this;
     if (!fs.existsSync(sslPath)) {
@@ -122,7 +133,7 @@ export default class ScvServer extends RestApi {
   }
 
   async initialize() {
-    let { app, port, scApi, name, protocol, distDir } = this;
+    let { app, port, scApi, scvApi, name, protocol, distDir } = this;
     if (portMap[port]) {
       throw new Error([
         `${name} conflict`,
@@ -134,6 +145,7 @@ export default class ScvServer extends RestApi {
       return this;
     }
     this.initialized = false;
+    this.addResourceMethods();
     this.bindExpress(app);
 
     app.use(compression());
@@ -191,10 +203,8 @@ export default class ScvServer extends RestApi {
         //TBD scApi,
         //TBD ephemeralAge: 60*MS_MINUTE,
     //TBD };
-    //TBD let scvApi = new ScvApi(opts);
     //TBD app.locals.scvApi = scvApi;
-    //TBD await scvApi.initialize();
-    //TBD restBundles.push(scvApi);
+    await scvApi.initialize();
 
     let httpServer = protocol === "https"
       ? await this.listenSSL()
