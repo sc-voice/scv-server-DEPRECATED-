@@ -51,8 +51,6 @@ export default class ScvServer extends RestApi {
     Object.defineProperty(this, "scApi", {value: scApi});
     let scvApi = opts.scvApi || new ScvApi({});
     Object.defineProperty(this, "scvApi", {value: scvApi});
-    //TBD let rbServer = opts.rbServer || new RbServer();
-    //TBD Object.defineProperty(this, "rbServer", {value: rbServer});
 
     this.debug("ctor", opts);
     this.info("ctor", this);
@@ -86,10 +84,6 @@ export default class ScvServer extends RestApi {
     }
     this.port = port;
     portMap[port] = this;
-    //TBD if (restBundles.filter(rb=>rb===this)[0] == null) {
-      //TBD restBundles.push(this);
-    //TBD }
-    //TBD restBundles.forEach(rb => rb.bindExpress(app));
     var server = https.createServer(sslOpts, app);
     let httpServer = await server.listen(port);
     if (!httpServer.listening) {
@@ -98,7 +92,6 @@ export default class ScvServer extends RestApi {
         `(NOTE: TCP ports below 1024 are restricted to superusers).`,
       ].join(' '));
     }
-    // TBD this.rbss = new RbSingleton(restBundles, this.httpServer);
     return httpServer;
   }
 
@@ -161,12 +154,12 @@ export default class ScvServer extends RestApi {
         next();
     });
    
-    //TBD app.get('/scv/auth/*',
-        //TBD jwt({secret: ScvApi.JWT_SECRET, algorithms:['HS256']}),
-        //TBD (req, res, next) => {
-            //TBD this.debug(`authenticated path:${req.path}`);
-            //TBD next();
-        //TBD });
+    //TODO app.get('/scv/auth/*',
+        //TODO jwt({secret: ScvApi.JWT_SECRET, algorithms:['HS256']}),
+        //TODO (req, res, next) => {
+            //TODO this.debug(`authenticated path:${req.path}`);
+            //TODO next();
+        //TODO });
 
     Object.entries({
       "/scv/index.html": "index.html",
@@ -194,16 +187,11 @@ export default class ScvServer extends RestApi {
         next();
     });
 
-    //TBD await scApi.initialize();
-    //TBD var rbServer =  app.locals.rbServer = new RbServer();
-
     // create RestApis
-    //TBD let restBundles = app.locals.restBundles = [];
-    //TBD var opts = {
-        //TBD scApi,
-        //TBD ephemeralAge: 60*MS_MINUTE,
-    //TBD };
-    //TBD app.locals.scvApi = scvApi;
+    //TODO var opts = {
+        //TODO scApi,
+        //TODO ephemeralAge: 60*MS_MINUTE,
+    //TODO };
     await scvApi.initialize();
 
     let httpServer = protocol === "https"
