@@ -1,0 +1,63 @@
+#!/bin/bash
+DIR=`dirname $0`
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+echo -e "$SCRIPT: $0 START `date`"
+
+sudo apt-get update
+
+REBOOT=0
+OPTIND=1
+while getopts "r" opt; do
+  case "$opt" in
+  r)  REBOOT=y
+    ;;
+  esac
+done
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
+
+if [ "$1" == "test" ]; then
+  echo -e "$SCRIPT: UPDATE TEST COMPLETED"
+  exit 0;
+fi
+
+if [ "$REBOOT" == "0" ]; then
+  while true; do
+    echo -e "$SCRIPT: scv-server update requires a reboot"
+    read -p "$SCRIPT: Reboot after update? [y,n]:" REBOOT
+    case $REBOOT in
+      [y]* ) echo -e "$SCRIPT: (will reboot after update)"; break;;
+      [n]* ) break;;
+         * ) echo "$SCRIPT: Please enter 'y' or 'n'";;
+    esac
+  done
+fi
+
+#echo -e "$SCRIPT: chown " `whoami`
+#sudo chown -R $(whoami):$(whoami) * .*
+
+$DIR/update-ripgrep
+
+MSG=`type rotatelogs`
+RC=$?; if [ "$RC" == "0" ]; then
+    echo -e "$SCRIPT: $MSG (OK)"
+else
+    echo -e "$SCRIPT: installing apache2-utils for rotatelogs (sudo)"
+    sudo apt-get update -y
+    sudo apt-get install -y apache2-utils
+fi
+
+echo -e "$SCRIPT: npm install..."
+npm install
+
+$DIR/update-ebt-data
+
+echo -e "$SCRIPT: clearing memoization caches"
+rm -rf local/memo
+
+if [ "$REBOOT" == "y" ]; then
+    sudo shutdown -r now
+fi
+
+echo -e "$SCRIPT: $0 END `date`"

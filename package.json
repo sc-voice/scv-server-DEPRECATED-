@@ -29,7 +29,7 @@
   "scripts": {
     "schedule-action": "scripts/schedule-action",
     "start": "sudo node scripts/sc-voice.mjs",
-    "start:3000": "node scripts/sc-voice.mjs -3000",
+    "start:3000": "node scripts/sc-voice.mjs --port:3000",
     "start:ssl": "sudo node scripts/sc-voice.mjs --ssl",
     "start:staging": "node scripts/sc-voice.mjs --staging",
     "test": "npm run test:verbose",
