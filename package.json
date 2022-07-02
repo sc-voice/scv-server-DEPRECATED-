@@ -27,6 +27,7 @@
     "why-is-node-running": "^2.2.2"
   },
   "scripts": {
+    "aws-creds": "node scripts/aws-creds.mjs",
     "schedule-action": "scripts/schedule-action",
     "start": "sudo node scripts/sc-voice.mjs",
     "start:3000": "node scripts/sc-voice.mjs --port:3000",

@@ -4,9 +4,7 @@ import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 
 import { logger, } from 'log-instance';
-import {
-    ScvServer,
-} from '../index.mjs';
+import ScvServer from '../src/scv-server.mjs';
 
 // ensure argv is actually for script instead of mocha
 var argv = process.argv[1].match(__filename) && process.argv || [];

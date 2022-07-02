@@ -9,12 +9,9 @@ import bodyParser from "body-parser";
 import supertest from "supertest";
 import { logger } from "log-instance";
 import ResourceMethod from '../src/resource-method.cjs';
+import ScvServer from '../src/scv-server.mjs';
 
 logger.logLevel = 'warn';
-
-import { 
-  ScvServer,
-} from "../index.mjs";
 
 typeof describe === "function" &&
   describe("scv-server", function() {
