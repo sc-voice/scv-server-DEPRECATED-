@@ -10,7 +10,7 @@
   const PATH_SOUNDS = path.join(LOCAL, "sounds");
   const MS_MINUTE = 60 * 1000;
   const MS_DAY = 24 * 60 * MS_MINUTE;
-  const VSMPATH = path.join(LOCAL, "vsm-s3.json");
+  const AWS_CREDS_PATH = path.join(LOCAL, "aws-creds.json");
 
   var instances = 0;
 

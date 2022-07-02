@@ -8,8 +8,8 @@ typeof describe === "function" &&
     const S3Creds = require("../src/s3-creds.cjs");
     const Polly = require("../src/polly.cjs");
     const LOCAL = path.join(__dirname, "../local");
-    const VSMPATH = path.join(LOCAL, "vsm-s3.json");
-    const awsConfig = new AwsConfig(VSMPATH);
+    const AWS_CREDS_PATH = path.join(LOCAL, "aws-creds.json");
+    const awsConfig = new AwsConfig(AWS_CREDS_PATH);
     var winr;
     this.timeout(10 * 1000);
 
@@ -82,7 +82,7 @@ typeof describe === "function" &&
     });
     it("synthesizeSSML(ssml) returns sound file", async()=>{
       var s3Creds = new S3Creds({
-        configPath: VSMPATH,
+        configPath: AWS_CREDS_PATH,
       });
       var sayAgain = new SayAgain(s3Creds.awsConfig);
       var polly = new Polly({ sayAgain });

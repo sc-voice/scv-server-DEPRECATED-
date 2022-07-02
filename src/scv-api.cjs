@@ -1398,8 +1398,8 @@ TODO*/
       });
     }
 
-    vsmS3Bucket(Bucket) {
-      var credPath = path.join(LOCAL, "vsm-s3.json");
+    awsCredsBucket(Bucket) {
+      var credPath = path.join(LOCAL, "aws-creds.json");
       var creds;
       if (fs.existsSync(credPath)) {
         creds = JSON.parse(fs.readFileSync(credPath));
@@ -1415,7 +1415,7 @@ TODO*/
         (async function () {
           try {
             that.requireAdmin(req, res, `GET vsm/list-objects`);
-            var s3Bucket = await that.vsmS3Bucket();
+            var s3Bucket = await that.awsCredsBucket();
             var params;
             var result = await s3Bucket.listObjects(params);
             var Contents = result.Contents;
@@ -1485,7 +1485,7 @@ TODO*/
         );
         var s3Bucket = await new S3Bucket(creds).initialize();
 
-        var credPath = path.join(LOCAL, "vsm-s3.json");
+        var credPath = path.join(LOCAL, "aws-creds.json");
         var s3Creds = new S3Creds({ awsConfig: creds });
         var json = JSON.stringify(s3Creds.awsConfig, null, 2);
         await fs.promises.writeFile(credPath, json);
@@ -1526,7 +1526,7 @@ TODO*/
               1
             );
             postArchive = postArchive == null ? true : postArchive;
-            var s3Bucket = await that.vsmS3Bucket();
+            var s3Bucket = await that.awsCredsBucket();
             var tmpDirObj = tmp.dirSync({
               unsafeCleanup: true,
             });
@@ -1597,7 +1597,7 @@ TODO*/
             if (restore == null) {
               throw new Error(`Missing required property: restore`);
             }
-            var s3Bucket = await that.vsmS3Bucket(Bucket);
+            var s3Bucket = await that.awsCredsBucket(Bucket);
             var { Bucket, s3 } = s3Bucket;
             var { endpoint, region } = s3.config;
             var vsm = new VsmStore({

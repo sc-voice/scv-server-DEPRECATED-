@@ -154,23 +154,23 @@ typeof describe === "function" &&
         }
       })();
     });
-    it("local/vsm-s3.json changes endpoint", function (done) {
+    it("local/aws-creds.json changes endpoint", function (done) {
       this.timeout(20 * 1000);
-      var vsm_s3_path = path.join(__dirname, "..", "local", "vsm-s3.json");
-      if (!fs.existsSync(vsm_s3_path)) {
-        logger.warn(`skipping vsm-s3.json test`);
+      var aws_creds_path = path.join(__dirname, "..", "local", "aws-creds.json");
+      if (!fs.existsSync(aws_creds_path)) {
+        logger.warn(`skipping aws-creds.json test`);
         done();
         return;
       }
       (async function () {
         try {
-          var vsm_s3 = JSON.parse(fs.readFileSync(vsm_s3_path));
-          vsm_s3.Bucket = "sc-voice-test";
-          var bucket = await new S3Bucket(vsm_s3).initialize();
+          var aws_creds = JSON.parse(fs.readFileSync(aws_creds_path));
+          aws_creds.Bucket = "sc-voice-test";
+          var bucket = await new S3Bucket(aws_creds).initialize();
           should(bucket.s3.config.endpoint).equal(
             "https://s3.us-west-1.amazonaws.com"
           );
-          should(bucket.Bucket).equal(vsm_s3.Bucket);
+          should(bucket.Bucket).equal(aws_creds.Bucket);
           should(bucket.initialized).equal(true);
 
           // we can upload a readStream to S3

@@ -42,12 +42,38 @@ Now update the content but do not reboot (i.e., Respond with <kbd>no</kbd> when 
 As part of installation you will need to configure the AWS Polly TTS service adapter.
 
 ##### Configure Amazon AWS Polly 
-The [Amazon AWS Polly Text-to-Speech](https://aws.amazon.com/polly/) service can be used to convert sutta text to speech.
+The [Amazon AWS Polly Text-to-Speech](https://aws.amazon.com/polly/) service 
+is used to convert multilingual sutta text to speech. 
+Furthermore, sutta text contains many Pali references that require 
+SSML customization specific to AWS.
 To enable AWS Polly, you will need to [configure your credentials](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html#getting-started-nodejs-credentials)
 
 Login to your AWS account and go to the IAM dashboard|Delete your root access keys|Manage Security Credentials|Access Keys...|Create New Access Key
 
 <img src="https://raw.githubusercontent.com/sc-voice/sc-voice/master/src/assets/aws-keys.png"/>
+
+
+```
+{
+  "Bucket": "sc-voice-vsm",
+  "s3": {
+    "apiVersion": "2006-03-01",
+    "endpoint": "https://s3.us-west-1.amazonaws.com",
+    "region": "us-west-1"
+  },
+  "polly": {
+    "region": "us-west-1",
+    "signatureVersion": "v4",
+    "apiVersion": "2016-06-10"
+  },
+  "sayAgain": {
+    "Bucket": "say-again.sc-voice"
+  },
+  "region": "us-west-1",
+  "secretAccessKey": "########################################",
+  "accessKeyId": "####################"
+}
+```
 
 ```
 aws configure

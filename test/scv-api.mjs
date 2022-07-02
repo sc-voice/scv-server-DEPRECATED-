@@ -734,16 +734,16 @@ typeof describe === "function" &&
             `${urlBase}/en/sn/sn1/sn1.23-en-sujato-sujato.webm`,
         ]);
     });
-    it("GET auth/vsm/s3-credentials => sanitized vsm-s3.json", done=>{
-        var vsmS3Path = path.join(LOCAL, 'vsm-s3.json');
-        if (!fs.existsSync(vsmS3Path)) {
+    it("GET auth/vsm/s3-credentials => sanitized aws-creds.json", done=>{
+        var awsCredsPath = path.join(LOCAL, 'aws-creds.json');
+        if (!fs.existsSync(awsCredsPath)) {
             logger.warn('skipping vsm/s3-credentials GET test');
             done();
             return;
         }
         (async function() { try {
             var url = `/scv/auth/vsm/s3-credentials`;
-            var goodCreds = JSON.parse(fs.readFileSync(vsmS3Path));
+            var goodCreds = JSON.parse(fs.readFileSync(awsCredsPath));
 
             // Returns obfuscated credentials
             var res = await testAuthGet(url);
@@ -761,8 +761,8 @@ typeof describe === "function" &&
     });
     it("POST auth/vsm/s3-credentials good creds", async()=>{try{
         await testInitialize;
-        var vsmS3Path = path.join(LOCAL, 'vsm-s3.json');
-        if (!fs.existsSync(vsmS3Path)) {
+        var awsCredsPath = path.join(LOCAL, 'aws-creds.json');
+        if (!fs.existsSync(awsCredsPath)) {
             logger.warn('skipping vsm/s3-credentials POST test');
             return;
         }
@@ -770,27 +770,27 @@ typeof describe === "function" &&
         //logger.logLevel = 'info';
 
         // save good creds and make bad creds
-        var goodCreds = JSON.parse(fs.readFileSync(vsmS3Path));
+        var goodCreds = JSON.parse(fs.readFileSync(awsCredsPath));
         var badCreds = JSON.parse(JSON.stringify(goodCreds));
         badCreds.s3.secretAccessKey = "wrong-key";
-        await fs.promises.writeFile(vsmS3Path, JSON.stringify(badCreds, null, 2));
+        await fs.promises.writeFile(awsCredsPath, JSON.stringify(badCreds, null, 2));
 
         // Good credentials are saved
         var res = await testAuthPost(url, goodCreds);
 
-        var actualCreds = JSON.parse(await fs.promises.readFile(vsmS3Path));
-        await fs.promises.writeFile(vsmS3Path, JSON.stringify(goodCreds, null, 2));
+        var actualCreds = JSON.parse(await fs.promises.readFile(awsCredsPath));
+        await fs.promises.writeFile(awsCredsPath, JSON.stringify(goodCreds, null, 2));
         res.statusCode.should.equal(200);
         should.deepEqual(actualCreds, goodCreds);
     } catch(e) {
-        logger.info(`TEST: restoring ${vsmS3Path}`);
-        fs.writeFileSync(vsmS3Path, JSON.stringify(goodCreds, null, 2));
+        logger.info(`TEST: restoring ${awsCredsPath}`);
+        fs.writeFileSync(awsCredsPath, JSON.stringify(goodCreds, null, 2));
         throw e;
     }});
     it("POST auth/vsm/s3-credentials bad creds", async()=>{try{
         await testInitialize;
-        var vsmS3Path = path.join(LOCAL, 'vsm-s3.json');
-        if (!fs.existsSync(vsmS3Path)) {
+        var awsCredsPath = path.join(LOCAL, 'aws-creds.json');
+        if (!fs.existsSync(awsCredsPath)) {
             logger.warn('skipping vsm/s3-credentials POST test');
             return;
         }
@@ -799,14 +799,14 @@ typeof describe === "function" &&
         var url = `/scv/auth/vsm/s3-credentials`;
         var logLevel = logger.logLevel;
         logger.logLevel = 'error';
-        var goodCreds = JSON.parse(fs.readFileSync(vsmS3Path));
+        var goodCreds = JSON.parse(fs.readFileSync(awsCredsPath));
         logger.warn("EXPECTED WARNING BEGIN");
         var badCreds = JSON.parse(JSON.stringify(goodCreds));
         badCreds.s3.secretAccessKey = 'bad-secretAccessKey';
         var res = await testAuthPost(url, badCreds);
         logger.warn("EXPECTED WARNING END");
         res.statusCode.should.equal(500);
-        var actualCreds = JSON.parse(fs.readFileSync(vsmS3Path));
+        var actualCreds = JSON.parse(fs.readFileSync(awsCredsPath));
         should.deepEqual(actualCreds, goodCreds);
     } finally {
         logger.logLevel = logLevel;
@@ -834,8 +834,8 @@ typeof describe === "function" &&
         } catch(e) {done(e);} })();
     });
     it("GET auth/vsm/list-objects lists bucket objects", function(done) {
-        var vsmS3Path = path.join(LOCAL, 'vsm-s3.json');
-        if (!fs.existsSync(vsmS3Path)) {
+        var awsCredsPath = path.join(LOCAL, 'aws-creds.json');
+        if (!fs.existsSync(awsCredsPath)) {
             logger.warn("skipping auth/vsm/list-objects test");
             done();
             return;
@@ -848,7 +848,7 @@ typeof describe === "function" &&
             res.statusCode.should.equal(200);
             var s3Result = res.body;
             should(s3Result).properties({
-                Name: fs.existsSync(vsmS3Path)
+                Name: fs.existsSync(awsCredsPath)
                     ? 'sc-voice-vsm'
                     : 'sc-voice-test',
                 MaxKeys: 1000,
@@ -874,8 +874,8 @@ typeof describe === "function" &&
     });
     it("POST auth/vsm/restore-s3-archives", async()=>{
         console.log(`TODO`,__filename); return; // Restore VSM file
-        var vsmS3Path = path.join(LOCAL, 'vsm-s3.json');
-        if (!fs.existsSync(vsmS3Path)) {
+        var awsCredsPath = path.join(LOCAL, 'aws-creds.json');
+        if (!fs.existsSync(awsCredsPath)) {
             logger.warn('skipping vsm/s3-credentials POST test');
             done();
             return;

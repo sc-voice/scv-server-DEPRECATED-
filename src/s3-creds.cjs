@@ -5,16 +5,16 @@
   const { GuidStore } = require("memo-again");
   const { AwsConfig, SayAgain } = require("say-again");
   const LOCAL = path.join(__dirname, "../local");
-  const VSMPATH = path.join(LOCAL, "vsm-s3.json");
+  const AWS_CREDS_PATH = path.join(LOCAL, "aws-creds.json");
 
   class S3Creds {
     constructor(opts = {}) {
-      var configPath = opts.configPath || VSMPATH;
-      var vsmCreds = fs.existsSync(configPath)
+      var configPath = opts.configPath || AWS_CREDS_PATH;
+      var awsCreds = fs.existsSync(configPath)
         ? JSON.parse(fs.readFileSync(configPath))
         : {};
 
-      var config = opts.awsConfig || new AwsConfig(vsmCreds);
+      var config = opts.awsConfig || new AwsConfig(awsCreds);
       this.awsConfig = config;
       let s3 = (config.s3 = config.s3 || {});
       let polly = (config.polly = config.polly || {});
@@ -29,7 +29,7 @@
       config.accessKeyId = config.accessKeyId || 
         polly.accessKeyId || s3.accessKeyId;
 
-      config.Bucket = config.Bucket || vsmCreds.Bucket || "sc-voice-vsm";
+      config.Bucket = config.Bucket || awsCreds.Bucket || "sc-voice-vsm";
       sayAgain.Bucket = "say-again.sc-voice";
     }
 

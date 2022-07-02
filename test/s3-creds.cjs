@@ -9,7 +9,7 @@ typeof describe === "function" &&
     const { AwsConfig } = require("say-again");
     const S3Creds = require("../src/s3-creds.cjs");
     const LOCAL = path.join(__dirname, "..", "local");
-    const TESTCONFIG = path.join(__dirname, "data", "vsm-s3.json");
+    const TESTCONFIG = path.join(__dirname, "data", "aws-creds.json");
     this.timeout(10 * 1000);
 
     it("default ctor", function () {
