@@ -280,7 +280,7 @@ typeof describe === "function" &&
 
       await scv.close();
     })
-    it("TESTTESTGET /scv/search/:pattern/:lang", async()=>{
+    it("GET /scv/search/:pattern/:lang", async()=>{
       let scv = await testServer();
       let pattern = encodeURI(`wurzel des leidens`);
       let lang = 'de';

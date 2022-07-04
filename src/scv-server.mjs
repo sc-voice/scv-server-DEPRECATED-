@@ -30,7 +30,7 @@ export default class ScvServer extends RestApi {
     super(Object.assign({
       name: opts.name || "scv",
     }, opts));
-    logger.logInstance(this)
+    //logger.logInstance(this); // RestApi is a logger
 
     // configuration
     this.appDir = opts.appDir || APP_DIR;

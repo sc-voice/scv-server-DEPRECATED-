@@ -33,6 +33,9 @@
       sayAgain.Bucket = "say-again.sc-voice";
     }
 
+    async write() {
+    }
+
     obfuscate(s) {
       if (s == null) {
         return "(n/a)";

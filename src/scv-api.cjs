@@ -15,6 +15,7 @@
   const AudioUrls = require("./audio-urls.cjs");
   const SoundStore = require("./sound-store.cjs");
   const SuttaStore = require("./sutta-store.cjs");
+  const S3Creds = require("./s3-creds.cjs");
 
   const LOCAL = path.join(__dirname, "../local");
   const LANG_MAP = {
@@ -148,6 +149,27 @@ TODO*/
         throw e;
       }
     }
+
+    requireAdmin(req, res, msg) {
+      var authorization = req.headers.authorization || "";
+      var decoded = jwt.decode(authorization.split(" ")[1]);
+      var { username } = decoded;
+      if (decoded.isAdmin) {
+        this.info(`${msg}:${username} => AUTHORIZED`);
+      } else {
+        res.locals.status = 401;
+        this.warn(`${msg}:${username} => HTTP401 UNAUTHORIZED (ADMIN)`);
+        throw new Error("Admin privilege required");
+      }
+      return true;
+    }
+
+    async getVsmS3Credentials(req, res, next) {
+      this.requireAdmin(req, res, next, "GET vsm/s3-credentials");
+      let creds = new S3Creds();
+      return creds.obfuscated();
+    }
+
   }
 
   module.exports = exports.ScvApi = ScvApi;

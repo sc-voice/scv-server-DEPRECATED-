@@ -6,6 +6,7 @@
   const path = require("path");
   const os = require("os");
   const fs = require("fs");
+  const jwt = require("jsonwebtoken");
   const express = require("express");
   const bodyParser = require("body-parser");
   const logger = require("log-instance").LogInstance.singleton;
@@ -13,14 +14,16 @@
   const { exec } = require("child_process");
   const util = require("util");
   const v8 = require("v8");
+  const JWT_SECRET = `JWT${Math.random()}`;
 
   class RestApi {
     constructor(opts = {}) {
+      logger.logInstance(this);
       let { name="test" } = opts;
       if (typeof name !== "string") {
         throw new Error(`bundle name is required: ${name}`);
       }
-      logger.info(`RestApi.ctor(${name})`);
+      this.info(`RestApi.ctor(${name})`);
       this.name = name;
       this.appDir =
         opts.appDir || 
@@ -40,8 +43,20 @@
       });
     }
 
-    pushState() {
-      logger.warn("RestApi.pushState() ignored (no web socket)");
+    static get JWT_SECRET() { return JWT_SECRET; }
+
+    requireAdmin(req, res, msg) {
+      var authorization = req.headers.authorization || "";
+      var decoded = jwt.decode(authorization.split(" ")[1]) || {};
+      var { username='unidentified-user' } = decoded;
+      if (decoded.isAdmin) {
+        this.info(`${msg}:${username} => AUTHORIZED`);
+      } else {
+        res.status(401);
+        this.warn(`${msg}:${username} => HTTP401 UNAUTHORIZED (ADMIN)`);
+        throw new Error("Admin privilege required");
+      }
+      return true;
     }
 
     taskPromise(name, cbPromise) {

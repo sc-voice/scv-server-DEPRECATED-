@@ -24,16 +24,18 @@
 
     async processRequest(req, res, next) {
       let { method, name, mime, handler } = this;
+      let statusOk = 200;
       try {
         res.type(mime);
         let value = await handler(req, res);
-        res.status(200);
+        res.status(statusOk);
         res.send(value);
       } catch(e) {
         res.type("application/json");
-        res.status(500);
-        this.error('ResourceMethod.processRequest()',
-          method, name, 'HTTP500:', e.message);
+        let { statusCode = statusOk } = res;
+        statusCode === statusOk && res.status(500);
+        this.warn('ResourceMethod.processRequest()',
+          method, name, `HTTP${res.statusCode}:`, e.message);
         res.send({error:e.message});
       }
     }

@@ -20,12 +20,12 @@ typeof describe === "function" &&
     class MockResponse {
       constructor(data, code, type) {
         this.mockData = data;
-        this.mockCode = code;
+        this.statusCode = code;
         this.mockType = type;
       }
 
       send(data) { this.mockData = data; }
-      status(code) { this.mockCode = code; }
+      status(code) { this.statusCode = code; }
       type(t) { this.mockType = t; }
     }
 
@@ -62,16 +62,16 @@ typeof describe === "function" &&
       await rm.processRequest(req,res);
       should.deepEqual(res, new MockResponse(testResponse, 200, mime));
     })
-    it("processRequest() => HTTP500 response", async() => {
+    it("TESTTESTprocessRequest() => HTTP500 response", async() => {
       let name = "testHTTP500";
-      let errMsg = `error-message-${name}`;
+      let errMsg = `${name}-error-message`;
       let method = "get";
       let mime = "text/html";
       let handler = (req, res) => { 
         throw new Error(errMsg); 
       };
       let rm = new ResourceMethod(method, name, handler, mime);
-      rm.logLevel = 'warn';
+      rm.logLevel = 'error';
       let req = {};
       let res = new MockResponse();
       await rm.processRequest(req,res);

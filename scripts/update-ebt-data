@@ -5,8 +5,10 @@ pushd $DIR/.. > /dev/null
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
+cd $DIR/..
+
 mkdir -p local
-pushd local > /dev/null
+cd local
 if [ -e ebt-data ]; then
   echo "$SCRIPT: git pull ebt-data"
   cd ebt-data
@@ -15,6 +17,5 @@ else
   echo "$SCRIPT: git clone ebt-data"
   git clone https://git@github.com/ebt-site/ebt-data; RC=$? || exit $RC
 fi
-popd > /dev/null
 
 echo -e "${SCRIPT}: END `date`"

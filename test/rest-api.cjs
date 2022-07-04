@@ -4,6 +4,7 @@ typeof describe === "function" &&
   describe("rest-api", function () {
     const should = require("should");
     const pkg = require("../package.json");
+    const jwt = require("jsonwebtoken");
     const RestApi = require("../src/rest-api.cjs");
     const supertest = require("supertest");
     const express = require("express");
@@ -15,10 +16,16 @@ typeof describe === "function" &&
     const RbHash = require("../src/rb-hash.cjs");
     const ResourceMethod = require("../src/resource-method.cjs");
     const APPDIR = path.join(__dirname, '..');
+    const LOCAL = path.join(APPDIR, 'local');
     logger.level = "warn";
     function testRb(app, name="test") {
       return app.locals.restApis.filter((ra) => ra.name === name)[0];
     }
+    const TEST_ADMIN = {
+      username: "test-admin",
+      isAdmin: true,
+    };
+
     this.timeout(5 * 1000);
 
     class TestApi extends RestApi {
@@ -32,6 +39,41 @@ typeof describe === "function" &&
       getColor(req, res, next) {
         return { color: "blue" };
       }
+    }
+
+    async function testAuthGet(opts={}) {
+      let {
+        app,
+        url,
+        contentType='application/json', 
+        accept=contentType,
+      } = opts;
+      should(app==null).equal(false);
+      should(url==null).equal(false);
+    
+      var token = jwt.sign(TEST_ADMIN, RestApi.JWT_SECRET);
+      return supertest(app).get(url)
+        .set("Authorization", `Bearer ${token}`)
+        .set('Content-Type', contentType)
+        .set('Accept', accept)
+        .expect('Content-Type', new RegExp(contentType))
+        ;
+    }
+
+    function testAuthPost(opts={}) {
+      let {
+        app,
+        url,
+        data,
+        contentType='application/json', 
+        accept=contentType,
+      } = opts;
+      var token = jwt.sign(TEST_ADMIN, RestApi.JWT_SECRET);
+      return supertest(app).post(url)
+        .set("Authorization", `Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send(data);
     }
 
     function testHandlers(restApi) {
@@ -84,7 +126,7 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("RestApi returns 500 for bad responses", async()=>{
+    it("TESTTESTRestApi returns 500 for bad responses", async()=>{
       class TestApi extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
@@ -103,12 +145,12 @@ typeof describe === "function" &&
       var app = express();
       var tb = (new TestApi("testBadJSON").bindExpress(app));
       let logLevel = logger.logLevel;
-      logger.logLevel = "error";
+      //logger.logLevel = "error";
       try {
         logger.warn("Expected error (BEGIN)");
         let res = await supertest(app) .get("/testBadJSON/bad-json")
-        should(res.statusCode).equal(500);
         should(res.body.error).match(/Converting circular structure to JSON/);
+        should(res.statusCode).equal(500);
       } finally {
         logger.warn("Expected error (END)");
         logger.logLevel = logLevel;
@@ -216,7 +258,7 @@ typeof describe === "function" &&
         .expect('content-type', /utf-8/)
         .expect({tasks:[]});
     });
-    it("POST => HTTP500 response for thrown exception", async()=>{
+    it("TESTTESTPOST => HTTP500 response for thrown exception", async()=>{
       let name = "test500";
       let app = express();
       let ra = new RestApi({ name });
@@ -263,5 +305,58 @@ typeof describe === "function" &&
         var mb = b.space_used_size / 10e6;
         logger.info(`heap used ${mb.toFixed(1)}MB ${b.space_name}`);
       });
+    });
+    it("GET /auth/secret => hello", async()=>{
+      let app = express();
+      let name = "testAuthGet";
+      let ra = new RestApi({name});
+      let theSecret =  {secret: "hello"};
+      let authPath = "auth/secret";
+      var url = `/${name}/${authPath}`;
+      let authMethod = new ResourceMethod("get", authPath, (req,res) => {
+        ra.requireAdmin(req, res, `an-error-message`);
+        return theSecret;
+      });
+      ra.bindExpress(app, [authMethod]);
+
+      // authorized
+      var resAuth = await testAuthGet({url, app});
+      resAuth.statusCode.should.equal(200);
+      should.deepEqual(resAuth.body, theSecret);
+
+      // unauthorized
+      let eCaught;
+      ra.logLevel = 'error';
+      authMethod.logLevel = 'error';
+      let resPublic = await supertest(app).get(url)
+        .expect(401)
+        .expect("content-type", /application\/json/)
+        .expect(/Admin privilege required/)
+        ;
+    });
+    it("TESTTESTPOST /auth/secret => hello", async()=>{
+      let app = express();
+      let name = "testAuthPost";
+      let ra = new RestApi({name});
+      let data =  {secret: "hello"};
+      let authPath = "auth/secret";
+      var url = `/${name}/auth/secret`;
+      let authMethod = new ResourceMethod("post", authPath, (req, res)=>{
+        ra.requireAdmin(req, res, 'an-error-message');
+        return req.body;
+      });
+      ra.bindExpress(app, [authMethod]);
+
+      let resAuth = await testAuthPost({url, app, data});
+      resAuth.statusCode.should.equal(200);
+      should.deepEqual(resAuth.body, data);
+
+      ra.logLevel = 'error';
+      authMethod.logLevel = 'error';
+      let resNoAuth = await supertest(app).post(url).send(data)
+        .expect(401)
+        .expect("content-type", /application\/json/)
+        .expect(/Admin privilege required/)
+        ;
     });
   });
