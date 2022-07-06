@@ -10,7 +10,7 @@ global.__appdir = APP_DIR;
 import compression from "compression";
 import express from "express";
 import favicon from "serve-favicon";
-import jwt from 'express-jwt';
+import { expressjwt as jwt } from 'express-jwt';
 import { logger, } from 'log-instance';
 import pkgScApi from 'suttacentral-api';
 const { ScApi } = pkgScApi;
@@ -108,30 +108,23 @@ export default class ScvServer extends RestApi {
 
   async close() {
     let { httpServer, port } = this;
-    if (httpServer) {
-      if (httpServer.listening) {
-        this.info(`server shutting down (port:${port})`);
-        await new Promise((resolve, reject) => {
-          httpServer.close(()=>resolve());
-        });
-        this.info(`server shutdown completed (port:${port})`);
-        this.httpServer = undefined;
-        portMap[port] = undefined;
-      } else {
-        this.warn(`server is not running on port:${port}`);
-      }
+    if (httpServer  && httpServer.listening) {
+      this.info(`server shutting down (port:${port})`);
+      await new Promise((resolve, reject) => {
+        httpServer.close(()=>resolve());
+      });
+      this.info(`server shutdown completed (port:${port})`);
+      this.httpServer = undefined;
+      portMap[port] = undefined;
     } else {
-      this.warn(`server is not initialized (port:${port})`);
+      this.info(`close() ignored (port:${port})`);
     }
   }
 
   async initialize() {
     let { app, port, scApi, scvApi, name, protocol, distDir } = this;
     if (portMap[port]) {
-      throw new Error([
-        `${name} conflict`,
-        `with ${portMap[port].name}`,
-        `on active port:${port}`].join(' '));
+      throw new Error(`initialize() port conflict with ${name}:${port}`);
     }
     if (this.initialized != null) {
       this.warn(`already initialized on port:${port}`);
@@ -155,11 +148,11 @@ export default class ScvServer extends RestApi {
     });
    
     //TODO app.get('/scv/auth/*',
-        //TODO jwt({secret: ScvApi.JWT_SECRET, algorithms:['HS256']}),
-        //TODO (req, res, next) => {
-            //TODO this.debug(`authenticated path:${req.path}`);
-            //TODO next();
-        //TODO });
+      //TODO jwt({secret: ScvApi.JWT_SECRET, algorithms:['HS256']}),
+      //TODO (req, res, next) => {
+      //TODO this.debug(`authenticated path:${req.path}`);
+      //TODO next();
+    //TODO });
 
     Object.entries({
       "/scv/index.html": "index.html",

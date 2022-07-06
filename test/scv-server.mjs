@@ -7,9 +7,15 @@ const APP_DIR = path.dirname(__dirname);
 import express from "express";
 import bodyParser from "body-parser";
 import supertest from "supertest";
+import jwt from "jsonwebtoken";
 import { logger } from "log-instance";
 import ResourceMethod from '../src/resource-method.cjs';
+import RestApi from '../src/rest-api.cjs';
 import ScvServer from '../src/scv-server.mjs';
+const TEST_ADMIN = {
+  username: "test-admin",
+  isAdmin: true,
+};
 
 logger.logLevel = 'warn';
 
@@ -21,7 +27,7 @@ typeof describe === "function" &&
 
     after(()=>{
       Object.keys(TEST_SERVERS).forEach(port=>{
-        logger.info(`Closing test server on port:${port}`);
+        logger.warn(`after() closing test server on port:${port}`);
         let scv = TEST_SERVERS[port];
         scv.close();
       });
@@ -41,6 +47,7 @@ typeof describe === "function" &&
       if (scv == null) {
         args = Object.assign({port}, args);
         TEST_SERVERS[port] = scv = new ScvServer(args);
+        logger.info(`creating test server port:${port}`);
         should(scv).instanceOf(ScvServer);
         should(await scv.initialize()).equal(scv);
         should(scv).properties({
@@ -54,9 +61,30 @@ typeof describe === "function" &&
         let { httpServer } = scv;
         should(httpServer.address().port).equal(port);
         should(httpServer.listening).equal(true);
+      } else {
+        logger.info(`re-using test server port:${port}`);
       }
       return scv;
     }
+    async function testAuthGet(opts={}) {
+      let {
+        scv,
+        url,
+        contentType='application/json', 
+        accept=contentType,
+      } = opts;
+      should(scv==null).equal(false);
+      should(url==null).equal(false);
+    
+      var token = jwt.sign(TEST_ADMIN, RestApi.JWT_SECRET);
+      return supertest(scv.app).get(url)
+        .set("Authorization", `Bearer ${token}`)
+        .set('Content-Type', contentType)
+        .set('Accept', accept)
+        .expect('Content-Type', new RegExp(contentType))
+        ;
+    }
+
 
     it("default ctor()", async()=>{ 
       let port = 80;
@@ -174,7 +202,7 @@ typeof describe === "function" &&
       let testResponse = { [name]: 'blue' };
       let apiMethod = req => testResponse;
       let rm = new ResourceMethod("get", name, apiMethod);
-      let port = 3001;
+      let port = 3002;
       let resourceMethods = [ rm ];
       let scv = new ScvServer({port, resourceMethods});
       should(scv.resourceMethods).equal(resourceMethods);
@@ -226,13 +254,14 @@ typeof describe === "function" &&
     })
     it("GET port conflict", async()=>{ 
       //logger.logLevel = 'info';
-      let port = 3001;
+      let port = 3003;
       let scv1 = new ScvServer({port});
       let scv2 = new ScvServer({port});
       await scv1.initialize();
       let eCaught;
       try { await scv2.initialize() } catch(e) { eCaught = e; }
-      should(eCaught.message).match(/conflict with.*on active port:3001/);
+      should(eCaught.message).match(new RegExp(
+        `port conflict with scv:${port}`));
       should(ScvServer.portMap).properties({[port]:scv1});
       await scv1.close();
       should(ScvServer.portMap[port]).equal(undefined);
@@ -299,6 +328,21 @@ typeof describe === "function" &&
       ]);
 
       await scv.close();
+    })
+    it("TESTTESTGET /scv/auth/test-secret", async()=>{
+      let name = 'auth/test-secret';
+      let port = 3004;
+      let testResponse = { secret: `${name} secret` };
+      let apiMethod = (req,res) => {
+        scv.requireAdmin(req,res);
+        return testResponse;
+      }
+      let rm = new ResourceMethod("get", name, apiMethod);
+      let resourceMethods = [rm];
+      let scv = await testServer({resourceMethods, port});
+      var url = `/scv/${name}`;
+      var res = await testAuthGet({scv, url});
+      console.log('res.body', res.body, !!scv.httpServer);
     })
 
   });

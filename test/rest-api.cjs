@@ -126,13 +126,15 @@ typeof describe === "function" &&
       var app = express();
       should.throws(() => tb.bindExpress(app));
     });
-    it("TESTTESTRestApi returns 500 for bad responses", async()=>{
+    it("RestApi returns 500 for bad responses", async()=>{
       class TestApi extends RestApi {
         constructor(name, options = {}) {
           super(Object.assign({name}, options));
           let { resourceMethods } = this;
-          resourceMethods.push(new ResourceMethod("get", "bad-json", 
-            (req,res,next)=>this.getBadJson(req,res,next)));
+          this.rm = new ResourceMethod("get", "bad-json", 
+            (req,res,next)=>this.getBadJson(req,res,next));
+          resourceMethods.push(this.rm);
+          this.rm.logLevel = 'error'; // suppress error during test
         }
         getBadJson(req, res, next) {
           var badJson = {
@@ -144,17 +146,9 @@ typeof describe === "function" &&
       }
       var app = express();
       var tb = (new TestApi("testBadJSON").bindExpress(app));
-      let logLevel = logger.logLevel;
-      //logger.logLevel = "error";
-      try {
-        logger.warn("Expected error (BEGIN)");
-        let res = await supertest(app) .get("/testBadJSON/bad-json")
-        should(res.body.error).match(/Converting circular structure to JSON/);
-        should(res.statusCode).equal(500);
-      } finally {
-        logger.warn("Expected error (END)");
-        logger.logLevel = logLevel;
-      }
+      let res = await supertest(app) .get("/testBadJSON/bad-json")
+      should(res.body.error).match(/Converting circular structure to JSON/);
+      should(res.statusCode).equal(500);
     });
     it("diskusage", async () => {
       var execPromise = util.promisify(exec);
@@ -262,22 +256,21 @@ typeof describe === "function" &&
       let name = "test500";
       let app = express();
       let ra = new RestApi({ name });
-      ra.bindExpress(app, testHandlers(ra));
-      let logLevel = logger.logLevel;
-      logger.logLevel = "error";
-      logger.warn("Expected error (BEGIN)");
+      let msg = `${name} expected error`;
+      let rm = new ResourceMethod("post", "throwMe", (req,res)=>{
+        throw new Error(msg);
+      });
+      ra.bindExpress(app, [rm]);
+      rm.logLevel = "error"; // suppress error log 
       let res = await supertest(app)
-        .post(`/${name}/identity`)
+        .post(`/${name}/throwMe`)
         .send({ greeting: "whoa" })
         .expect(500)
         .expect('content-type', /json/)
         .expect('content-type', /utf-8/);
-      logger.warn("Expected error (END)");
-      logger.logLevel = logLevel;
 
       res.body.should.properties("error");
-      res.body.error.should.match(/POST not supported/);
-      res.body.error.should.match(/{"greeting":"whoa"}/);
+      res.body.error.should.match(msg);
     });
     it("kebab(id) => kebab case of id", function () {
       var kebab = (id) =>
