@@ -27,9 +27,11 @@ typeof describe === "function" &&
 
     after(()=>{
       Object.keys(TEST_SERVERS).forEach(port=>{
-        logger.warn(`after() closing test server on port:${port}`);
         let scv = TEST_SERVERS[port];
-        scv.close();
+        if (scv.httpListener) {
+          scv.warn(`after() closing test server on port:${port}`);
+          scv.close();
+        }
       });
     });
 
@@ -326,7 +328,6 @@ typeof describe === "function" &&
       should.deepEqual(results.map(r => r.uid),[
         'sn42.11', 'sn56.21', 'dn16',
       ]);
-
       await scv.close();
     })
     it("TESTTESTGET /scv/auth/test-secret", async()=>{
@@ -342,7 +343,8 @@ typeof describe === "function" &&
       let scv = await testServer({resourceMethods, port});
       var url = `/scv/${name}`;
       var res = await testAuthGet({scv, url});
-      console.log('res.body', res.body, !!scv.httpServer);
+      should.deepEqual(res.body, testResponse);
+      await scv.close();
     })
 
   });
