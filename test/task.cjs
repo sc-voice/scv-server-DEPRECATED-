@@ -107,18 +107,11 @@ typeof describe === "function" &&
       task.error = new Error("test error");
       should(task.isActive).equal(false);
     });
-    it("msActive returns milliseconds of activity", (done) => {
+    it("TESTTESTmsActive returns milliseconds of activity", async() => {
       var task = new Task();
       should(task.msActive).equal(0);
-      setTimeout(() => {
-        try {
-          task.actionsTotal++;
-          should(task.msActive).above(8);
-          should(task.msActive).below(25);
-          done();
-        } catch (e) {
-          done(e);
-        }
-      }, 10);
+      await new Promise(resolve=>setTimeout(resolve, 10));
+      task.actionsTotal++;
+      should(task.msActive).above(8).below(50);
     });
   });

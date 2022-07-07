@@ -45,16 +45,22 @@
 
     static get JWT_SECRET() { return JWT_SECRET; }
 
-    requireAdmin(req, res, msg) {
-      var authorization = req.headers.authorization || "";
-      var decoded = jwt.decode(authorization.split(" ")[1]) || {};
-      var { username='unidentified-user' } = decoded;
+    requireAdmin(req, res) {
+      let authorization = req.headers.authorization || "";
+      let decoded = jwt.decode(authorization.split(" ")[1]) || {};
+      let { username='unidentified-user' } = decoded;
+      let { name } = this;
+      let { method, path } = req;
+      let methodPath = `${method} ${path}`;
+      let msg = `requireAdmin() ${methodPath} user:${username}`;
       if (decoded.isAdmin) {
-        this.info(`${msg}:${username} => AUTHORIZED`);
+        this.info(`${msg}} => authorized)`);
       } else {
         res.status(401);
-        this.warn(`${msg}:${username} => HTTP401 UNAUTHORIZED (ADMIN)`);
-        throw new Error("Admin privilege required");
+        let errMsg = `${msg} => UNAUTHORIZED`;
+        res.send({error:errMsg});
+        this.warn(errMsg);
+        throw new Error(errMsg);
       }
       return true;
     }

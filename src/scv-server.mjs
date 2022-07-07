@@ -17,6 +17,8 @@ const { ScApi } = pkgScApi;
 import RestApi from './rest-api.cjs';
 import ScvApi from './scv-api.cjs';
 import ResourceMethod from './resource-method.cjs';
+import S3Creds from './s3-creds.cjs';
+
 //TBD import ScvApi from "./scv-rest.js";
 
 //TBD import pkgRestApi from "rest-api";
@@ -58,15 +60,20 @@ export default class ScvServer extends RestApi {
 
   static get portMap() { return portMap }
 
-  addResourceMethods() {
+  _addResourceMethods() {
+    let that = this;
     let { resourceMethods, scvApi } = this;
-    resourceMethods.push(new ResourceMethod(
-      "get", "search/:pattern", req=>scvApi.getSearch(req) ));
-    resourceMethods.push(new ResourceMethod(
-      "get", "search/:pattern/:lang", req=>scvApi.getSearch(req) ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "search/:pattern", (req,res)=>scvApi.getSearch(req,res) ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "search/:pattern/:lang", (req,res)=>scvApi.getSearch(req,res) ));
+
+    // authenticated
+    resourceMethods.push(new ResourceMethod( "get", 
+      "auth/aws-creds", (req,res)=>scvApi.getAwsCreds(req,res) ));
 
     resourceMethods.forEach(rm => 
-      this.info('addResourceMethods', rm.method, rm.name));
+      this.info('_addResourceMethods', rm.method, rm.name));
   }
 
   async listenSSL(restBundles=[], sslOpts) {
@@ -108,7 +115,7 @@ export default class ScvServer extends RestApi {
 
   async close() {
     let { httpServer, port } = this;
-    if (httpServer  && httpServer.listening) {
+    if (httpServer && httpServer.listening) {
       this.info(`server shutting down (port:${port})`);
       await new Promise((resolve, reject) => {
         httpServer.close(()=>resolve());
@@ -123,16 +130,14 @@ export default class ScvServer extends RestApi {
 
   async initialize() {
     let { app, port, scApi, scvApi, name, protocol, distDir } = this;
+    if (this.initialized != null) {
+      this.info(`initialize() port:${port} already initialized (ignored)`);
+      return this;
+    }
     if (portMap[port]) {
       throw new Error(`initialize() port conflict with ${name}:${port}`);
     }
-    if (this.initialized != null) {
-      this.warn(`already initialized on port:${port}`);
-      return this;
-    }
     this.initialized = false;
-    this.addResourceMethods();
-    this.bindExpress(app);
 
     app.use(compression());
     app.all('*', function(req, res, next) {
@@ -147,12 +152,17 @@ export default class ScvServer extends RestApi {
         next();
     });
    
-    //TODO app.get('/scv/auth/*',
-      //TODO jwt({secret: ScvApi.JWT_SECRET, algorithms:['HS256']}),
-      //TODO (req, res, next) => {
-      //TODO this.debug(`authenticated path:${req.path}`);
-      //TODO next();
-    //TODO });
+    app.get('/scv/auth/*', (req, res, next) => {
+      try {
+        super.requireAdmin(req, res);
+        this.debug(`${req.path} auth:OK`);
+        next();
+      } catch(e) {
+        this.debug(`${req.path} ${e.message}`);
+      }
+    });
+    this._addResourceMethods();
+    this.bindExpress(app);
 
     Object.entries({
       "/scv/index.html": "index.html",

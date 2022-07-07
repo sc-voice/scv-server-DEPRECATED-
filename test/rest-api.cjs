@@ -252,7 +252,7 @@ typeof describe === "function" &&
         .expect('content-type', /utf-8/)
         .expect({tasks:[]});
     });
-    it("TESTTESTPOST => HTTP500 response for thrown exception", async()=>{
+    it("POST => HTTP500 response for thrown exception", async()=>{
       let name = "test500";
       let app = express();
       let ra = new RestApi({ name });
@@ -307,7 +307,7 @@ typeof describe === "function" &&
       let authPath = "auth/secret";
       var url = `/${name}/${authPath}`;
       let authMethod = new ResourceMethod("get", authPath, (req,res) => {
-        ra.requireAdmin(req, res, `an-error-message`);
+        ra.requireAdmin(req, res);
         return theSecret;
       });
       ra.bindExpress(app, [authMethod]);
@@ -319,37 +319,39 @@ typeof describe === "function" &&
 
       // unauthorized
       let eCaught;
+      let errMsg = `requireAdmin() GET /${authPath} ` +
+        `user:unidentified-user => UNAUTHORIZED`;
       ra.logLevel = 'error';
       authMethod.logLevel = 'error';
       let resPublic = await supertest(app).get(url)
         .expect(401)
         .expect("content-type", /application\/json/)
-        .expect(/Admin privilege required/)
-        ;
+        .expect({ error: errMsg });
     });
-    it("TESTTESTPOST /auth/secret => hello", async()=>{
+    it("POST /auth/secret => hello", async()=>{
       let app = express();
       let name = "testAuthPost";
       let ra = new RestApi({name});
-      let data =  {secret: "hello"};
       let authPath = "auth/secret";
-      var url = `/${name}/auth/secret`;
+      let url = `/${name}/${authPath}`;
       let authMethod = new ResourceMethod("post", authPath, (req, res)=>{
-        ra.requireAdmin(req, res, 'an-error-message');
+        ra.requireAdmin(req, res);
         return req.body;
       });
       ra.bindExpress(app, [authMethod]);
 
+      let data = {secret: "hello"};
       let resAuth = await testAuthPost({url, app, data});
       resAuth.statusCode.should.equal(200);
       should.deepEqual(resAuth.body, data);
 
       ra.logLevel = 'error';
       authMethod.logLevel = 'error';
+      let errMsg = `requireAdmin() POST /${authPath} ` +
+        `user:unidentified-user => UNAUTHORIZED`;
       let resNoAuth = await supertest(app).post(url).send(data)
         .expect(401)
         .expect("content-type", /application\/json/)
-        .expect(/Admin privilege required/)
-        ;
+        .expect({error:errMsg});
     });
   });

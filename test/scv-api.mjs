@@ -25,32 +25,32 @@ typeof describe === "function" &&
     }
 
     it ("default ctor", ()=>{
-      let rest = new ScvApi();
-      should(rest).properties({
+      let api = new ScvApi();
+      should(api).properties({
         name: 'scv',
         wikiUrl: 'https://github.com/sc-voice/sc-voice/wiki',
         jwtExpires: '1h',
         downloadMap: {},
       });
-      should(rest.mj).instanceOf(MerkleJson);
-      should(rest.soundStore).instanceOf(SoundStore);
+      should(api.mj).instanceOf(MerkleJson);
+      should(api.soundStore).instanceOf(SoundStore);
     });
     it("ScvApi must be initialized", async()=>{
-      let rest = new ScvApi();
-      should(rest.initialized).equal(undefined);
+      let api = new ScvApi();
+      should(api.initialized).equal(undefined);
 
-      let res = await rest.initialize();  // actual initialization
-      should(rest.initialized).equal(true);
+      let res = await api.initialize();  // actual initialization
+      should(api.initialized).equal(true);
 
-      res = await rest.initialize(); // ignored
-      should(rest.initialized).equal(true);
+      res = await api.initialize(); // ignored
+      should(api.initialized).equal(true);
 
-      should(res).equal(rest);
+      should(res).equal(api);
     });
     it("getSearch() => dn7/de", async()=>{
-      let rest = await testScvApi();
+      let api = await testScvApi();
       let params = { lang: 'de', pattern: 'dn7' }; 
-      let res = await rest.getSearch({params, query});
+      let res = await api.getSearch({params, query});
       let { method, results } = res;
       should(results).instanceOf(Array);
       should(results.length).equal(1);
@@ -61,12 +61,12 @@ typeof describe === "function" &&
       should(method).equal('sutta_uid');
     });
     it("getSearch(invalid)", async()=>{
-      let rest = await testScvApi();
+      let api = await testScvApi();
       var eCaught;
 
       try { // Missing pattern
         eCaught = undefined;
-        let res = await rest.getSearch({params,query});
+        let res = await api.getSearch({params,query});
       } catch(e) {
         eCaught = e;
       }
@@ -76,19 +76,19 @@ typeof describe === "function" &&
         eCaught = undefined;
         let params = {pattern: "dn7"};
         let query = {maxResults:'asdf'};
-        let res = await rest.getSearch({params,query});
+        let res = await api.getSearch({params,query});
       } catch(e) {
         eCaught = e;
       }
       should(eCaught.message).match(/expected number for maxResults/i);
     });
     it("getSearch() => root of suffering", async()=>{
-      let rest = await testScvApi();
+      let api = await testScvApi();
       let params = {pattern: "root of suffering"};
       
       { // maxResults: 3
         let query = {maxResults:3};
-        let { method, results } = await rest.getSearch({params,query});
+        let { method, results } = await api.getSearch({params,query});
         should(method).equal('phrase');
         should(results).instanceOf(Array);
         should(results.length).equal(3);
@@ -101,7 +101,7 @@ typeof describe === "function" &&
 
       { // default maxResults
         let query = {};
-        let { method, results } = await rest.getSearch({params,query});
+        let { method, results } = await api.getSearch({params,query});
         should(method).equal('phrase');
         should(results).instanceOf(Array);
         should(results.length).equal(5);
@@ -111,6 +111,18 @@ typeof describe === "function" &&
         ]);
       }
     });
+    it("getAwsCreds() => obfuscated", async()=>{
+      let api = await testScvApi();
+      let creds = await api.getAwsCreds({});
+      let properties = ['accessKeyId', 'secretAccessKey'];
+      should(creds.Bucket).equal('sc-voice-vsm');
+      should(creds.s3).properties({region:'us-west-1'});
+      should(creds.s3).properties(properties);
+      should(creds.s3.accessKeyId.startsWith('*****')).equal(true);
+      should(creds.polly).properties({region:'us-west-1'});
+      should(creds.polly).properties(properties);
+      should(creds.polly.accessKeyId.startsWith('*****')).equal(true);
+    })
   });
 
 /*TODO

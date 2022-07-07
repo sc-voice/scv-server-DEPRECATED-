@@ -16,6 +16,7 @@ const TEST_ADMIN = {
   username: "test-admin",
   isAdmin: true,
 };
+const SHARED_TEST_PORT = 3001;
 
 logger.logLevel = 'warn';
 
@@ -25,14 +26,14 @@ typeof describe === "function" &&
     const TEST_SERVERS = {};
     this.timeout(5*1000);
 
-    after(()=>{
-      Object.keys(TEST_SERVERS).forEach(port=>{
+    after(async() => {
+      let ports = Object.keys(TEST_SERVERS);
+      for (let i = 0; i < ports.length; i++) {
+        let port = ports[i];
         let scv = TEST_SERVERS[port];
-        if (scv.httpListener) {
-          scv.warn(`after() closing test server on port:${port}`);
-          scv.close();
-        }
-      });
+        logger.info(`after() closing test server on port:${port}`);
+        await scv.close();
+      }
     });
 
     function sleep(ms = 600) {
@@ -41,37 +42,42 @@ typeof describe === "function" &&
       return new Promise((r) => setTimeout(() => r(), ms));
     }
 
-    async function testServer(args={}) {
-      let { port, protocol="http" } = args;
-      port = port || (protocol === "https" ? 443 : 3000);
+    async function sharedTestServer() {
+      let port = SHARED_TEST_PORT;
       let scv = TEST_SERVERS[port];
       
       if (scv == null) {
-        args = Object.assign({port}, args);
-        TEST_SERVERS[port] = scv = new ScvServer(args);
         logger.info(`creating test server port:${port}`);
-        should(scv).instanceOf(ScvServer);
-        should(await scv.initialize()).equal(scv);
-        should(scv).properties({
-          initialized:true,
-          port,
-          protocol,
-          apiUrl: 'http://suttacentral.net/api',
-        });
-        let { app } = scv;
-        should(app).not.equal(undefined);
-        let { httpServer } = scv;
-        should(httpServer.address().port).equal(port);
-        should(httpServer.listening).equal(true);
+        TEST_SERVERS[port] = scv = new ScvServer({port});
+        await scv.initialize();
       } else {
         logger.info(`re-using test server port:${port}`);
       }
       return scv;
     }
+    async function testGet(opts={}) {
+      let {
+        scv,
+        url,
+        statusCode=200,
+        contentType='application/json', 
+        accept=contentType,
+      } = opts;
+      should(scv==null).equal(false);
+      should(url==null).equal(false);
+    
+      return supertest(scv.app).get(url)
+        .set('Content-Type', contentType)
+        .set('Accept', accept)
+        .expect(statusCode)
+        .expect('Content-Type', new RegExp(contentType))
+        ;
+    }
     async function testAuthGet(opts={}) {
       let {
         scv,
         url,
+        statusCode=200,
         contentType='application/json', 
         accept=contentType,
       } = opts;
@@ -83,6 +89,7 @@ typeof describe === "function" &&
         .set("Authorization", `Bearer ${token}`)
         .set('Content-Type', contentType)
         .set('Accept', accept)
+        .expect(statusCode)
         .expect('Content-Type', new RegExp(contentType))
         ;
     }
@@ -103,7 +110,7 @@ typeof describe === "function" &&
       });
       should(typeof scv.app).equal('function'); // express instance
     })
-    it("custom ctor()", async()=>{ 
+    it("custom ctor()", async()=>{
       let port = 3000;
       let name = "testCustom";
       let appDir = "testAppDir";
@@ -179,9 +186,25 @@ typeof describe === "function" &&
       should(scv.app).equal(app);
       should(scv.scApi).equal(scApi);
     })
+    it("sharedTestServer", async()=>{
+      let scv = await sharedTestServer();
+      let port = SHARED_TEST_PORT;
+      should(scv).instanceOf(ScvServer);
+      should(await scv.initialize()).equal(scv);
+      should(scv).properties({
+        initialized:true,
+        port,
+        protocol: 'http',
+        apiUrl: 'http://suttacentral.net/api',
+      });
+      should(scv.app).not.equal(undefined);
+      let { httpServer } = scv;
+      should(httpServer.address().port).equal(port);
+      should(httpServer.listening).equal(true);
+    })
     it("ScvServer() => express instance", async()=>{ 
       //logger.logLevel = 'info';
-      let port = 3001;
+      let port = 3000;
       let scv = await new ScvServer({port}).initialize();
       let { app } = scv;
       let testPath = '/testExpress';
@@ -196,7 +219,7 @@ typeof describe === "function" &&
         .expect(200)
         .expect("Content-Type", /json/)
         .expect(testResponse);
-      scv.close();
+      await scv.close(); 
     })
     it("ScvServer() testColor", async()=>{ 
       //logger.logLevel = 'info';
@@ -204,7 +227,7 @@ typeof describe === "function" &&
       let testResponse = { [name]: 'blue' };
       let apiMethod = req => testResponse;
       let rm = new ResourceMethod("get", name, apiMethod);
-      let port = 3002;
+      let port = 3003;
       let resourceMethods = [ rm ];
       let scv = new ScvServer({port, resourceMethods});
       should(scv.resourceMethods).equal(resourceMethods);
@@ -219,14 +242,14 @@ typeof describe === "function" &&
       await scv.close();
     })
     it("GET /favicon", async()=>{ 
-      let scv = await testServer();
+      let scv = await sharedTestServer();
       var res = await supertest(scv.app)
         .get('/favicon.ico')
         .expect(200)
         .expect("Content-Type", /image/)
     })
     it("GET /index.html", async()=>{ 
-      let scv = await testServer();
+      let scv = await sharedTestServer();
       let indexUrl = '/scv/index.html';
       let res = [
         await supertest(scv.app).get(indexUrl)
@@ -243,7 +266,8 @@ typeof describe === "function" &&
     it("GET SSL /index.html", async()=>{ 
       let port = 3443;
       let sslPath = path.join(APP_DIR, 'test', 'ssl');
-      let scv = await testServer({protocol: 'https', port, sslPath});
+      let scv = await new ScvServer({protocol: 'https', port, sslPath});
+      await scv.initialize();
       let certificate = fs.readFileSync(path.join(sslPath, 'server.crt'));
       let privateKey = fs.readFileSync(path.join(sslPath, 'server.key'));
       let indexUrl = '/scv/index.html';
@@ -253,6 +277,7 @@ typeof describe === "function" &&
         .cert(certificate)
         .expect(200)
         .expect("Content-Type", /html/);
+      scv.close();
     })
     it("GET port conflict", async()=>{ 
       //logger.logLevel = 'info';
@@ -272,7 +297,7 @@ typeof describe === "function" &&
       await scv2.close();
     })
     it("GET /scv/search/:pattern", async()=>{
-      let scv = await testServer();
+      let scv = await sharedTestServer();
       let pattern = encodeURI(`root of suffering`);
 
       var maxResults = 5; // the default
@@ -308,11 +333,9 @@ typeof describe === "function" &&
       ]);
       should.deepEqual(results.map(r => r.count),
         [ 5.091, 3.016, 2.006  ]);
-
-      await scv.close();
     })
     it("GET /scv/search/:pattern/:lang", async()=>{
-      let scv = await testServer();
+      let scv = await sharedTestServer();
       let pattern = encodeURI(`wurzel des leidens`);
       let lang = 'de';
       let maxResults = 3; // custom
@@ -328,11 +351,10 @@ typeof describe === "function" &&
       should.deepEqual(results.map(r => r.uid),[
         'sn42.11', 'sn56.21', 'dn16',
       ]);
-      await scv.close();
     })
-    it("TESTTESTGET /scv/auth/test-secret", async()=>{
+    it("GET /scv/auth/test-secret", async()=>{
       let name = 'auth/test-secret';
-      let port = 3004;
+      let port = 3002;
       let testResponse = { secret: `${name} secret` };
       let apiMethod = (req,res) => {
         scv.requireAdmin(req,res);
@@ -340,11 +362,37 @@ typeof describe === "function" &&
       }
       let rm = new ResourceMethod("get", name, apiMethod);
       let resourceMethods = [rm];
-      let scv = await testServer({resourceMethods, port});
+      let scv = await new ScvServer({resourceMethods, port});
+      await scv.initialize();
       var url = `/scv/${name}`;
       var res = await testAuthGet({scv, url});
       should.deepEqual(res.body, testResponse);
       await scv.close();
+    })
+    it("GET /scv/auth/aws-creds", async()=>{
+      let name = 'auth/aws-creds';
+      let scv = await sharedTestServer();
+      var url = `/scv/${name}`;
+
+      // authenticated
+      var res = await testAuthGet({scv, url});
+      let creds = res.body;
+      let properties = ['accessKeyId', 'secretAccessKey'];
+      should(creds.Bucket).equal('sc-voice-vsm');
+      should(creds.s3).properties({region:'us-west-1'});
+      should(creds.s3).properties(properties);
+      should(creds.s3.accessKeyId.startsWith('*****')).equal(true);
+      should(creds.polly).properties({region:'us-west-1'});
+      should(creds.polly).properties(properties);
+      should(creds.polly.accessKeyId.startsWith('*****')).equal(true);
+
+      // not authenticated
+      let errMsg = `requireAdmin() GET /scv/${name} `+
+        `user:unidentified-user => UNAUTHORIZED`;
+      scv.logLevel = "error";
+      let resNoAuth = await supertest(scv.app).get(url)
+        .expect(401)
+        .expect({ error: errMsg });
     })
 
   });

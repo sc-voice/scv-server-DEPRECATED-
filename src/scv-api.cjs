@@ -150,22 +150,7 @@ TODO*/
       }
     }
 
-    requireAdmin(req, res, msg) {
-      var authorization = req.headers.authorization || "";
-      var decoded = jwt.decode(authorization.split(" ")[1]);
-      var { username } = decoded;
-      if (decoded.isAdmin) {
-        this.info(`${msg}:${username} => AUTHORIZED`);
-      } else {
-        res.locals.status = 401;
-        this.warn(`${msg}:${username} => HTTP401 UNAUTHORIZED (ADMIN)`);
-        throw new Error("Admin privilege required");
-      }
-      return true;
-    }
-
-    async getVsmS3Credentials(req, res, next) {
-      this.requireAdmin(req, res, next, "GET vsm/s3-credentials");
+    async getAwsCreds(req, res) {
       let creds = new S3Creds();
       return creds.obfuscated();
     }

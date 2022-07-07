@@ -62,7 +62,7 @@ typeof describe === "function" &&
       await rm.processRequest(req,res);
       should.deepEqual(res, new MockResponse(testResponse, 200, mime));
     })
-    it("TESTTESTprocessRequest() => HTTP500 response", async() => {
+    it("processRequest() => HTTP500 response", async() => {
       let name = "testHTTP500";
       let errMsg = `${name}-error-message`;
       let method = "get";
