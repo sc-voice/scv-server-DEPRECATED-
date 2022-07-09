@@ -187,7 +187,7 @@ typeof describe === "function" &&
       should.deepEqual(pl.stats(), {
         tracks: 12,
         chars: {
-          en: 84692,
+          en: 84695,
           pli: 78920,
         },
         segments: {
@@ -277,6 +277,6 @@ typeof describe === "function" &&
         voices,
         volume: "test-playlist",
       });
-      should(result.signature.guid).match(/e72d5a36f159baf55d437cf978ae09b6/);
+      should(result.signature.guid).match(/138aa18fd821f3622094a2faf97e0c87/);
     });
   });
