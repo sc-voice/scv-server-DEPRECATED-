@@ -18,9 +18,9 @@
     "promise-queue": "^2.2.5",
     "roboto-fontface": "*",
     "say-again": "^0.4.0",
-    "scv-bilara": "^3.39.17",
+    "scv-bilara": "^3.40.1",
     "serve-favicon": "^2.5.0",
-    "suttacentral-api": "^2.2.61",
+    "suttacentral-api": "^2.2.62",
     "vue": "^3.2.37",
     "vuetify": "^3.0.0-beta.0",
     "webfontloader": "^1.0.0"
