@@ -1,21 +1,27 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import AwsCreds from './components/AwsCreds.vue'
-</script>
-
 <template>
-  <img alt="scv-server logo" src="./assets/logo.png" />
-  <AwsCreds msg="AWS Credentials" />
+  <v-app>
+    <v-main>
+      <v-app-bar color="primary" density="compact" flat>
+        <v-app-bar-title> scv-server </v-app-bar-title>
+      </v-app-bar>
+      <AwsCreds/>
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<script>
+import logo from './assets/logo.png'
+import AwsCreds from './components/AwsCreds.vue'
+
+export default {
+  name: 'App',
+
+  components: {
+    AwsCreds,
+  },
+
+  data: () => ({
+    logo,
+  }),
 }
-</style>
+</script>
