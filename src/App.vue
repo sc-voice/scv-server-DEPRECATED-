@@ -1,9 +1,26 @@
 <template>
   <v-app>
     <v-main>
-      <v-app-bar color="primary" density="compact" flat>
-        <v-app-bar-title> scv-server </v-app-bar-title>
+      <v-app-bar color="brown-darken-2" density="compact" flat>
+        <v-app-bar-title > scv-server </v-app-bar-title>
       </v-app-bar>
+      <v-card>
+        <v-card-title> Settings </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row >
+              <v-col cols="2">
+                <v-btn @click="$vuetify.theme.global.name='dark'">
+                  Dark</v-btn>
+              </v-col>
+              <v-col cols="2">
+                <v-btn @click="$vuetify.theme.global.name='light'">
+                  Light</v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-card>
       <AwsCreds/>
     </v-main>
   </v-app>
@@ -22,6 +39,7 @@ export default {
 
   data: () => ({
     logo,
+    aFlag: true,
   }),
 }
 </script>

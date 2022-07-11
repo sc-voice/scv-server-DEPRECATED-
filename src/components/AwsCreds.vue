@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card dark>
     <v-card-title>AWS Credentials</v-card-title>
     <v-card-text>
       (TBD)
