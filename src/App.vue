@@ -21,25 +21,33 @@
           </v-container>
         </v-card-text>
       </v-card>
-      <AwsCreds/>
+      <!--AwsCreds/-->
+      <!--Authenticated/-->
+      <Settings/>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import logo from './assets/logo.png'
-import AwsCreds from './components/AwsCreds.vue'
+//import AwsCreds from './components/AwsCreds.vue'
+//import Authenticated from './components/Authenticated.vue'
+import Settings from './components/Settings.vue'
 
 export default {
   name: 'App',
 
   components: {
-    AwsCreds,
+    //AwsCreds,
+    //Authenticated,
+    Settings,
   },
 
-  data: () => ({
-    logo,
-    aFlag: true,
-  }),
+  data: () => {
+    return { logo, aFlag: true, }
+  },
+  activated: ()=>{
+    console.log('App.activated() $vuetify', this);
+  },
 }
 </script>

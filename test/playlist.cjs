@@ -188,13 +188,13 @@ typeof describe === "function" &&
         tracks: 12,
         chars: {
           en: 84695,
-          pli: 78920,
+          pli: 78866,
         },
         segments: {
           en: 1166,
           pli: 1167,
         },
-        duration: 14505,
+        duration: 14501,
       });
     });
     it("addTrack(sutta_uid, segmentsOrMessage) adds a track", async()=>{
