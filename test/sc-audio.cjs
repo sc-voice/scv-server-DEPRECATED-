@@ -319,7 +319,7 @@ typeof describe === "function" &&
           });
           should(fs.existsSync(audioPath)).equal(true);
           var stats = fs.statSync(audioPath);
-          should(stats.size).above(28000).below(29000);
+          should(stats.size).above(27000).below(29000);
 
           // Pali
           var url = [

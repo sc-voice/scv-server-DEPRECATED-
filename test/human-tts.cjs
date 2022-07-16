@@ -144,6 +144,6 @@ typeof describe === "function" &&
       should(fs.existsSync(result.file)).equal(true);
       var stats = fs.statSync(result.file);
       //should(stats.size).above(56000).below(57000);
-      should(stats.size).above(28000).below(29000);
+      should(stats.size).above(27000).below(29000);
     });
   });
