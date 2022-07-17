@@ -2,6 +2,8 @@
 DIR=`dirname $0`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
+APP=$DIR/..
+
 # abort on errors
 set -e
 
@@ -14,7 +16,7 @@ cd dist
 # if you are deploying to a custom domain
 # echo 'www.example.com' > CNAME
 
-git add dist
+git add .
 git commit -m 'deploy'
 
 # if you are deploying to https://<USERNAME>.github.io
@@ -23,6 +25,5 @@ git commit -m 'deploy'
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:<USERNAME>/<REPO>.git main:gh-pages
 
-cd -
-
-git subtree push --prefix dist origin gh-pages
+pwd
+git subtree push --prefix ../dist origin gh-pages
