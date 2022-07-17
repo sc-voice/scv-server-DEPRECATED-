@@ -4,20 +4,16 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 APP=$DIR/..
 
-# abort on errors
-set -e
-
 # build
 npm run build
 
-# navigate into the build output directory
-cd dist
 
 # if you are deploying to a custom domain
 # echo 'www.example.com' > CNAME
 
+echo "$SCRIPT: adding changed files"
 git add .
-git commit -m 'deploy'
+git commit -m "$SCRIPT: committing dist"
 
 # if you are deploying to https://<USERNAME>.github.io
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git main
@@ -26,4 +22,5 @@ git commit -m 'deploy'
 # git push -f git@github.com:<USERNAME>/<REPO>.git main:gh-pages
 
 pwd
-git subtree push --prefix ../dist origin gh-pages
+echo "$SCRIPT: pushing dist..."
+git subtree push --prefix dist origin gh-pages
