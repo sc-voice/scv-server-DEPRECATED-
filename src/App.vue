@@ -3,9 +3,15 @@
     <v-main>
       <v-app-bar color="brown-darken-2" density="compact" flat>
         <v-app-bar-title > scv-server </v-app-bar-title>
+        <v-spacer/>
+        <Settings/>
       </v-app-bar>
-      <Search/>
-      <Settings/>
+      <v-card>
+        <v-card-title>REST API Endpoints</v-card-title>
+        <v-expansion-panels>
+          <Search/>
+        </v-expansion-panels>
+      </v-card>
     </v-main>
   </v-app>
 </template>
@@ -31,6 +37,8 @@ export default {
     return { 
       logo, 
     }
+  },
+  methods: {
   },
 }
 </script>
