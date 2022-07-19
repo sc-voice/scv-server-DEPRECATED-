@@ -1,0 +1,15 @@
+import { defineStore } from 'pinia'
+
+export const useSettingsStore = defineStore('settings', {
+  state: ()=>({
+    theme: 'dark',
+    serverUrl: 'https://voice.suttacentral.net/scv',
+  }),
+  actions: {
+    setTheme(value) {
+      this.theme = value === 'light' ? value : 'dark';
+      console.log("settings-store.setTheme", value, Object.keys(this));
+    },
+  },
+
+})

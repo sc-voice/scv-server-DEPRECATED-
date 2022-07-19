@@ -17,25 +17,45 @@
           <v-list-item>
             <v-list-item-header>
               <v-list-item-title>
-                Theme
+                Server Endpoint
               </v-list-item-title>
               <v-list-item-subtitle>
-                <v-collection>
-                  <v-row>
-                    <v-col cols="6">
+                <v-container>
+                  <v-row dense>
+                    <v-col >
+                      <v-select v-model="settings.serverUrl" :items="servers" 
+                        :hint='settings.serverUrl'
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-list-item-subtitle>
+            </v-list-item-header>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-header>
+              <v-list-item-title>
+                Theme 
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                <v-container fluid>
+                  <v-row dense>
+                    <v-col cols="4">
                       <v-btn variant="outlined" 
-                        @click="$vuetify.theme.global.name='dark'">
+                        :disabled="settings.theme==='dark'"
+                        @click="settings.setTheme('dark')">
                         Dark
                       </v-btn>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col cols="4">
                       <v-btn variant="outlined" 
-                        @click="$vuetify.theme.global.name='light'">
+                        :disabled="settings.theme==='light'"
+                        @click="settings.setTheme('light')">
                         Light
                       </v-btn>
                     </v-col>
                   </v-row>
-                </v-collection>
+                </v-container>
               </v-list-item-subtitle>
             </v-list-item-header>
           </v-list-item>
@@ -45,22 +65,24 @@
   <!--/v-row-->
 </template>
 
-<script>
-const TODO = 1
-import * as VuetifyMod from "vuetify";
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+import { useSettingsStore } from "../stores/settings";
 
-export default {
-  name: 'Settings',
-  data: () => ({
-    dialog: false,
-  }),
-  methods: {
-  },
-  mounted() {
-  },
-  components: {
-  },
-}
+const dialog = ref(false);
+const settings = useSettingsStore();
+const servers = [{
+  title: 'voice.suttacentral.net',
+  value: 'https://voice.suttacentral.net/scv',
+},{
+  title: 'Linode scv-s2',
+  value: 'https://45.79.140.204/scv',
+}];
+
+onMounted(()=>{
+  console.log('Settings.mounted() settings', settings);
+});
+
 </script>
 
 <style scoped>

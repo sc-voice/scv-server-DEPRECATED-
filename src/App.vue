@@ -16,29 +16,39 @@
   </v-app>
 </template>
 
-<script>
-import logo from './assets/logo.png'
+<script setup>
+import * as LOGO from './assets/logo.png'
 //import AwsCreds from './components/AwsCreds.vue'
 //import Authenticated from './components/Authenticated.vue'
 import Settings from './components/Settings.vue'
+import { useSettingsStore } from './stores/settings'
 import Search from './components/Search.vue'
+import { onMounted, getCurrentInstance} from 'vue'
+import * as vue from 'vue'
 
-export default {
-  name: 'App',
+const logo = LOGO;
+const vuetify = null;
 
-  components: {
-    //AwsCreds,
-    //Authenticated,
-    Search,
-    Settings,
-  },
+//onMounted((obj)=>{
+  //let { $vuetify } = vue.prototype;
+//});
 
-  data: () => {
-    return { 
-      logo, 
-    }
-  },
-  methods: {
-  },
-}
+
+</script>
+<script>
+  export default {
+    data: ()=>({
+      vuetify: undefined,
+      settings: useSettingsStore(),
+      unsubscribe: undefined,
+    }),
+    mounted() {
+      let { $vuetify, settings } = this;
+      this.vuetify = $vuetify;
+      this.unsubscribe = settings.$subscribe((mutation, state) => {
+        $vuetify.theme.global.name = settings.theme;
+      });
+      console.log('Settings.mounted() subscribe', $vuetify);
+    },
+  }
 </script>

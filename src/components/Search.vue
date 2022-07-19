@@ -17,7 +17,7 @@
               hint="Required"
               placeholder="Enter sutta id or search text">
             </v-text-field>
-            <v-text-field v-model="lang" 
+            <v-text-field v-model="settings.lang" 
               clearable density="compact" variant="underlined"
               label="lang" 
               @click:append="onSearch"
@@ -28,7 +28,7 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <pre v-if="search" color="primary">{{url}}</pre>
+        <a v-if="search" :href="url" target="_blank">{{url}}</a>
         <v-progress-linear v-if="loading"
           indeterminate color="white" class="mb-0"/>
         <v-row v-if="results">
@@ -44,64 +44,55 @@
   </v-expansion-panel>
 </template>
 
-<script>
-export default {
-  name: 'Search',
+<script setup>
+  import { ref, computed, onMounted } from 'vue';
+  import { useSettingsStore } from "../stores/settings";
 
-  components: {
-  },
+  const search = ref('');
+  const loading = ref(false);
+  const results = ref(undefined);
+  const settings = useSettingsStore(); 
 
-  data: () => {
-    return { 
-      search: '',
-      lang: '',
-      loading: false,
-      results: undefined,
-    }
-  },
-  mounted: ()=>{ 
+  const url = computed(()=>{
+    let pattern = search.value && search.value.toLowerCase().trim();
+    let url = [
+      settings.serverUrl,
+      `search`,
+      encodeURIComponent(pattern),
+    ].join('/');
+    return settings.lang ?  `${url}/${lang}` : url;
+  })
+
+  onMounted(()=>{
     console.log("Search.mounted()");
-  },
-  methods: {
-    onSearchCleared(evt) {
-      this.results = undefined;
-    },
-    async onSearch(evt) {
-      let res;
-      try {
-        let { url } = this;
-        console.log('onSearch() url:', url);
-        this.results = undefined;
-        this.loading = true;
-        res = await fetch(url);
-        this.results = res.ok
-          ? await res.json()
-          : res;
-      } catch(e) {
-        console.log("onSearch() ERROR:", res, e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    onSearchKey(evt) {
-      if (evt.code === "Enter") {
-        this.search && this.onSearch(evt);
-        evt.preventDefault();
-      }
-    },
-  },
-  computed: {
-    url() {
-      let { search, lang } = this;
-      let pattern = search && search.toLowerCase().trim();
-      let url = [
-        `https://voice.suttacentral.net`,
-        `scv`,
-        `search`,
-        encodeURIComponent(pattern),
-      ].join('/');
-      return lang ?  `${url}/${lang}` : url;
+  })
+
+  function onSearchCleared(evt) {
+    results.value = undefined;
+  }
+
+  async function onSearch(evt) {
+    let res;
+    try {
+      console.log('onSearch() url:', url.value);
+      results.value = undefined;
+      loading.value = true;
+      res = await fetch(url.value);
+      results.value = res.ok
+        ? await res.json()
+        : res;
+    } catch(e) {
+      console.error("onSearch() ERROR:", res, e);
+    } finally {
+      loading.value = false;
     }
-  },
-}
+  }
+
+  function onSearchKey(evt) {
+    if (evt.code === "Enter") {
+      search && onSearch(evt);
+      evt.preventDefault();
+    }
+  }
+
 </script>
