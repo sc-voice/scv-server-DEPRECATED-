@@ -4,12 +4,10 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 APP=$DIR/..
 
-echo "$SCRIPT: pulling dist..."
-git subtree pull --prefix dist origin gh-pages
-RC=$?; if [ "$RC" != "0" ]; then
-  echo "FAILED: git subtree pull --prefix dist origin gh-pages"
- exit
-fi
+set -e
 
-echo "$SCRIPT: pulling dist..."
+echo "$SCRIPT: git subtree pull --prefix dist origin gh-pages"
+git subtree pull --prefix dist origin gh-pages
+
+echo "$SCRIPT: vite build"
 vite build

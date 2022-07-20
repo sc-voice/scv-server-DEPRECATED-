@@ -4,8 +4,7 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 APP=$DIR/..
 
-echo "$SCRIPT: pulling dist..."
-git subtree pull --prefix dist origin gh-pages
+set -e
 
 # build
 npm run build
