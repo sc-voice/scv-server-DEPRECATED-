@@ -40,7 +40,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite preview",
-    "build": "vite build",
+    "build": "scripts/build.sh",
     "preview": "vite preview",
     "deploy": "scripts/deploy.sh",
     "aws-creds": "node scripts/aws-creds.mjs",
