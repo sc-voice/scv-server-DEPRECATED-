@@ -4,12 +4,11 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 APP=$DIR/..
 
+echo "$SCRIPT: pulling dist..."
+git subtree pull --prefix dist origin gh-pages
+
 # build
 npm run build
-
-
-# if you are deploying to a custom domain
-# echo 'www.example.com' > CNAME
 
 echo "$SCRIPT: adding changed files"
 git add .
