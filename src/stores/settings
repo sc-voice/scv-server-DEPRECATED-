@@ -1,14 +1,33 @@
 import { defineStore } from 'pinia'
 
+const SERVERS = [{
+  title: 'voice.suttacentral.net (AWS)',
+  value: 'https://voice.suttacentral.net/scv',
+},{
+  title: 's2.sc-voice.net (Linode)',
+  value: 'https://s2.sc-voice.net/scv',
+},{
+  title: 'localhost:3000',
+  value: 'http://127.0.0.1:3000/scv',
+}];
+
 export const useSettingsStore = defineStore('settings', {
   state: ()=>({
     theme: 'dark',
-    serverUrl: 'https://voice.suttacentral.net/scv',
+    serverUrl: SERVERS[0].value,
   }),
   actions: {
     setTheme(value) {
       this.theme = value === 'light' ? value : 'dark';
       console.log("settings-store.setTheme", value, Object.keys(this));
+    },
+  },
+  getters: {
+    servers: (state)=>SERVERS,
+    server: (state)=>{
+      return SERVERS.reduce((a,v) => {
+        return v.value === state.serverUrl ? v : a;
+      }, "unknown");
     },
   },
 

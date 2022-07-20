@@ -17,7 +17,7 @@
           <v-list-item>
             <v-list-item-header>
               <v-list-item-title>
-                Server Endpoint
+                Server
               </v-list-item-title>
               <v-list-item-subtitle>
                 <v-container>
@@ -71,13 +71,7 @@ import { useSettingsStore } from "../stores/settings";
 
 const dialog = ref(false);
 const settings = useSettingsStore();
-const servers = [{
-  title: 'voice.suttacentral.net',
-  value: 'https://voice.suttacentral.net/scv',
-},{
-  title: 'Linode scv-s2',
-  value: 'https://45.79.140.204/scv',
-}];
+const servers = settings.servers;
 
 onMounted(()=>{
   console.log('Settings.mounted() settings', settings);

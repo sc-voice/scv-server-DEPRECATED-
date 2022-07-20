@@ -167,6 +167,7 @@ export default class ScvServer extends RestApi {
     Object.entries({
       "/scv/index.html": "index.html",
       "/scv/img": "img",
+      "/assets": "assets",
       "/audio": "audio",
       "/css": "css",
       "/fonts": "fonts",

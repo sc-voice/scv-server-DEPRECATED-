@@ -7,7 +7,9 @@
         <Settings/>
       </v-app-bar>
       <v-card>
-        <v-card-title>REST API Endpoints</v-card-title>
+        <v-card-title> 
+          REST API Endpoints: {{settings.server.title}}
+        </v-card-title>
         <v-expansion-panels>
           <Search/>
         </v-expansion-panels>
@@ -23,28 +25,20 @@ import * as LOGO from './assets/logo.png'
 import Settings from './components/Settings.vue'
 import { useSettingsStore } from './stores/settings'
 import Search from './components/Search.vue'
-import { onMounted, getCurrentInstance} from 'vue'
+import { onMounted, } from 'vue'
 import * as vue from 'vue'
 
 const logo = LOGO;
-const vuetify = null;
-
-//onMounted((obj)=>{
-  //let { $vuetify } = vue.prototype;
-//});
-
 
 </script>
 <script>
   export default {
     data: ()=>({
-      vuetify: undefined,
       settings: useSettingsStore(),
       unsubscribe: undefined,
     }),
     mounted() {
       let { $vuetify, settings } = this;
-      this.vuetify = $vuetify;
       this.unsubscribe = settings.$subscribe((mutation, state) => {
         $vuetify.theme.global.name = settings.theme;
       });
