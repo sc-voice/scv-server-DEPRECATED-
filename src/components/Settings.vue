@@ -23,7 +23,7 @@
                 <v-container>
                   <v-row dense>
                     <v-col >
-                      <v-select v-model="settings.serverUrl" :items="servers" 
+                      <v-select v-model="settings.serverUrl" :items="servers()" 
                         :hint='settings.serverUrl'
                       />
                     </v-col>
@@ -71,10 +71,17 @@ import { useSettingsStore } from "../stores/settings";
 
 const dialog = ref(false);
 const settings = useSettingsStore();
-const servers = settings.servers;
+const host = ref(undefined);
+
+function servers() {
+  return settings.servers.filter(s => {
+    return host.value.startsWith("localhost") || !/localhost/.test(s);
+  });
+}
 
 onMounted(()=>{
   console.log('Settings.mounted() settings', settings);
+  host.value = window.location.host;
 });
 
 </script>

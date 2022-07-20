@@ -8,14 +8,13 @@ const SERVERS = [{
   value: 'https://s2.sc-voice.net/scv',
 },{
   title: 'localhost:3000',
-  value: 'http://127.0.0.1:3000/scv',
+  value: 'http://localhost:3000/scv',
 }];
 
 export const useSettingsStore = defineStore('settings', {
   state: ()=>({
     theme: 'dark',
     serverUrl: SERVERS[0].value,
-    pathname: window.location.pathname,
   }),
   actions: {
     setTheme(value) {

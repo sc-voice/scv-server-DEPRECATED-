@@ -82,7 +82,7 @@
         ? await res.json()
         : res;
     } catch(e) {
-      console.error("onSearch() ERROR:", e);
+      console.error("onSearch() ERROR:", res, e);
       results.value = `ERROR: ${url.value} ${e.message}`;
     } finally {
       loading.value = false;
