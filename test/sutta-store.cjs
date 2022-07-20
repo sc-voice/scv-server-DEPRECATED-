@@ -820,7 +820,7 @@ typeof describe === "function" &&
       //should.deepEqual(ids.slice(0,3), KNSTART);
       //should.deepEqual(ids.slice(ids.length-3,ids.length), KNEND);
     });
-    it("search('sn12.3') returns Deutsch", async () => {
+    it("TESTTESTsearch('sn12.3') returns Deutsch", async () => {
       var voice = Voice.createVoice("Amy");
       var scApi = await new ScApi().initialize();
       var suttaFactory = new SuttaFactory({
@@ -869,7 +869,7 @@ typeof describe === "function" &&
         should(sutta.author_uid).equal("sabbamitta");
         should.deepEqual(sutta.segments[0], {
           matched: true,
-          de: "Verbundene Lehrreden 12 ",
+          de: "Verbundene Lehrreden 12",
           en: "Linked Discourses 12.3",
           pli: "Saṁyutta Nikāya 12.3 ",
           scid: "sn12.3:0.1",
@@ -878,7 +878,7 @@ typeof describe === "function" &&
         var sections = sutta.sections;
         should.deepEqual(sections[0].segments[0], {
           matched: true,
-          de: "Verbundene Lehrreden 12 ",
+          de: "Verbundene Lehrreden 12",
           en: "Linked Discourses 12.3",
           pli: "Saṁyutta Nikāya 12.3 ",
           scid: "sn12.3:0.1",

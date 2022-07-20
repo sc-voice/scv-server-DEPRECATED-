@@ -202,7 +202,7 @@ typeof describe === "function" &&
       should(httpServer.address().port).equal(port);
       should(httpServer.listening).equal(true);
     })
-    it("ScvServer() => express instance", async()=>{ 
+    it("TESTTESTScvServer() => express instance", async()=>{ 
       //logger.logLevel = 'info';
       let port = 3000;
       let scv = await new ScvServer({port}).initialize();
