@@ -9,6 +9,7 @@
       <v-card>
         <v-card-title> 
           REST API Endpoints: {{settings.server.title}}
+          {{settings.pathname}}
         </v-card-title>
         <v-expansion-panels>
           <Search/>

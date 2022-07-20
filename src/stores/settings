@@ -15,6 +15,7 @@ export const useSettingsStore = defineStore('settings', {
   state: ()=>({
     theme: 'dark',
     serverUrl: SERVERS[0].value,
+    pathname: window.location.pathname,
   }),
   actions: {
     setTheme(value) {
@@ -23,7 +24,9 @@ export const useSettingsStore = defineStore('settings', {
     },
   },
   getters: {
-    servers: (state)=>SERVERS,
+    servers: (state)=>{ 
+      return SERVERS;
+    },
     server: (state)=>{
       return SERVERS.reduce((a,v) => {
         return v.value === state.serverUrl ? v : a;
