@@ -18,7 +18,8 @@ import { en, de } from 'vuetify/locale'
 //NEXT })
 
 // Vuetify
-import { createVuetify } from 'vuetify'
+import { createVuetify, } from "vuetify"
+
 //NEXT import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
 const vuetify = createVuetify({
   theme: {

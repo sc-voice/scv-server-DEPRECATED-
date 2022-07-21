@@ -40,23 +40,20 @@
               <v-list-item-subtitle>
                 <v-container fluid>
                   <v-row dense>
-                    <v-col cols="4">
-                      <v-btn variant="outlined" 
-                        :disabled="settings.theme==='dark'"
-                        @click="settings.setTheme('dark')">
-                        Dark
-                      </v-btn>
-                    </v-col>
-                    <v-col cols="4">
-                      <v-btn variant="outlined" 
-                        :disabled="settings.theme==='light'"
-                        @click="settings.setTheme('light')">
-                        Light
-                      </v-btn>
+                    <v-col>
+                      <v-select v-model="settings.theme" :items="themes" />
                     </v-col>
                   </v-row>
                 </v-container>
               </v-list-item-subtitle>
+            </v-list-item-header>
+          </v-list-item>
+          <v-divider />
+          <v-list-item>
+            <v-list-item-header>
+              <v-btn @click="resetDefaults" variant="outlined" >
+                Restore Defaults
+              </v-btn>
             </v-list-item-header>
           </v-list-item>
         </v-list>
@@ -73,15 +70,28 @@ const dialog = ref(false);
 const settings = useSettingsStore();
 const host = ref(undefined);
 
+const themes = [{
+  title: "Dark",
+  value: "dark",
+},{
+  title: "Light",
+  value: "light",
+}]
+
 function servers() {
   return settings.servers.filter(s => {
     return host.value.startsWith("localhost") || !/localhost/.test(s);
   });
 }
 
+function resetDefaults() {
+  settings.clear();
+  console.log("Settings.resetDefaults()", settings);
+}
+
 onMounted(()=>{
-  console.log('Settings.mounted() settings', settings);
   host.value = window.location.host;
+  console.log('Settings.mounted() settings:', settings);
 });
 
 </script>

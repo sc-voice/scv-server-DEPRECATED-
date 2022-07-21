@@ -6,11 +6,21 @@
         <v-spacer/>
         <Settings/>
       </v-app-bar>
-      <v-card>
+      <v-progress-linear v-if="volatile.waiting"
+        indeterminate color="secondary" class="mb-0"/>
+      <v-alert v-if="!settings.isLocalStorage" type="warning">
+        This site requires localStorage for preferences.
+        <v-btn @click="allowLocalStorage" dark>
+          Allow
+        </v-btn>
+      </v-alert>
+      <v-card v-if="settings.isLocalStorage">
         <v-card-title> 
-          REST API Endpoints: {{settings.server.title}}
-          {{settings.pathname}}
+          {{settings.server.title}}
         </v-card-title>
+        <v-card-subtitle> 
+          REST API Endpoints
+        </v-card-subtitle>
         <v-expansion-panels>
           <Search/>
         </v-expansion-panels>
@@ -20,30 +30,38 @@
 </template>
 
 <script setup>
-import * as LOGO from './assets/logo.png'
 //import AwsCreds from './components/AwsCreds.vue'
 //import Authenticated from './components/Authenticated.vue'
 import Settings from './components/Settings.vue'
 import { useSettingsStore } from './stores/settings'
+import { useVolatileStore } from './stores/volatile'
 import Search from './components/Search.vue'
 import { onMounted, } from 'vue'
 import * as vue from 'vue'
-
-const logo = LOGO;
 
 </script>
 <script>
   export default {
     data: ()=>({
       settings: useSettingsStore(),
+      volatile: useVolatileStore(),
       unsubscribe: undefined,
     }),
+    methods: {
+      allowLocalStorage() {
+        let { settings } = this;
+        settings.saveSettings();
+        console.log("allowLocalStorage()", settings);
+      },
+    },
     mounted() {
-      let { $vuetify, settings } = this;
+      let { $vuetify, settings, } = this;
+      $vuetify.theme.global.name = settings.theme === 'dark' ? 'dark' : 'light';;
       this.unsubscribe = settings.$subscribe((mutation, state) => {
-        $vuetify.theme.global.name = settings.theme;
+        $vuetify.theme.global.name = settings.theme === 'dark' ? 'dark' : 'light';;
+        console.debug("App.mounted() App.mounted() subscribe =>", {mutation, state});
+        settings.isLocalStorage && settings.saveSettings();
       });
-      console.log('Settings.mounted() subscribe', $vuetify);
     },
   }
 </script>

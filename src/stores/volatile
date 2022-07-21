@@ -1,0 +1,16 @@
+import { defineStore } from 'pinia'
+import Utils from "../utils.mjs";
+
+const INITIAL_STATE = {
+  waiting: false,
+};
+
+export const useVolatileStore = defineStore('volatile', {
+  state: () => {
+    let s = Object.assign({}, INITIAL_STATE);
+    console.debug(`VolatileStore.state() => `, s);
+    return s;
+  },
+  getters: {
+  },
+})

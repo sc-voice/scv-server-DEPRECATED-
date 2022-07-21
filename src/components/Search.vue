@@ -29,8 +29,6 @@
           </v-col>
         </v-row>
         <a v-if="search" :href="url" target="_blank">{{url}}</a>
-        <v-progress-linear v-if="loading"
-          indeterminate color="white" class="mb-0"/>
         <v-row v-if="results">
           <v-col>
             <h3>Search results ({{search}})</h3>
@@ -47,11 +45,12 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue';
   import { useSettingsStore } from "../stores/settings";
+  import { useVolatileStore } from "../stores/volatile";
 
   const search = ref('');
-  const loading = ref(false);
   const results = ref(undefined);
   const settings = useSettingsStore(); 
+  const volatile = useVolatileStore();
 
   const url = computed(()=>{
     let pattern = search.value && search.value.toLowerCase().trim();
@@ -76,7 +75,7 @@
     try {
       console.log('onSearch() url:', url.value);
       results.value = undefined;
-      loading.value = true;
+      volatile.waiting = true;
       res = await fetch(url.value);
       results.value = res.ok
         ? await res.json()
@@ -85,7 +84,7 @@
       console.error("onSearch() ERROR:", res, e);
       results.value = `ERROR: ${url.value} ${e.message}`;
     } finally {
-      loading.value = false;
+      volatile.waiting = false;
     }
   }
 
