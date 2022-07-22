@@ -42,6 +42,7 @@
     "serve": "vite preview",
     "build": "scripts/build.sh",
     "preview": "vite preview",
+    "vite": "vite",
     "deploy": "scripts/deploy.sh",
     "aws-creds": "node scripts/aws-creds.mjs",
     "schedule-action": "scripts/schedule-action",
