@@ -3,7 +3,7 @@
   <!--v-row justify="center"-->
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ props }">
-        <v-btn icon="mdi-cog" v-bind="props" /> 
+        <v-btn v-if="settings.isLocalStorage" icon="mdi-cog" v-bind="props" /> 
       </template>
       <v-card>
         <v-toolbar compact>
@@ -86,6 +86,7 @@ function servers() {
 
 function resetDefaults() {
   settings.clear();
+  dialog.value = false;
   console.log("Settings.resetDefaults()", settings);
 }
 

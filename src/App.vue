@@ -9,7 +9,8 @@
       <v-progress-linear v-if="volatile.waiting"
         indeterminate color="secondary" class="mb-0"/>
       <v-alert v-if="!settings.isLocalStorage" type="warning">
-        This site requires localStorage for preferences.
+        This site requires localStorage/cookies for preferences and performance.
+        Enable settings (store in web browser localStorage/cookies)?
         <v-btn @click="allowLocalStorage" dark>
           Allow
         </v-btn>
