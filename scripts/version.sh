@@ -4,8 +4,6 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 APP=$DIR/..
 set -e
 
-npm version minor
-
-VERSION=` json version < package.json`
+VERSION=`npm version minor`
 
 echo "<template>$VERSION</template>" | tee $APP/src/components/Version.vue
