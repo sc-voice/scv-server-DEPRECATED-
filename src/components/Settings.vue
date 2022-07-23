@@ -7,7 +7,7 @@
       </template>
       <v-card>
         <v-toolbar compact>
-          Settings {{Version}}
+          Settings <Version/>
           <v-spacer/>
           <v-btn icon @click="dialog = false">
             <v-icon>mdi-close</v-icon>
@@ -69,7 +69,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useSettingsStore } from "../stores/settings";
-import { Version } from "../version.mjs";
+import Version from "./Version.vue";
 
 const dialog = ref(false);
 const settings = useSettingsStore();

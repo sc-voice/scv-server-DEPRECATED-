@@ -4,7 +4,6 @@
       <v-app-bar color="brown-darken-2" flat >
         <v-app-bar-title > 
           scv-server 
-          <!-- debug1 -->
           <div class="text-caption" style="margin-top:-5px"> 
             {{settings.server.title}}
           </div>
