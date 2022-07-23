@@ -4,7 +4,14 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 APP=$DIR/..
 
-set -e
+git status | grep "nothing to commit"; RC=$?
+
+set -e # Fail on error
+
+if [ "$RC" != "0" ]; then
+  echo "$SCRIPT: ERROR: local changes have not been pushed"
+  exit 1
+fi
 
 # build
 npm run build
