@@ -38,7 +38,7 @@
     "why-is-node-running": "^2.2.2"
   },
   "scripts": {
-    "version": "scripts/version.sh",
+    "version:minor": "scripts/version.sh",
     "dev": "vite",
     "serve": "vite preview",
     "build": "scripts/build.sh",

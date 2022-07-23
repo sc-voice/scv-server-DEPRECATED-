@@ -6,6 +6,6 @@ set -e
 
 npm version minor
 
-#json version < package.json \
-#  | sed -e 's/.*/<template>&<\/template>/' \
-#  | tee $APP/src/components/Version.vue
+json version < package.json \
+  | sed -e 's/.*/<template>&<\/template>/' \
+  | tee $APP/src/components/Version.vue
