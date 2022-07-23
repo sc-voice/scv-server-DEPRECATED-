@@ -7,3 +7,5 @@ set -e
 VERSION=`npm version minor`
 
 echo "<template>$VERSION</template>" | tee $APP/src/components/Version.vue
+
+git commit -am $VERSION
