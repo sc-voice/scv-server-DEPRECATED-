@@ -4,7 +4,7 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
 APP=$DIR/..
 
-git status | grep "nothing to commit"; RC=$?
+git status | grep "up to date"; RC=$?
 
 set -e # Fail on error
 
