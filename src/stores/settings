@@ -7,9 +7,6 @@ const SERVERS = [{
 },{
   title: 's2.sc-voice.net (Linode)',
   value: 'https://s2.sc-voice.net/scv',
-},{
-  title: 'localhost:3000',
-  value: 'http://localhost:3000/scv',
 }];
 
 const INITIAL_STATE = {
@@ -56,8 +53,14 @@ export const useSettingsStore = defineStore('settings', {
   },
   getters: {
     servers: (state)=>{ 
-      console.log("SettingsStore.servers() localStorage", localStorage);
-      return SERVERS;
+      let servers = SERVERS;
+      if (window.location.host.startsWith("localhost")) {
+        servers.push({
+          title: 'localhost:3000',
+          value: 'http://localhost:3000/scv',
+        });
+      }
+      return servers;
     },
     server: (state)=>{
       return SERVERS.reduce((a,v) => {

@@ -106,13 +106,13 @@ typeof describe === "function" &&
       should(sutta.author_uid).equal("sujato");
       should.deepEqual(sutta.segments[0], {
         matched: true,
-        en: "Verses of the Senior Nuns 16.1",
+        en: "Verses of the Senior Nuns 16.1 ",
         pli: "Therīgāthā 16.1 ",
         scid: "thig16.1:0.1",
       });
       var sections = sutta.sections;
       should.deepEqual(sections[0].segments[0], {
-        en: "Verses of the Senior Nuns 16.1",
+        en: "Verses of the Senior Nuns 16.1 ",
         matched: true,
         pli: "Therīgāthā 16.1 ",
         scid: "thig16.1:0.1",
@@ -187,14 +187,14 @@ typeof describe === "function" &&
       should(sutta.author_uid).equal("sujato");
       should.deepEqual(sutta.segments[0], {
         matched: true,
-        en: "Verses of the Senior Nuns 1.1",
+        en: "Verses of the Senior Nuns 1.1 ",
         pli: "Therīgāthā 1.1 ",
         scid: "thig1.1:0.1",
       });
       var sections = sutta.sections;
       should.deepEqual(sections[0].segments[0], {
         matched: true,
-        en: "Verses of the Senior Nuns 1.1",
+        en: "Verses of the Senior Nuns 1.1 ",
         pli: "Therīgāthā 1.1 ",
         scid: "thig1.1:0.1",
       });
@@ -646,10 +646,10 @@ typeof describe === "function" &&
           should.deepEqual(playlist.stats(), {
             tracks: 4,
             chars: {
-              en: 3120,
+              en: 3122,
               pli: 2408,
             },
-            duration: 489,
+            duration: 490,
             segments: {
               pli: 40,
               en: 38,
@@ -869,8 +869,8 @@ typeof describe === "function" &&
         should(sutta.author_uid).equal("sabbamitta");
         should.deepEqual(sutta.segments[0], {
           matched: true,
-          de: "Verbundene Lehrreden 12",
-          en: "Linked Discourses 12.3",
+          de: "Verbundene Lehrreden 12 ",
+          en: "Linked Discourses 12.3 ",
           pli: "Saṁyutta Nikāya 12.3 ",
           scid: "sn12.3:0.1",
         });
@@ -878,8 +878,8 @@ typeof describe === "function" &&
         var sections = sutta.sections;
         should.deepEqual(sections[0].segments[0], {
           matched: true,
-          de: "Verbundene Lehrreden 12",
-          en: "Linked Discourses 12.3",
+          de: "Verbundene Lehrreden 12 ",
+          en: "Linked Discourses 12.3 ",
           pli: "Saṁyutta Nikāya 12.3 ",
           scid: "sn12.3:0.1",
         });

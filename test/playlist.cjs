@@ -1,5 +1,5 @@
 typeof describe === "function" &&
-  describe("playlist", function () {
+  describe("TESTTESTplaylist", function () {
     const should = require("should");
     const fs = require("fs");
     const { logger } = require("log-instance");
@@ -187,14 +187,14 @@ typeof describe === "function" &&
       should.deepEqual(pl.stats(), {
         tracks: 12,
         chars: {
-          en: 84695,
+          en: 84799,
           pli: 78866,
         },
         segments: {
-          en: 1166,
+          en: 1129,
           pli: 1167,
         },
-        duration: 14501,
+        duration: 14510,
       });
     });
     it("addTrack(sutta_uid, segmentsOrMessage) adds a track", async()=>{
@@ -235,7 +235,7 @@ typeof describe === "function" &&
         voices,
         volume: "test-playlist",
       });
-      should(result.signature.guid).match(/5f6cff6a478700df26c491f92ad89c92/);
+      should(result.signature.guid).match(/2bd755ec79e30d1f12376c8e8e778397/);
     });
     it("speak(opts) adds break between suttas", async () => {
       var factory = await testSuttaFactory();

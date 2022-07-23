@@ -1,8 +1,13 @@
 <template>
   <v-app>
     <v-main>
-      <v-app-bar color="brown-darken-2" density="compact" flat>
-        <v-app-bar-title > scv-server </v-app-bar-title>
+      <v-app-bar color="brown-darken-2" flat >
+        <v-app-bar-title > 
+          scv-server 
+          <div class="text-caption" style="margin-top:-5px"> 
+            {{settings.server.title}}
+          </div>
+        </v-app-bar-title>
         <v-spacer/>
         <Settings/>
       </v-app-bar>
@@ -17,11 +22,8 @@
       </v-alert>
       <v-card v-if="settings.isLocalStorage">
         <v-card-title> 
-          {{settings.server.title}}
-        </v-card-title>
-        <v-card-subtitle> 
           REST API Endpoints
-        </v-card-subtitle>
+        </v-card-title>
         <v-expansion-panels>
           <Search/>
         </v-expansion-panels>
@@ -37,8 +39,15 @@ import Settings from './components/Settings.vue'
 import { useSettingsStore } from './stores/settings'
 import { useVolatileStore } from './stores/volatile'
 import Search from './components/Search.vue'
-import { onMounted, } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as vue from 'vue'
+
+const showMenu = ref(false);
+
+function onMenu(value) {
+  showMenu.value = !showMenu.value;
+  console.log('App.onMenu()', value, showMenu.value);
+}
 
 </script>
 <script>

@@ -6,8 +6,14 @@ APP=$DIR/..
 
 set -e
 
+json version < package.json \
+  | sed -e 's/.*/export const Version = "&"/' \
+  > ../src/version.mjs
+
 echo "$SCRIPT: git subtree pull --prefix dist origin gh-pages"
 git subtree pull --prefix dist origin gh-pages
 
 echo "$SCRIPT: vite build"
 vite build
+
+

@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panel variant="popout">
-    <v-expansion-panel-title>
+    <v-expansion-panel-title expand-icon="mdi-dots-vertical">
       GET /scv/search/:pattern/:lang
     </v-expansion-panel-title>
     <v-expansion-panel-text>

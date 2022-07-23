@@ -100,7 +100,7 @@
               {
                 "scid": "sn42.11:0.1",
                 "pli": "Saṁyutta Nikāya 42.11 ",
-                "en": "Linked Discourses 42.11"
+                "en": "Linked Discourses 42.11 "
               },
               {
                 "scid": "sn42.11:0.2",
@@ -117,7 +117,7 @@
             "prefix": "",
             "values": [],
             "prop": "en",
-            "title": "Linked Discourses 42.11",
+            "title": "Linked Discourses 42.11 ",
             "expandable": false
           },
           {
@@ -399,12 +399,12 @@
         "blurb": "The chief Bhadraka asks the Buddha about the origin and ending of suffering, and the Buddha points out that a loss among Bhadraka’s own community would cause him suffering, due to his attachment."
       },
       "stats": {
-        "text": 3478,
+        "text": 3479,
         "lang": "en",
         "nSegments": 55,
         "nEmptySegments": 1,
         "nSections": 2,
-        "seconds": 340.75927603183607
+        "seconds": 340.8597697131683
       }
     },
     {
@@ -556,12 +556,12 @@
               {
                 "scid": "mn105:2.4",
                 "pli": "“sambahulehi kira bhikkhūhi bhagavato santike aññā byākatā hoti: ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:2.5",
                 "pli": "‘khīṇā jāti, vusitaṁ brahmacariyaṁ, kataṁ karaṇīyaṁ, nāparaṁ itthattāyāti pajānāmā’”ti. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:3.1",
@@ -581,12 +581,12 @@
               {
                 "scid": "mn105:4.3",
                 "pli": "khīṇā jāti, vusitaṁ brahmacariyaṁ, kataṁ karaṇīyaṁ, nāparaṁ itthattāyāti pajānāmā’ti. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:4.4",
                 "pli": "Ye te, bhante, bhikkhū bhagavato santike aññaṁ byākaṁsu: ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:4.5",
@@ -596,12 +596,12 @@
               {
                 "scid": "mn105:5.1",
                 "pli": "“Ye te, sunakkhatta, bhikkhū mama santike aññaṁ byākaṁsu: ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:5.2",
                 "pli": "‘khīṇā jāti, vusitaṁ brahmacariyaṁ, kataṁ karaṇīyaṁ, nāparaṁ itthattāyāti pajānāmā’ti. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:5.3",
@@ -1444,7 +1444,7 @@
               {
                 "scid": "mn105:30.9",
                 "pli": "netaṁ ṭhānaṁ vijjatī”ti. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn105:30.10",
@@ -1590,7 +1590,7 @@
               {
                 "scid": "mn1:0.2",
                 "pli": "Mūlapariyāyasutta ",
-                "en": "The Root of All Things"
+                "en": "The Root of All Things "
               }
             ],
             "type": "Section",
@@ -2140,7 +2140,7 @@
               {
                 "scid": "mn1:26.5",
                 "pli": "Puthujjanavasena paṭhamanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:27.1",
@@ -2295,7 +2295,7 @@
               {
                 "scid": "mn1:50.4",
                 "pli": "Sekkhavasena dutiyanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:51.1",
@@ -2450,7 +2450,7 @@
               {
                 "scid": "mn1:52-74.27",
                 "pli": "Khīṇāsavavasena tatiyanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:75.1",
@@ -2605,7 +2605,7 @@
               {
                 "scid": "mn1:76-98.27",
                 "pli": "Khīṇāsavavasena catutthanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:99.1",
@@ -2760,7 +2760,7 @@
               {
                 "scid": "mn1:100-122.27",
                 "pli": "Khīṇāsavavasena pañcamanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:123.1",
@@ -2915,7 +2915,7 @@
               {
                 "scid": "mn1:124-146.27",
                 "pli": "Khīṇāsavavasena chaṭṭhanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:147.1",
@@ -3070,7 +3070,7 @@
               {
                 "scid": "mn1:148-170.27",
                 "pli": "Tathāgatavasena sattamanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:171.1",
@@ -3247,7 +3247,7 @@
               {
                 "scid": "mn1:172-194.29",
                 "pli": "Tathāgatavasena aṭṭhamanayabhūmiparicchedo niṭṭhito. ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn1:172-194.30",
@@ -3276,12 +3276,12 @@
         "blurb": "The Buddha examines how the notion of a permanent self emerges from the process of perception. A wide range of phenomena are considered, embracing both naturalistic and cosmological dimensions. An unawakened person interprets experience in terms of a self, while those more advanced have the same experiences without attachment."
       },
       "stats": {
-        "text": 14303,
+        "text": 14304,
         "lang": "en",
         "nSegments": 334,
         "nEmptySegments": 9,
         "nSections": 2,
-        "seconds": 1255.2717914185075
+        "seconds": 1255.3477467693156
       }
     },
     {
@@ -3658,7 +3658,7 @@
               {
                 "scid": "mn66:8.4",
                 "pli": "sammā nu kho so, udāyi, vadamāno vadeyyā”ti? ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn66:8.5",
@@ -3733,7 +3733,7 @@
               {
                 "scid": "mn66:10.4",
                 "pli": "sammā nu kho so, udāyi, vadamāno vadeyyā”ti? ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn66:10.5",
@@ -3823,7 +3823,7 @@
               {
                 "scid": "mn66:11.11",
                 "pli": "sammā nu kho so, udāyi, vadamāno vadeyyā”ti? ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn66:11.12",
@@ -3903,7 +3903,7 @@
               {
                 "scid": "mn66:12.9",
                 "pli": "sammā nu kho so, udāyi, vadamāno vadeyyā”ti? ",
-                "en": " "
+                "en": ""
               },
               {
                 "scid": "mn66:12.10",

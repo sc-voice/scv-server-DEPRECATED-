@@ -51,7 +51,7 @@ typeof describe === "function" &&
       var scd = new SuttaDuration();
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 258,
+        text: 266,
         lang: "en",
         nSegments: 9,
         nSections: 2,
@@ -66,7 +66,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 336,
+        text: 345,
         lang: "en",
         nSegments: 9,
         nEmptySegments: 0,
@@ -81,7 +81,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 343,
+        text: 345,
         lang: "en",
         nSegments: 9,
         nEmptySegments: 0,
@@ -96,7 +96,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 721,
+        text: 746,
         lang: "en",
         nSegments: 26,
         nEmptySegments: 1,
@@ -111,7 +111,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 936,
+        text: 938,
         lang: "en",
         nSegments: 20,
         nEmptySegments: 1,
@@ -127,7 +127,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 1081,
+        text: 1082,
         lang: "en",
         nSegments: 23,
         nEmptySegments: 1,
@@ -142,7 +142,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 1783,
+        text: 1823,
         lang: "en",
         nSegments: 48,
         nSections: 2,
@@ -157,7 +157,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 2996,
+        text: 2997,
         lang: "en",
         nSegments: 50,
         nEmptySegments: 4,
@@ -173,7 +173,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 3313,
+        text: 3314,
         lang: "en",
         nSegments: 55,
         nEmptySegments: 1,
@@ -188,7 +188,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 6574,
+        text: 6576,
         lang: "en",
         nSegments: 126,
         nEmptySegments: 26,
@@ -203,7 +203,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 6787,
+        text: 6788,
         lang: "en",
         nSegments: 92,
         nEmptySegments: 1,
@@ -218,7 +218,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 84658,
+        text: 84799,
         lang: "en",
         nSegments: 1167,
         nEmptySegments: 38,
@@ -234,7 +234,7 @@ typeof describe === "function" &&
 
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 14237,
+        text: 14238,
         lang: "en",
         nSegments: 334,
         nSections: 2,

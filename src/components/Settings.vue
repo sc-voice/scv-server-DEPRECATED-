@@ -7,7 +7,7 @@
       </template>
       <v-card>
         <v-toolbar compact>
-          Settings
+          Settings {{Version}}
           <v-spacer/>
           <v-btn icon @click="dialog = false">
             <v-icon>mdi-close</v-icon>
@@ -48,15 +48,19 @@
               </v-list-item-subtitle>
             </v-list-item-header>
           </v-list-item>
-          <v-divider />
-          <v-list-item>
-            <v-list-item-header>
+        </v-list>
+        <v-expansion-panels>
+          <v-expansion-panel >
+            <v-expansion-panel-title expand-icon="mdi-dots-vertical">
+              Advanced
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-btn @click="resetDefaults" variant="outlined" >
                 Restore Defaults
               </v-btn>
-            </v-list-item-header>
-          </v-list-item>
-        </v-list>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-card>
     </v-dialog>
   <!--/v-row-->
@@ -65,6 +69,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useSettingsStore } from "../stores/settings";
+import { Version } from "../version.mjs";
 
 const dialog = ref(false);
 const settings = useSettingsStore();
