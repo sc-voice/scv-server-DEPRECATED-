@@ -5,6 +5,21 @@ import SuttaStore from "../src/sutta-store.cjs";
 
 import { MerkleJson } from "merkle-json";
 
+class MockResponse {
+  constructor(data, code, type) {
+    this.mockData = data;
+    this.statusCode = code;
+    this.mockType = type;
+    this.mockHeaders = {};
+  }
+
+  send(data) { this.mockData = data; }
+  status(code) { this.statusCode = code; }
+  type(t) { this.mockType = t; }
+  set(key, value) { this.mockHeaders[key] = value; }
+}
+
+
 typeof describe === "function" &&
   describe("scv-api", function() {
     this.timeout(5*1000);
@@ -198,7 +213,7 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
-    it("TESTTESTgetPlaySegment() => HumanTts DN33", async()=>{
+    it("getPlaySegment() => HumanTts DN33", async()=>{
       let api = await testScvApi();
       let scid = "dn33:0.1";
       let langTrans = 'en';
@@ -231,7 +246,7 @@ typeof describe === "function" &&
         },
       });
     });
-    it("TESTTESTgetPlaySegment() => Soma", async()=>{
+    it("getPlaySegment() => Soma", async()=>{
       let api = await testScvApi();
       let scid = "thig1.1:1.1"
       let langTrans = 'en';
@@ -250,6 +265,30 @@ typeof describe === "function" &&
           en: '37cedc61727373870e197793e653330d', // Soma
           pli: '4fb90df3760dd54ac4f9f3c31358c8fa',
         },
+      });
+    });
+    it("TESTTESTgetAudio() => Soma", async()=>{
+      let filename = 'test-file.mp3';
+      let guid = '37cedc61727373870e197793e653330d';
+      let sutta_uid = 'thig1.1';
+      let langTrans = 'en';
+      let translator = 'soma';
+      let vnameTrans = 'Amy';
+      let api = await testScvApi();
+      let params = { 
+        filename, guid, sutta_uid, langTrans, translator, vnameTrans,
+      };
+      let query = {};
+      let response = new MockResponse();
+
+      let data = await api.getAudio({params, query}, response);
+      should(data.length).equal(13524); // audio
+      should(response).properties({
+        mockHeaders: {
+          'accept-ranges': 'bytes',
+          'do_stream' : 'true',
+          'Content-disposition': `attachment; filename=${filename}`
+        }
       });
     });
   });

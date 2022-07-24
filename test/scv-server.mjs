@@ -437,5 +437,26 @@ typeof describe === "function" &&
         .expect(401)
         .expect({ error: errMsg });
     })
+    it("TESTTESTGET /scv/audio/:sutta_uid/...", async()=>{
+      let scv = await sharedTestServer();
+      let filename = 'test-file.mp3';
+      let guid = '37cedc61727373870e197793e653330d';
+      let sutta_uid = 'thig1.1';
+      let langTrans = 'en';
+      let translator = 'soma';
+      let vnameTrans = 'Amy';
+      let url = [
+        '/scv/audio',
+        sutta_uid,
+        langTrans,
+        translator,
+        vnameTrans,
+        guid,
+      ].join('/');
+      await supertest(scv.app).get(url)
+        .expect(200)
+        .expect("Content-Type", /audio.mp3/)
+        .expect("Content-Length", "13524");
+    });
 
   });

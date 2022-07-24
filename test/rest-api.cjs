@@ -1,7 +1,7 @@
 const supertest = require("supertest");
 
 typeof describe === "function" &&
-  describe("TESTTESTrest-api", function () {
+  describe("rest-api", function () {
     const should = require("should");
     const pkg = require("../package.json");
     const jwt = require("jsonwebtoken");

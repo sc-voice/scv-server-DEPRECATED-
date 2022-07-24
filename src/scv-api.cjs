@@ -267,6 +267,24 @@ TODO*/
       };
     }
 
+    async getAudio(req, res) {
+      var { 
+        filename, guid, sutta_uid, langTrans, translator, vnameTrans 
+      } = req.params;
+      var volume =
+        !sutta_uid || sutta_uid === "word"
+          ? "play-word"
+          : SoundStore.suttaVolumeName(sutta_uid, langTrans, translator, vnameTrans);
+      var soundOpts = { volume };
+      var filePath = this.soundStore.guidPath(guid, soundOpts);
+      var data = fs.readFileSync(filePath);
+      res.set("accept-ranges", "bytes");
+      res.set("do_stream", "true");
+      filename &&
+        res.set("Content-disposition", "attachment; filename=" + filename);
+
+      return data;
+    }
 
   }
 
@@ -461,30 +479,6 @@ TODO*/
       Object.defineProperty(this, "resourceMethods", {
         value: super.resourceMethods.concat(resourceMethods),
       });
-    }
-
-    async getAudio(req, res, next) {
-      try {
-        var guid = req.params.guid;
-        var { sutta_uid, lang, translator, voice } = req.params;
-        var volume =
-          !sutta_uid || sutta_uid === "word"
-            ? "play-word"
-            : SoundStore.suttaVolumeName(sutta_uid, lang, translator, voice);
-        var soundOpts = { volume };
-        var filePath = this.soundStore.guidPath(guid, soundOpts);
-        var filename = req.params.filename;
-        var data = fs.readFileSync(filePath);
-        res.set("accept-ranges", "bytes");
-        res.set("do_stream", "true");
-        filename &&
-          res.set("Content-disposition", "attachment; filename=" + filename);
-
-        return data;
-      } catch (e) {
-        this.warn(e);
-        throw e;
-      }
     }
 
     async getAudioInfo(req, res, next) {

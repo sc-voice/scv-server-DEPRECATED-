@@ -73,6 +73,15 @@ export default class ScvServer extends RestApi {
     resourceMethods.push(new ResourceMethod( "get", 
       "play/segment/:sutta_uid/:langTrans/:translator/:scid/:vnameTrans/:vnameRoot", 
       (req,res)=>scvApi.getPlaySegment(req,res) ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "audio/:guid",
+      (req,res)=>scvApi.getAudio(req,res), scvApi.audioMIME ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "audio/:guid/:filename",
+      (req,res)=>scvApi.getAudio(req,res), scvApi.audioMIME ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "audio/:sutta_uid/:langTrans/:translator/:vnameTrans/:guid", 
+      (req,res)=>scvApi.getAudio(req,res), scvApi.audioMIME ));
 
     // authenticated
     resourceMethods.push(new ResourceMethod( "get", 
