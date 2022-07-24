@@ -5,7 +5,7 @@
       GET /scv/play/segment/:sutta_uid/:langTrans/:translator/:scid/:vnameTrans
     </v-expansion-panel-title>
     <v-expansion-panel-text>
-      <v-form >
+      <v-form :disabled="volatile.waiting">
         <v-container>
           <v-row centered>
             <v-col >
@@ -19,7 +19,7 @@
                 required
                 placeholder="Enter sutta id (e.g., thig1.1">
               </v-text-field>
-              <v-text-field v-model="langTrans" 
+              <v-text-field v-model="settings.langTrans" 
                 clearable density="compact" variant="underlined"
                 :append-icon="valid ? 'mdi-magnify' : ''"
                 @click:append="onFetch"
@@ -28,7 +28,7 @@
                 required
                 placeholder="Enter two-letter ISO language code">
               </v-text-field>
-              <v-text-field v-model="translator" 
+              <v-text-field v-model="settings.translator" 
                 clearable density="compact" variant="underlined"
                 :append-icon="valid ? 'mdi-magnify' : ''"
                 @click:append="onFetch"
@@ -46,7 +46,7 @@
                 required
                 placeholder='E.g., "thig1.1:1.1"'>
               </v-text-field>
-              <v-text-field v-model="vnameTrans" 
+              <v-text-field v-model="settings.vnameTrans" 
                 clearable density="compact" variant="underlined"
                 :append-icon="valid ? 'mdi-magnify' : ''"
                 @click:append="onFetch"
@@ -80,9 +80,6 @@
 
   const sutta_uid = ref(undefined);
   const scid = ref(undefined);
-  const langTrans = ref(undefined);
-  const translator = ref(undefined);
-  const vnameTrans = ref(undefined);
   const results = ref(undefined);
   const settings = useSettingsStore(); 
   const volatile = useVolatileStore();
@@ -90,9 +87,9 @@
   const valid = computed(()=>{
     return sutta_uid.value != null
       && scid.value != null
-      && langTrans.value != null
-      && translator.value != null
-      && vnameTrans.value != null;
+      && settings.langTrans != null
+      && settings.translator != null
+      && settings.vnameTrans != null;
   })
 
   const url = computed(()=>{
@@ -100,10 +97,10 @@
       settings.serverUrl,
       `play/segment`,
       encodeURIComponent(sutta_uid.value),
-      encodeURIComponent(langTrans.value),
-      encodeURIComponent(translator.value),
+      encodeURIComponent(settings.langTrans),
+      encodeURIComponent(settings.translator),
       encodeURIComponent(scid.value),
-      encodeURIComponent(vnameTrans.value),
+      encodeURIComponent(settings.vnameTrans),
     ].join('/');
     return url;
   })

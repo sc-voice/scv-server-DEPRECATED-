@@ -12,6 +12,9 @@ const SERVERS = [{
 const INITIAL_STATE = {
   theme: 'dark',
   serverUrl: SERVERS[0].value,
+  langTrans: 'en',
+  translator: 'sujato',
+  vnameTrans: 'Amy',
   isLocalStorage: false,
   id: 1,
 };
