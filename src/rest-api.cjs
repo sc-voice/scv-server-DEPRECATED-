@@ -134,7 +134,7 @@
       };
     }
 
-    async getIdentity(req, res, next) {
+    async getIdentity(req, res) {
       try {
         var execPromise = util.promisify(exec);
         var cmd = "df --total -B 1 /";

@@ -123,6 +123,135 @@ typeof describe === "function" &&
       should(creds.polly).properties(properties);
       should(creds.polly.accessKeyId.startsWith('*****')).equal(true);
     })
+    it("getPlaySegment() => mn1:0.1", async()=>{
+      let api = await testScvApi();
+      let scid = "mn1:0.1";
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = 'Matthew';
+      let params = { langTrans, translator, scid, vnameTrans };
+      let query = {};
+      
+      let res = await api.getPlaySegment({params, query});
+      should(res).properties({
+        sutta_uid: 'mn1',
+        scid,
+        langTrans,
+        language: langTrans,
+        translator,
+        title: 'Middle Discourses 1 ',
+        section: 0,
+      });
+      should(res.segment).properties({
+        scid,
+        pli: 'Majjhima Nikāya 1 ',
+        en: 'Middle Discourses 1 ',
+        matched: true,
+        audio: {
+          en: 'c525ba7deccd71378172e4f9cff46904',
+          pli: 'eb2c6cf0626c7a0f422da93a230c4ab7',
+        },
+      });
+    });
+    it("getPlaySegment() => mn1:3.4", async()=>{
+      let api = await testScvApi();
+      let scid = "mn1:3.4";
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = 'Matthew';
+      let params = { langTrans, translator, scid, vnameTrans };
+      let query = {};
+      
+      let res = await api.getPlaySegment({params, query});
+      should(res).properties({
+        sutta_uid: 'mn1',
+        scid,
+        langTrans,
+        language: langTrans,
+        translator,
+        title: 'Middle Discourses 1 ',
+        section: 0,
+      });
+      should(res.segment).properties({
+        scid,
+        pli: 'Taṁ kissa hetu? ',
+        en: 'Why is that? ',
+        matched: true,
+        audio: {
+          en: '3f8a5730048bbfd5db1cf7978b15f99f',
+          pli: '53db7b850e2dae7d90ee0114843f5ac7',
+        },
+      });
+    });
+    it("getPlaySegment() => large segment", async()=>{
+      let api = await testScvApi();
+      let scid = "an2.281-309:1.1";
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = 'Matthew';
+      let params = { langTrans, translator, scid, vnameTrans };
+      let query = {};
+      
+      let res = await api.getPlaySegment({params, query});
+      should.deepEqual(res.segment.audio, {
+        en: 'b7a709a7c565dc2a78a05ed6acada4b5',
+        pli: '93c80a6ed3f7a3a931a451735c59df39',
+      });
+    });
+    it("TESTTESTgetPlaySegment() => HumanTts DN33", async()=>{
+      let api = await testScvApi();
+      let scid = "dn33:0.1";
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = 'sujato_en';
+      let vnameRoot = 'sujato_pli';
+      let params = { langTrans, translator, scid, vnameTrans };
+      let query = {};
+      
+      let res = await api.getPlaySegment({params, query});
+      should(res).properties({
+        sutta_uid: 'dn33',
+        scid,
+        langTrans,
+        translator,
+        title: 'Long Discourses 33 ',
+        section: 0,
+        nSections: 12,
+        vnameTrans,
+        iSegment: 0,
+      });
+      should.deepEqual(res.segment, {
+        scid,
+        pli: 'Dīgha Nikāya 33 ',
+        en: 'Long Discourses 33 ',
+        matched: true,
+        audio: {
+          en: 'b06d3e95cd46714448903fa8bcb12004',
+          pli: '899e4cd12b700b01200f295631b1576b',
+        },
+      });
+    });
+    it("TESTTESTgetPlaySegment() => Soma", async()=>{
+      let api = await testScvApi();
+      let scid = "thig1.1:1.1"
+      let langTrans = 'en';
+      let translator = 'soma';
+      let vnameTrans = 'Amy';
+      let params = { langTrans, translator, scid, vnameTrans };
+      let query = {};
+      
+      let res = await api.getPlaySegment({params, query});
+      should.deepEqual(res.segment, {
+        scid,
+        pli: '“Sukhaṁ supāhi therike, ',
+        en: '“Sleep with ease, Elder, ', // Soma
+        matched: true,
+        audio: {
+          en: '37cedc61727373870e197793e653330d', // Soma
+          pli: '4fb90df3760dd54ac4f9f3c31358c8fa',
+        },
+      });
+    });
   });
 
 /*TODO
@@ -379,162 +508,10 @@ typeof describe === "function" &&
             done();
         } catch(e) {done(e);} })();
     });
-    it("GET /play/segment/... => playable segment", done=>{
-        (async function() { try {
-            await new Promise(resolve=>setTimeout(()=>resolve(),1000));
-            var voicename = 'Matthew';
-            var scid = "mn1:0.1";
-            var url = 
-                `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
-            var res = await supertest(app).get(url);
-            res.statusCode.should.equal(200);
-            var data = res.body instanceof Buffer 
-                ? JSON.parse(res.body) : res.body;
-            should(data.segment.en).match(/^Middle Discourses 1/);
-            should(data.segment.audio.pli)
-                .match(/eb2c6cf0626c7a0f422da93a230c4ab7/); // no numbers
-
-            var scid = "mn1:3.1";
-            var url = 
-                `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
-            var res = await supertest(app).get(url);
-            res.statusCode.should.equal(200);
-            var data = res.body instanceof Buffer 
-                ? JSON.parse(res.body) : res.body;
-            should(data.segment.en).match(/^.Take an uneducated ordinary/);
-            if (0) { // simulate REST response using static file
-                var testPath = path.join(PUBLIC,
-                    `play/segment/mn1/en/sujato/${scid}/${voicename}`);
-                fs.writeFileSync(testPath, JSON.stringify(data, null,2));
-            }
-
-            done();
-        } catch(e) {done(e);} })();
-    });
-    it("GET /play/segment/... => playable segment", done=>{
-        (async function() { try {
-            var voicename = '0';
-            var scid = "mn1:0.1";
-            var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
-            var res = await supertest(app).get(url);
-            res.statusCode.should.equal(200);
-            var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
-            should(data.segment.en).match(/^Middle Discourses 1/);
-            should(data.segment.audio.pli).match(/eb2c6cf0626c7a0f422da93a230c4ab7/); // no numbers
-
-            if (0) {
-                var scid = "mn1:52-74.23";
-                var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
-                var res = await supertest(app).get(url);
-                res.statusCode.should.equal(200);
-                var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
-                should(data.sutta_uid).equal('mn1');
-                should(data.vnameLang).equal('Amy');
-                should(data.vnameRoot).equal('Aditi');
-                should(data.iSegment).equal(299);
-                should(data.section).equal(4);
-                should(data.nSections).equal(10);
-                should(data.voicename).equal(voicename);
-                should(data.language).equal('en');
-                should(data.translator).equal('sujato');
-                should(data.segment.en).match(/^They directly know extinguishment as/);
-                should(data.segment.audio.en).match(/^3f8996/);
-                should(data.segment.audio.pli).match(/^a777fb/);
-            }
-
-
-            if (1) {
-                var scid = "mn1:3.1";
-                var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
-                var res = await supertest(app).get(url);
-                res.statusCode.should.equal(200);
-                var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
-                should(data.segment.en).match(/^.Take an uneducated ordinary/);
-                var testPath = path.join(PUBLIC,
-                    `play/segment/mn1/en/sujato/${scid}/${voicename}`);
-                fs.writeFileSync(testPath, JSON.stringify(data, null,2));
-            }
-
-            if (0) {
-                var scid = "mn1:3.2";
-                var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
-                var res = await supertest(app).get(url);
-                res.statusCode.should.equal(200);
-                var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
-                should(data.segment.en).match(/^They perceive earth as earth/);
-                var testPath = path.join(PUBLIC,
-                    `play/segment/mn1/en/sujato/${scid}/${voicename}`);
-                fs.writeFileSync(testPath, JSON.stringify(data, null,2));
-            }
-
-            done();
-        } catch(e) {done(e);} })();
-    });
     it("GET /play/audio/:suid/:lang/:trans/:voice/:guid returns audio", function(done) {
         (async function() { try {
             done();
         } catch(e) {done(e);} })();
-    });
-    it("GET /play/segment/... handles large segment", async()=>{
-        console.log(`TODO`, __filename); return; 
-        await new Promise(resolve=>setTimeout(()=>resolve(),1000));
-        var scid = "an2.281-309:1.1";
-        var sutta_uid = scid.split(":")[0];
-        var vnameTrans = "1"; // Matthew
-        var url = `/scv/play/segment/${sutta_uid}/`+
-            `en/sujato/${scid}/${vnameTrans}`;
-        var res = await supertest(app).get(url);
-        res.statusCode.should.equal(200);
-        var data = res.body instanceof Buffer 
-            ? JSON.parse(res.body) : res.body;
-        should(data.sutta_uid).equal('an2.281-309');
-        should(data.vnameTrans).equal('Brian');
-        should(data.vnameRoot).equal('Aditi');
-        should(data.iSegment).equal(9);
-        should(data.nSections).equal(3);
-        should(data.language).equal('en');
-        should(data.translator).equal('sujato');
-        should(data.segment.en)
-            .match(/^.For two reasons the Realized One/);
-        should(data.segment.audio.en)
-            .match(/4341471c187e12334475901a9599698c/);
-        should(data.segment.audio.pli)
-            .match(/7bd718c9fbda06ab56b2d09a05776353/);
-    });
-    it("GET /play/segment/... handles HumanTts dn33", async()=>{
-        var scid = "dn33:0.1";
-        var sutta_uid = scid.split(":")[0];
-        var langTrans = 'en';
-        var vnameTrans = "sujato_en";
-        var vnameRoot = "sujato_pli";
-        var url = [
-            `/scv/play/segment`,
-            sutta_uid,
-            langTrans,
-            'sujato',
-            scid,
-            vnameTrans,
-            vnameRoot,
-        ].join('/');
-        var res = await supertest(app).get(url);
-        res.statusCode.should.equal(200);
-        var data = res.body instanceof Buffer 
-            ? JSON.parse(res.body) : res.body;
-        should(data.sutta_uid).equal(scid.split(':')[0]);
-        should(data.vnameTrans).equal(vnameTrans);
-        should(data.vnameRoot).equal(vnameRoot);
-        should(data.iSegment).equal(0);
-        should(data.section).equal(0);
-        should(data.nSections).equal(12);
-        should(data.language).equal('en');
-        should(data.translator).equal('sujato');
-        should(data.segment.pli).match(/^Dīgha Nikāya 33/);
-        should(data.segment.audio.vnamePali).equal('Aditi');
-        should(data.segment.audio.vnameTrans).equal('Amy');
-        should(data.segment.audio.en)
-            .match(/b06d3e95cd46714448903fa8bcb12004/);
-        should(data.segment.audio.pli)
-            .match(/899e4cd12b700b01200f295631b1576b/);
     });
     it("GET /play/segment/... handles HumanTts sn1.9", done=>{
         (async function() { try {
@@ -608,43 +585,6 @@ typeof describe === "function" &&
             should(data.segment.audio.pli)
                 .match(/a11ebc9a6bbe583d36e375ca163b6351/);
             should(data.segment.audio.vnamePali).equal('Aditi');
-
-            done();
-        } catch(e) {done(e);} })();
-    });
-    it("GET /play/segment/... handles thig1.1/en/soma", done=>{
-        (async function() { try {
-            // scv/play/segment/thig1.1/en/soma/thig1.1:1.1/Amy/Aditi
-            var sutta_uid = 'thig1.1';
-            var langTrans = 'en';
-            var translator = 1 ? 'soma' : 'sujato';
-            var vnameTrans = "Amy";
-            var vnameRoot = "Aditi";
-            var segnum = "1.1";
-            var scid = `${sutta_uid}:${segnum}`;
-            var url = [
-                `/scv/play/segment`,
-                sutta_uid,
-                langTrans,
-                translator,
-                scid,
-                vnameTrans,
-                vnameRoot,
-            ].join('/');
-            console.log('url', url);
-            logger.warn("EXPECTED WARN BEGIN");
-            var res = await supertest(app).get(url);
-            logger.warn("EXPECTED WARN END");
-            res.statusCode.should.equal(200);
-            var data = res.body instanceof Buffer 
-                ? JSON.parse(res.body) : res.body;
-            should(data.sutta_uid).equal(scid.split(':')[0]);
-            should(data.vnameTrans).equal(vnameTrans);
-            should(data.vnameRoot).equal(vnameRoot);
-            should(data.language).equal(langTrans);
-            should(data.translator).equal(translator);
-            should(data.segment.audio.en).match(/37cedc61727373870e197793e653330d/);
-            should(data.segment.en).match(/sleep with ease, elder/i);
 
             done();
         } catch(e) {done(e);} })();

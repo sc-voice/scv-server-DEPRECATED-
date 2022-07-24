@@ -1,5 +1,5 @@
 typeof describe === "function" &&
-  describe("TESTTESTplaylist", function () {
+  describe("playlist", function () {
     const should = require("should");
     const fs = require("fs");
     const { logger } = require("log-instance");

@@ -13,9 +13,12 @@
   const { MerkleJson } = require("merkle-json");
   const srcPkg = require("../package.json");
   const AudioUrls = require("./audio-urls.cjs");
+  const SCAudio = require("./sc-audio.cjs");
   const SoundStore = require("./sound-store.cjs");
   const SuttaStore = require("./sutta-store.cjs");
   const S3Creds = require("./s3-creds.cjs");
+  const Voice = require("./voice.cjs");
+  const VoiceFactory = require("./voice-factory.cjs");
 
   const LOCAL = path.join(__dirname, "../local");
   const LANG_MAP = {
@@ -32,13 +35,11 @@
   const Playlist = require("./playlist");
   const S3Bucket = require("./s3-bucket");
   const S3Creds = require("./s3-creds");
-  const SCAudio = require("./sc-audio");
   const Section = require("./section");
   const { ScApi, SuttaCentralId } = require("suttacentral-api");
   const SuttaFactory = require("./sutta-factory");
   const Sutta = require("./sutta");
   const Task = require("./task");
-  const VoiceFactory = require("./voice-factory");
   const Voice = require("./voice");
   const VsmStore = require("./vsm-store");
   const Words = require("./words");
@@ -72,15 +73,18 @@ TODO*/
       this.jwtExpires = opts.jwtExpires || "1h";
       this.downloadMap = {};
       this.mj = new MerkleJson();
-      var soundStore = opts.soundStore || new SoundStore(opts);
+      let soundStore = opts.soundStore || new SoundStore(opts);
       this.audioMIME = soundStore.audioMIME;
+      let scAudio = opts.scAudio || new SCAudio();
+      let voiceFactory = opts.voiceFactory 
+        || new VoiceFactory({ scAudio, soundStore, });
 
       Object.defineProperty(this, "audioUrls", {
         value: opts.audioUrls || new AudioUrls(),
       });
-      Object.defineProperty(this, "soundStore", {
-        value: soundStore,
-      });
+      Object.defineProperty(this, "scAudio", { value: scAudio, });
+      Object.defineProperty(this, "voiceFactory", { value: voiceFactory, });
+      Object.defineProperty(this, "soundStore", { value: soundStore, });
       Object.defineProperty(this, "suttaStore", {
         value: new SuttaStore({
           scApi: this.scApi,
@@ -121,6 +125,24 @@ TODO*/
       return req;
     }
 
+    suttaParms(req) {
+      var parms = Object.assign({
+        language: 'en', //deprecated
+        voicename: 'amy',
+        vnameTrans: 'Amy',
+        vnameRoot: 'Aditi',
+        usage: 'recite',
+        iSection: 0,
+        scid: null,
+        iVoice: 0,
+      }, req.params);
+      parms.iSection = Number(parms.iSection);
+      parms.iVoice = Number(parms.iVoice);
+      parms.sutta_uid = parms.sutta_uid || parms.scid && parms.scid.split(':')[0];
+      parms.langTrans = parms.langTrans || parms.language || 'en';
+      return parms;
+    }
+
     async getSearch(req) {
       try {
         let { suttaStore } = this;
@@ -154,6 +176,97 @@ TODO*/
       let creds = new S3Creds();
       return creds.obfuscated();
     }
+
+    async getPlaySegment(req, res) {
+      let { suttaStore, soundStore } = this;
+      let { 
+        sutta_uid, langTrans, translator, scid, vnameTrans, vnameRoot,
+      } = this.suttaParms(req);
+      if (/[0-9]+/.test(vnameTrans)) {
+        var iVoice = Number(vnameTrans);
+      }
+      var scAudio = this.scAudio;
+      var voice = Voice.voiceOfName(vnameTrans);
+      var voiceRoot = this.voiceFactory.voiceOfName(vnameRoot);
+      this.debug(`GET ${req.url}`);
+      var usage = voice.usage || 'recite';
+      var sutta = await suttaStore.loadSutta({
+        scid: sutta_uid,
+        translator,
+        language: langTrans, // deprecated
+        langTrans,
+        expand: true,
+      });
+      if (iSection < 0 || sutta.sections.length <= iSection) {
+        var suttaRef = `${sutta_uid}/${langTrans}/${translator}`;
+        throw new Error(`Sutta ${suttaRef} has no section:${iSection}`);
+      }
+      var voiceTrans = Voice.createVoice({
+        name: voice.name,
+        usage,
+        soundStore: soundStore,
+        localeIPA: "pli",
+        audioFormat: soundStore.audioFormat,
+        audioSuffix: soundStore.audioSuffix,
+        scAudio,
+      });
+      var sections = sutta.sections;
+      var iSegment = sutta.segments
+        .reduce((acc,seg,i) => seg.scid == scid ? i : acc, null);
+      if (iSegment == null) {
+        throw new Error(`segment ${scid} not found`);
+      }
+      var segment = sutta.segments[iSegment];
+      var iSection = 0;
+      var section = sutta.sections[iSection];
+      let nSegs = section.segments.length;
+      for (let i=iSegment; section && (nSegs.length <= i); ) {
+        i -= section.segments.length;
+        section = sutta.sections[++iSection];
+      }
+      segment.audio = {};
+      if (segment[langTrans]) {
+        var resSpeak = await voiceTrans.speakSegment({
+          sutta_uid,
+          segment,
+          language: langTrans, 
+          translator,
+          usage,
+        });
+        segment.audio[langTrans] = resSpeak.signature.guid;
+      }
+      if (segment.pli) {
+        var pali = new Pali();
+        var resSpeak = await voiceRoot.speakSegment({
+          sutta_uid,
+          segment,
+          language: 'pli',
+          translator,
+          usage: 'recite',
+        });
+        segment.audio.pli = resSpeak.signature.guid;
+      }
+      var audio = segment.audio;
+      this.info(`GET ${req.url} =>`, 
+        audio[langTrans] ? `${langTrans}:${audio[langTrans]}` : ``,
+        audio.pli ? `pli:${audio.pli}` : ``,
+      );
+      return {
+        sutta_uid,
+        scid,
+        language: langTrans, // deprecated
+        langTrans,
+        translator,
+        title: section.title,
+        section:iSection,
+        nSections: sutta.sections.length,
+        vnameTrans: voiceTrans.name,
+        vnameRoot,
+        iSegment,
+        segment,
+      };
+    }
+
 
   }
 
@@ -384,28 +497,6 @@ TODO*/
         this.warn(e);
         throw e;
       }
-    }
-
-    suttaParms(req) {
-      var parms = Object.assign(
-        {
-          language: "en", //deprecated
-          voicename: "amy",
-          vnameTrans: "Amy",
-          vnameRoot: "Aditi",
-          usage: "recite",
-          iSection: 0,
-          scid: null,
-          iVoice: 0,
-        },
-        req.params
-      );
-      parms.iSection = Number(parms.iSection);
-      parms.iVoice = Number(parms.iVoice);
-      parms.sutta_uid =
-        parms.sutta_uid || (parms.scid && parms.scid.split(":")[0]);
-      parms.langTrans = parms.langTrans || parms.language || "en";
-      return parms;
     }
 
     async synthesizeSutta(sutta_uid, language, translator, usage) {

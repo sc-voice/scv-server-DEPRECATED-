@@ -1,7 +1,7 @@
 const supertest = require("supertest");
 
 typeof describe === "function" &&
-  describe("rest-api", function () {
+  describe("TESTTESTrest-api", function () {
     const should = require("should");
     const pkg = require("../package.json");
     const jwt = require("jsonwebtoken");
@@ -354,4 +354,276 @@ typeof describe === "function" &&
         .expect("content-type", /application\/json/)
         .expect({error:errMsg});
     });
+    /*
+    it("GET /play/segment/... => playable segment", done=>{
+        (async function() { try {
+            await new Promise(resolve=>setTimeout(()=>resolve(),1000));
+            var voicename = 'Matthew';
+            var scid = "mn1:0.1";
+            var url = 
+                `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
+            var res = await supertest(app).get(url);
+            res.statusCode.should.equal(200);
+            var data = res.body instanceof Buffer 
+                ? JSON.parse(res.body) : res.body;
+            should(data.segment.en).match(/^Middle Discourses 1/);
+            should(data.segment.audio.pli)
+                .match(/eb2c6cf0626c7a0f422da93a230c4ab7/); // no numbers
+
+            var scid = "mn1:3.1";
+            var url = 
+                `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
+            var res = await supertest(app).get(url);
+            res.statusCode.should.equal(200);
+            var data = res.body instanceof Buffer 
+                ? JSON.parse(res.body) : res.body;
+            should(data.segment.en).match(/^.Take an uneducated ordinary/);
+            if (0) { // simulate REST response using static file
+                var testPath = path.join(PUBLIC,
+                    `play/segment/mn1/en/sujato/${scid}/${voicename}`);
+                fs.writeFileSync(testPath, JSON.stringify(data, null,2));
+            }
+
+            done();
+        } catch(e) {done(e);} })();
+    });
+    it("GET /play/segment/... => playable segment", done=>{
+        (async function() { try {
+            var voicename = '0';
+            var scid = "mn1:0.1";
+            var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
+            var res = await supertest(app).get(url);
+            res.statusCode.should.equal(200);
+            var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
+            should(data.segment.en).match(/^Middle Discourses 1/);
+            should(data.segment.audio.pli).match(/eb2c6cf0626c7a0f422da93a230c4ab7/); // no numbers
+
+            if (0) {
+                var scid = "mn1:52-74.23";
+                var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
+                var res = await supertest(app).get(url);
+                res.statusCode.should.equal(200);
+                var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
+                should(data.sutta_uid).equal('mn1');
+                should(data.vnameLang).equal('Amy');
+                should(data.vnameRoot).equal('Aditi');
+                should(data.iSegment).equal(299);
+                should(data.section).equal(4);
+                should(data.nSections).equal(10);
+                should(data.voicename).equal(voicename);
+                should(data.language).equal('en');
+                should(data.translator).equal('sujato');
+                should(data.segment.en).match(/^They directly know extinguishment as/);
+                should(data.segment.audio.en).match(/^3f8996/);
+                should(data.segment.audio.pli).match(/^a777fb/);
+            }
+
+
+            if (1) {
+                var scid = "mn1:3.1";
+                var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
+                var res = await supertest(app).get(url);
+                res.statusCode.should.equal(200);
+                var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
+                should(data.segment.en).match(/^.Take an uneducated ordinary/);
+                var testPath = path.join(PUBLIC,
+                    `play/segment/mn1/en/sujato/${scid}/${voicename}`);
+                fs.writeFileSync(testPath, JSON.stringify(data, null,2));
+            }
+
+            if (0) {
+                var scid = "mn1:3.2";
+                var url = `/scv/play/segment/mn1/en/sujato/${scid}/${voicename}`;
+                var res = await supertest(app).get(url);
+                res.statusCode.should.equal(200);
+                var data = res.body instanceof Buffer ? JSON.parse(res.body) : res.body;
+                should(data.segment.en).match(/^They perceive earth as earth/);
+                var testPath = path.join(PUBLIC,
+                    `play/segment/mn1/en/sujato/${scid}/${voicename}`);
+                fs.writeFileSync(testPath, JSON.stringify(data, null,2));
+            }
+
+            done();
+        } catch(e) {done(e);} })();
+    });
+    it("GET /play/audio/:suid/:lang/:trans/:voice/:guid returns audio", function(done) {
+        (async function() { try {
+            done();
+        } catch(e) {done(e);} })();
+    });
+    it("GET /play/segment/... handles large segment", async()=>{
+        console.log(`TODO`, __filename); return; 
+        await new Promise(resolve=>setTimeout(()=>resolve(),1000));
+        var scid = "an2.281-309:1.1";
+        var sutta_uid = scid.split(":")[0];
+        var vnameTrans = "1"; // Matthew
+        var url = `/scv/play/segment/${sutta_uid}/`+
+            `en/sujato/${scid}/${vnameTrans}`;
+        var res = await supertest(app).get(url);
+        res.statusCode.should.equal(200);
+        var data = res.body instanceof Buffer 
+            ? JSON.parse(res.body) : res.body;
+        should(data.sutta_uid).equal('an2.281-309');
+        should(data.vnameTrans).equal('Brian');
+        should(data.vnameRoot).equal('Aditi');
+        should(data.iSegment).equal(9);
+        should(data.nSections).equal(3);
+        should(data.language).equal('en');
+        should(data.translator).equal('sujato');
+        should(data.segment.en)
+            .match(/^.For two reasons the Realized One/);
+        should(data.segment.audio.en)
+            .match(/4341471c187e12334475901a9599698c/);
+        should(data.segment.audio.pli)
+            .match(/7bd718c9fbda06ab56b2d09a05776353/);
+    });
+    it("GET /play/segment/... handles HumanTts dn33", async()=>{
+        var scid = "dn33:0.1";
+        var sutta_uid = scid.split(":")[0];
+        var langTrans = 'en';
+        var vnameTrans = "sujato_en";
+        var vnameRoot = "sujato_pli";
+        var url = [
+            `/scv/play/segment`,
+            sutta_uid,
+            langTrans,
+            'sujato',
+            scid,
+            vnameTrans,
+            vnameRoot,
+        ].join('/');
+        var res = await supertest(app).get(url);
+        res.statusCode.should.equal(200);
+        var data = res.body instanceof Buffer 
+            ? JSON.parse(res.body) : res.body;
+        should(data.sutta_uid).equal(scid.split(':')[0]);
+        should(data.vnameTrans).equal(vnameTrans);
+        should(data.vnameRoot).equal(vnameRoot);
+        should(data.iSegment).equal(0);
+        should(data.section).equal(0);
+        should(data.nSections).equal(12);
+        should(data.language).equal('en');
+        should(data.translator).equal('sujato');
+        should(data.segment.pli).match(/^Dīgha Nikāya 33/);
+        should(data.segment.audio.vnamePali).equal('Aditi');
+        should(data.segment.audio.vnameTrans).equal('Amy');
+        should(data.segment.audio.en)
+            .match(/b06d3e95cd46714448903fa8bcb12004/);
+        should(data.segment.audio.pli)
+            .match(/899e4cd12b700b01200f295631b1576b/);
+    });
+    it("GET /play/segment/... handles HumanTts sn1.9", done=>{
+        (async function() { try {
+            var scid = "sn1.9:1.1";
+            var sutta_uid = scid.split(":")[0];
+            var langTrans = 'en';
+            var vnameTrans = "Matthew";
+            var vnameRoot = "sujato_pli";
+            var url = [
+                `/scv/play/segment`,
+                sutta_uid,
+                langTrans,
+                'sujato',
+                scid,
+                vnameTrans,
+                vnameRoot,
+            ].join('/');
+            var res = await supertest(app).get(url);
+            res.statusCode.should.equal(200);
+            var data = res.body instanceof Buffer 
+                ? JSON.parse(res.body) : res.body;
+            should(data.sutta_uid).equal(scid.split(':')[0]);
+            should(data.vnameTrans).equal('Matthew');
+            should(data.vnameRoot).equal('sujato_pli');
+            should(data.iSegment).equal(3);
+            should(data.nSections).equal(2);
+            //should(data.section).equal(1);
+            should(data.language).equal('en');
+            should(data.translator).equal('sujato');
+            should(data.segment.pli).match(/Sāvatthinidānaṁ./);
+            should(data.segment.audio.en)
+                .match(/e5f5e2ec93f9f41908924177d5ee63ca/);
+            should(data.segment.audio.pli)
+                .match(/57eacb73319677cbe42256c332630451/);
+            should(data.segment.audio.vnamePali).equal(undefined);
+
+            done();
+        } catch(e) {done(e);} })();
+    });
+    it("GET /play/segment/... handles HumanTts sn12.1", done=>{
+        (async function() { try {
+            var scid = "sn12.1:1.2";
+            var sutta_uid = scid.split(":")[0];
+            var langTrans = 'en';
+            var vnameTrans = "Matthew";
+            var vnameRoot = "sujato_pli";
+            var url = [
+                `/scv/play/segment`,
+                sutta_uid,
+                langTrans,
+                'sujato',
+                scid,
+                vnameTrans,
+                vnameRoot,
+            ].join('/');
+            logger.warn("EXPECTED WARN BEGIN");
+            var res = await supertest(app).get(url);
+            logger.warn("EXPECTED WARN END");
+            res.statusCode.should.equal(200);
+            var data = res.body instanceof Buffer 
+                ? JSON.parse(res.body) : res.body;
+            should(data.sutta_uid).equal(scid.split(':')[0]);
+            should(data.vnameTrans).equal('Matthew');
+            should(data.vnameRoot).equal('sujato_pli');
+            should(data.language).equal('en');
+            should(data.translator).equal('sujato');
+            should(data.segment.pli)
+                .match(/ekaṁ samayaṁ bhagavā sāvatthiyaṁ./);
+            should(data.segment.audio.en)
+                .match(/d0a8567a6fca2fbeaa5d14e610304826/);
+            should(data.segment.audio.pli)
+                .match(/a11ebc9a6bbe583d36e375ca163b6351/);
+            should(data.segment.audio.vnamePali).equal('Aditi');
+
+            done();
+        } catch(e) {done(e);} })();
+    });
+    it("GET /play/segment/... handles thig1.1/en/soma", done=>{
+        (async function() { try {
+            // scv/play/segment/thig1.1/en/soma/thig1.1:1.1/Amy/Aditi
+            var sutta_uid = 'thig1.1';
+            var langTrans = 'en';
+            var translator = 1 ? 'soma' : 'sujato';
+            var vnameTrans = "Amy";
+            var vnameRoot = "Aditi";
+            var segnum = "1.1";
+            var scid = `${sutta_uid}:${segnum}`;
+            var url = [
+                `/scv/play/segment`,
+                sutta_uid,
+                langTrans,
+                translator,
+                scid,
+                vnameTrans,
+                vnameRoot,
+            ].join('/');
+            console.log('url', url);
+            logger.warn("EXPECTED WARN BEGIN");
+            var res = await supertest(app).get(url);
+            logger.warn("EXPECTED WARN END");
+            res.statusCode.should.equal(200);
+            var data = res.body instanceof Buffer 
+                ? JSON.parse(res.body) : res.body;
+            should(data.sutta_uid).equal(scid.split(':')[0]);
+            should(data.vnameTrans).equal(vnameTrans);
+            should(data.vnameRoot).equal(vnameRoot);
+            should(data.language).equal(langTrans);
+            should(data.translator).equal(translator);
+            should(data.segment.audio.en).match(/37cedc61727373870e197793e653330d/);
+            should(data.segment.en).match(/sleep with ease, elder/i);
+
+            done();
+        } catch(e) {done(e);} })();
+    });
+  */
   });

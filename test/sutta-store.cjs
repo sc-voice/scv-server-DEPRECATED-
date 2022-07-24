@@ -820,7 +820,7 @@ typeof describe === "function" &&
       //should.deepEqual(ids.slice(0,3), KNSTART);
       //should.deepEqual(ids.slice(ids.length-3,ids.length), KNEND);
     });
-    it("TESTTESTsearch('sn12.3') returns Deutsch", async () => {
+    it("search('sn12.3') returns Deutsch", async () => {
       var voice = Voice.createVoice("Amy");
       var scApi = await new ScApi().initialize();
       var suttaFactory = new SuttaFactory({

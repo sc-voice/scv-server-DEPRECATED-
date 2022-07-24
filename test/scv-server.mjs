@@ -352,6 +352,49 @@ typeof describe === "function" &&
         'sn42.11', 'sn56.21', 'dn16',
       ]);
     })
+    it("TESTTESTGET /scv/play/segment/...", async()=>{
+      let scv = await sharedTestServer();
+      let sutta_uid = 'thig1.1';
+      let scid = `${sutta_uid}:1.1`;
+      let langTrans = 'de';
+      let translator = 'sabbamitta';
+      let vnameTrans = 'Vicki';
+      let url = [
+        '/scv/play/segment',
+        sutta_uid,
+        langTrans,
+        translator,
+        scid,
+        vnameTrans,
+      ].join('/');
+      var res = await supertest(scv.app).get(url)
+        .expect(200)
+        .expect("Content-Type", /application.json/);
+      let { body } = res;
+      should(body).properties({
+        sutta_uid,
+        scid,
+        langTrans,
+        translator,
+        title: 'Strophen der altehrwürdigen Nonnen ',
+        section: 0,
+        nSections: 2,
+        vnameTrans,
+        iSegment: 4,
+        vnameRoot: 'Aditi',
+      });
+      should.deepEqual(body.segment, {
+        scid: 'thig1.1:1.1',
+        pli: '“Sukhaṁ supāhi therike, ',
+        de: 'Schlafe sanft, kleine Nonne, ',
+        en: 'Sleep softly, little nun, ',
+        matched: true,
+        audio: {
+          de: 'df3554e56794be279cde5df84b8e38ec',
+          pli: '4fb90df3760dd54ac4f9f3c31358c8fa'
+        }
+      });
+    })
     it("GET /scv/auth/test-secret", async()=>{
       let name = 'auth/test-secret';
       let port = 3002;

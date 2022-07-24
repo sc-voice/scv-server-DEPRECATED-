@@ -67,6 +67,12 @@ export default class ScvServer extends RestApi {
       "search/:pattern", (req,res)=>scvApi.getSearch(req,res) ));
     resourceMethods.push(new ResourceMethod( "get", 
       "search/:pattern/:lang", (req,res)=>scvApi.getSearch(req,res) ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "play/segment/:sutta_uid/:langTrans/:translator/:scid/:vnameTrans", 
+      (req,res)=>scvApi.getPlaySegment(req,res) ));
+    resourceMethods.push(new ResourceMethod( "get", 
+      "play/segment/:sutta_uid/:langTrans/:translator/:scid/:vnameTrans/:vnameRoot", 
+      (req,res)=>scvApi.getPlaySegment(req,res) ));
 
     // authenticated
     resourceMethods.push(new ResourceMethod( "get", 

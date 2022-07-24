@@ -26,6 +26,7 @@
         </v-card-title>
         <v-expansion-panels>
           <Search/>
+          <PlaySegment/>
         </v-expansion-panels>
       </v-card>
     </v-main>
@@ -39,6 +40,7 @@ import Settings from './components/Settings.vue'
 import { useSettingsStore } from './stores/settings'
 import { useVolatileStore } from './stores/volatile'
 import Search from './components/Search.vue'
+import PlaySegment from './components/PlaySegment.vue'
 import { onMounted, ref } from 'vue'
 import * as vue from 'vue'
 
