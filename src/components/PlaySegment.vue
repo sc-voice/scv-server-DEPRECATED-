@@ -9,11 +9,9 @@
         <v-container>
           <v-row centered>
             <v-col >
-              <v-text-field v-model="sutta_uid" 
+              <v-text-field v-model="settings.sutta_uid" 
                 clearable density="compact" variant="underlined"
                 label="sutta_uid"
-                :append-icon="valid ? 'mdi-magnify' : ''"
-                @click:append="onFetch"
                 @keypress="onFetchKey"
                 hint="E.g.: thig1.1"
                 required
@@ -21,8 +19,6 @@
               </v-text-field>
               <v-text-field v-model="settings.langTrans" 
                 clearable density="compact" variant="underlined"
-                :append-icon="valid ? 'mdi-magnify' : ''"
-                @click:append="onFetch"
                 @keypress="onFetchKey"
                 label="langTrans" 
                 required
@@ -30,17 +26,13 @@
               </v-text-field>
               <v-text-field v-model="settings.translator" 
                 clearable density="compact" variant="underlined"
-                :append-icon="valid ? 'mdi-magnify' : ''"
-                @click:append="onFetch"
                 @keypress="onFetchKey"
                 label="translator" 
                 required
                 placeholder='E.g., "sujato"'>
               </v-text-field>
-              <v-text-field v-model="scid" 
+              <v-text-field v-model="settings.scid" 
                 clearable density="compact" variant="underlined"
-                :append-icon="valid ? 'mdi-magnify' : ''"
-                @click:append="onFetch"
                 @keypress="onFetchKey"
                 label="scid (segment id)" 
                 required
@@ -48,8 +40,6 @@
               </v-text-field>
               <v-text-field v-model="settings.vnameTrans" 
                 clearable density="compact" variant="underlined"
-                :append-icon="valid ? 'mdi-magnify' : ''"
-                @click:append="onFetch"
                 @keypress="onFetchKey"
                 label="vnameTrans (AWS Polly voice)" 
                 required
@@ -57,13 +47,29 @@
               </v-text-field>
             </v-col>
           </v-row>
-          <a v-if="valid" :href="url" target="_blank">{{url}}</a>
-          <v-btn :disabled="!valid" @click="onFetch">
-            GET
-          </v-btn>
+          <v-row align="center">
+            <v-col cols="2">
+              <v-btn :disabled="!valid" @click="onFetch">
+                GET
+              </v-btn>
+            </v-col>
+            <v-col>
+              <a v-if="valid" :href="url" target="_blank">{{url}}</a>
+            </v-col>
+          </v-row>
+          <v-row v-for="audioUrl in audioUrls" align="center">
+            <v-col cols="5">
+              <audio controls :src="audioUrl.url">
+                {{audioUrl.url}}
+              </audio>
+            </v-col>
+            <v-col cols="7">
+              {{audioUrl.text}}
+            </v-col>
+          </v-row>
           <v-row v-if="results">
             <v-col>
-              <h3>Results</h3>
+              <div class="text-h5">JSON</div>
               <pre>{{ JSON.stringify(results,null,2) }}</pre>
             </v-col>
           </v-row>
@@ -78,32 +84,56 @@
   import { useSettingsStore } from "../stores/settings";
   import { useVolatileStore } from "../stores/volatile";
 
-  const sutta_uid = ref(undefined);
-  const scid = ref(undefined);
-  const results = ref(undefined);
+  const results = ref(undefined); 
   const settings = useSettingsStore(); 
   const volatile = useVolatileStore();
+  const guidRoot = ref(undefined);
 
   const valid = computed(()=>{
-    return sutta_uid.value != null
-      && scid.value != null
-      && settings.langTrans != null
-      && settings.translator != null
-      && settings.vnameTrans != null;
+    let { sutta_uid, scid, langTrans, translator, vnameTrans } = settings;
+    return sutta_uid && scid && langTrans && translator && vnameTrans != null;
   })
 
   const url = computed(()=>{
+    let { serverUrl, sutta_uid, scid, langTrans, translator, vnameTrans } = settings;
     let url = [
-      settings.serverUrl,
+      serverUrl,
       `play/segment`,
-      encodeURIComponent(sutta_uid.value),
-      encodeURIComponent(settings.langTrans),
-      encodeURIComponent(settings.translator),
-      encodeURIComponent(scid.value),
-      encodeURIComponent(settings.vnameTrans),
+      encodeURIComponent(sutta_uid),
+      encodeURIComponent(langTrans),
+      encodeURIComponent(translator),
+      encodeURIComponent(scid),
+      encodeURIComponent(vnameTrans),
     ].join('/');
     return url;
   })
+
+  const audioUrls = computed(()=>{
+    let segment = results.value?.segment;
+    let audio = segment?.audio;
+    if ( audio == null ) {
+      return null;
+    }
+    let { 
+      serverUrl, sutta_uid, scid, langTrans, translator, vnameTrans, vnameRoot,
+    } = settings;
+    return Object.keys(audio).reduce((a, k) => {
+      if (k !== "vnameTrans") {
+        let prefix = [serverUrl, 'audio', sutta_uid, k];
+        let guid = audio[k];
+        let urlParts = k === "pli"
+          ? prefix.concat(["ms", vnameRoot, guid])
+          : prefix.concat([translator, vnameTrans, guid]);
+        a.push({
+          lang: k,
+          url: urlParts.join('/'),
+          text: segment[k],
+        });
+      }
+      return a;
+    }, []);
+  })
+
 
   onMounted(()=>{
     console.log("PlaySegment.mounted()");

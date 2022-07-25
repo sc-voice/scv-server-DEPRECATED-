@@ -24,7 +24,7 @@
         <v-card-title> 
           REST API Endpoints
         </v-card-title>
-        <v-expansion-panels>
+        <v-expansion-panels variant="inset">
           <Search/>
           <PlaySegment/>
         </v-expansion-panels>

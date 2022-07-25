@@ -11,10 +11,14 @@ const SERVERS = [{
 
 const INITIAL_STATE = {
   theme: 'dark',
+  sutta_uid: undefined,
+  scid: undefined,
   serverUrl: SERVERS[0].value,
   langTrans: 'en',
+  langRoot: 'pli',
   translator: 'sujato',
   vnameTrans: 'Amy',
+  vnameRoot: 'Aditi',
   isLocalStorage: false,
   id: 1,
 };
