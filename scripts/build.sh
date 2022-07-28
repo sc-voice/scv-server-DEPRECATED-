@@ -7,6 +7,8 @@ set -e
 echo "$SCRIPT: git subtree pull --prefix dist origin gh-pages"
 git subtree pull --prefix dist origin gh-pages
 
+npm run version:minor
+
 echo "$SCRIPT: vite build"
 vite build
 
