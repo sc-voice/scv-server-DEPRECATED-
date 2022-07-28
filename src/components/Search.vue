@@ -17,7 +17,7 @@
               hint="Required"
               placeholder="Enter sutta id or search text">
             </v-text-field>
-            <v-text-field v-model="settings.lang" 
+            <v-text-field v-model="lang" 
               clearable density="compact" variant="underlined"
               label="lang" 
               @click:append="onSearch"
@@ -47,6 +47,7 @@
   import { useSettingsStore } from "../stores/settings";
   import { useVolatileStore } from "../stores/volatile";
 
+  const lang = ref('');
   const search = ref('');
   const results = ref(undefined);
   const settings = useSettingsStore(); 
@@ -59,7 +60,7 @@
       `search`,
       encodeURIComponent(pattern),
     ].join('/');
-    return settings.lang ?  `${url}/${lang}` : url;
+    return lang.value ?  `${url}/${lang.value}` : url;
   })
 
   onMounted(()=>{
