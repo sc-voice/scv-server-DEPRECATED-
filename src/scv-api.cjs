@@ -286,6 +286,219 @@ TODO*/
       return data;
     }
 
+    async buildDownload(args) {
+      try {
+        var { soundStore, suttaStore, voiceFactory, bilaraData } = this;
+        var {
+          audioSuffix,
+          langs,
+          language,
+          maxResults,
+          pattern,
+          vname,
+          vroot,
+
+        } = args;
+
+        if (isNaN(maxResults)) {
+          throw new Error("Expected number for maxResults");
+        }
+        try {
+          var playlist = await suttaStore.createPlaylist({
+            pattern,
+            languages: langs,
+            language,
+            maxResults,
+            audioSuffix,
+          });
+        } catch (e) {
+          console.log(`oopsie`, e.stack);
+          return e.stack.toString();
+        }
+
+        var voiceLang = voiceFactory.voiceOfName(vname);
+        var voiceRoot = voiceFactory.voiceOfName(vroot);
+        let voices = langs.map((l) => {
+          return l === "pli" ? voiceRoot.name : voiceLang.name;
+        });
+        let artists = playlist
+          .author_uids()
+          .map((a) => {
+            let ai = bilaraData.authorInfo(a);
+            return ai ? ai.name : a;
+          })
+          .concat(voices);
+        let artist = artists.join(", ");
+        var stats = playlist.stats();
+        let buildDate = new Date();
+        let yyyy = buildDate.toLocaleString(undefined, {
+          year: "numeric",
+        });
+        let mm = buildDate.toLocaleString(undefined, {
+          month: "2-digit",
+        });
+        let album = `${yyyy}-${mm} voice.suttacentral.net`;
+        var audio = await playlist.speak({
+          voices: {
+            pli: voiceRoot,
+            [language]: voiceLang,
+          },
+
+          album,
+          artist,
+          album_artist: artist,
+          languages: langs.join(","),
+          audioSuffix,
+          copyright: "https://suttacentral.net/licensing",
+          publisher: "voice.suttacentral.net",
+          title: pattern,
+        });
+        var result = {
+          audio,
+        };
+        var guid = audio.signature.guid;
+        var filepath = soundStore.guidPath(guid, audioSuffix);
+        var uriPattern = encodeURIComponent(
+          decodeURIComponent(pattern)
+            .replace(/[ ,\t]/g, "_")
+            .replace(/[\/]/g, "-")
+        );
+        var filename = `${uriPattern}_${langs.join(
+          "+"
+        )}_${vname}${audioSuffix}`;
+        return {
+          filepath,
+          filename,
+          guid,
+          stats,
+          buildDate,
+        };
+      } catch (e) {
+        this.warn(`buildDownload()`, JSON.stringify(args, null, 2), e.message);
+        throw e;
+      }
+    }
+
+    async getBuildDownload(req, res, next) {
+      try {
+        var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
+        if (!initialized) {
+          throw new Error(`${this.constructor.name} is not initialized`);
+        }
+        var type = req.params.type || "unknown-type";
+        let audioSuffix = soundStore.audioSuffix;
+        audioSuffix = type === "opus" ? ".opus" : audioSuffix;
+        audioSuffix = type === "ogg" ? ".ogg" : audioSuffix;
+        audioSuffix = type === "mp3" ? ".mp3" : audioSuffix;
+        var vroot = req.params.vroot || "Aditi";
+        var langs = (req.params.langs || "pli+en")
+          .toLowerCase()
+          .split("+")
+          .map((l) => LANG_MAP[l] || l);
+        var language = langs.filter((l) => l !== "pli")[0];
+        var language =
+          language || LANG_MAP[req.query.lang] || req.query.lang || "en";
+        var vname = (req.params.voice || "Amy").toLowerCase();
+        var pattern = req.params.pattern;
+        if (!pattern) {
+          throw new Error("Search pattern is required");
+        }
+        var maxResults = Number(req.query.maxResults || suttaStore.maxResults);
+
+        let downloadArgs = {
+          audioSuffix,
+          vroot,
+          langs,
+          language,
+          vname,
+          pattern,
+          maxResults,
+        };
+        let hash = mj.hash(downloadArgs);
+        let value = downloadMap[hash];
+        if (value && !(value instanceof Promise)) {
+          if (!fs.existsSync(value.filepath)) {
+            // downloadMap is stale.
+            downloadMap[hash] = value = null;
+          }
+        }
+        if (value == null) {
+          this.info(`buildDownload(${hash}) started`);
+          value = this.buildDownload(downloadArgs);
+          downloadMap[hash] = value;
+          value.then((v) => {
+            downloadMap[hash] = v;
+            this.info(`buildDownload(${hash}) ok:`, JSON.stringify(v));
+          });
+        }
+        if (value && !(value instanceof Promise)) {
+          downloadArgs.filename = value.filename;
+          downloadArgs.guid = value.guid;
+        }
+        return downloadArgs;
+      } catch (e) {
+        this.warn(`getBuildDownload`, JSON.stringify({}), e.message);
+        throw e;
+      }
+    }
+
+    async getDownloadPlaylist(req, res, next) {
+      try {
+        var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
+        if (!initialized) {
+          throw new Error(`${this.constructor.name} is not initialized`);
+        }
+        let route = req.route.path.split("/");
+        let audioSuffix = soundStore.audioSuffix;
+        audioSuffix = route[2] === "opus" ? ".opus" : audioSuffix;
+        audioSuffix = route[2] === "ogg" ? ".ogg" : audioSuffix;
+        var vroot = req.params.vroot || "Aditi";
+        var langs = (req.params.langs || "pli+en")
+          .toLowerCase()
+          .split("+")
+          .map((l) => LANG_MAP[l] || l);
+        var language = langs.filter((l) => l !== "pli")[0];
+        var language =
+          language || LANG_MAP[req.query.lang] || req.query.lang || "en";
+        var vname = (req.params.voice || "Amy").toLowerCase();
+        var pattern = req.params.pattern;
+        if (!pattern) {
+          throw new Error("Search pattern is required");
+        }
+        var maxResults = Number(req.query.maxResults || suttaStore.maxResults);
+
+        let downloadArgs = {
+          audioSuffix,
+          vroot,
+          langs,
+          language,
+          vname,
+          pattern,
+          maxResults,
+        };
+        let hash = mj.hash(downloadArgs);
+        let value = downloadMap[hash];
+        if (!value || value instanceof Promise) {
+          value = await this.buildDownload(downloadArgs);
+        }
+        let { filepath, filename, guid, stats } = value;
+        var data = await fs.promises.readFile(filepath);
+        res.set("Content-disposition", "attachment; filename=" + filename);
+        this.info(
+          `GET download/${langs}/${pattern} => ` +
+            `${filename} size:${data.length} ` +
+            `secs:${stats.duration} ${guid}`
+        );
+        let date = new Date();
+        res.cookie("download-date", date.toISOString()); // DEPRECATED
+        return data;
+      } catch (e) {
+        this.warn(`getDownloadPlaylist`, JSON.stringify({}), e.message);
+        throw e;
+      }
+    }
+
+
   }
 
   module.exports = exports.ScvApi = ScvApi;

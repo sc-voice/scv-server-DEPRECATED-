@@ -267,7 +267,7 @@ typeof describe === "function" &&
         },
       });
     });
-    it("TESTTESTgetAudio() => Soma", async()=>{
+    it("getAudio() => Soma", async()=>{
       let filename = 'test-file.mp3';
       let guid = '37cedc61727373870e197793e653330d';
       let sutta_uid = 'thig1.1';

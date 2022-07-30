@@ -631,57 +631,76 @@ typeof describe === "function" &&
       should(result0.suttaplex.original_title).equal("Suddhikasutta");
       should(result0.suttaplex.root_lang).equal("pli");
     });
-    it("createPlaylist(opts) creates playlist", function (done) {
-      (async function () {
-        try {
-          var store = await new SuttaStore().initialize();
-          var playlist = await store.createPlaylist({
-            pattern: "an3.76-77",
-          });
-          should(playlist.tracks.length).equal(4);
-          should.deepEqual(
-            playlist.tracks.map((track) => track.segments[0].scid),
-            ["an3.76:0.1", "an3.76:1.1", "an3.77:0.1", "an3.77:1.1"]
-          );
-          should.deepEqual(playlist.stats(), {
-            tracks: 4,
-            chars: {
-              en: 3122,
-              pli: 2408,
-            },
-            duration: 490,
-            segments: {
-              pli: 40,
-              en: 38,
-            },
-          });
+    it("TESTTESTcreatePlaylist(opts) => Soma playlist", async()=>{
+      var store = await new SuttaStore().initialize();
+      var playlist = await store.createPlaylist({
+        pattern: "thig1.1/en/soma, thig1.2/en/soma",
+      });
+      should(playlist.tracks.length).equal(4);
+      should.deepEqual(
+        playlist.tracks.map((track) => track.segments[0].scid),
+        ["thig1.1:0.1", "thig1.1:1.0", "thig1.2:0.1", "thig1.2:1.1"]
+      );
+      let stats = playlist.stats();
+      should(stats).properties({
+        tracks: 4,
+        segments: {
+          pli: 17,
+          en: 17,
+        },
+      });
+      let thigSeg1 = playlist.tracks[1].segments[1];
+      should(thigSeg1.scid).match(/thig1.1:1.1/);
+      should(thigSeg1.en).match(/sleep with ease, elder/i);
+      should(thigSeg1.pli).match(/Sukhaṁ supāhi therike/i);
+      let thigSeg3 = playlist.tracks[3].segments[0];
+      should(thigSeg3.scid).match(/thig1.2:1.1/);
+      should(thigSeg3.en).match(/free yourself from/i);
+      should(thigSeg3.pli).match(/Mutte muccassu yogehi/i);
+    });
+    it("createPlaylist(opts) creates playlist", async()=>{
+      var store = await new SuttaStore().initialize();
+      var playlist = await store.createPlaylist({
+        pattern: "an3.76-77",
+      });
+      should(playlist.tracks.length).equal(4);
+      should.deepEqual(
+        playlist.tracks.map((track) => track.segments[0].scid),
+        ["an3.76:0.1", "an3.76:1.1", "an3.77:0.1", "an3.77:1.1"]
+      );
+      should.deepEqual(playlist.stats(), {
+        tracks: 4,
+        chars: {
+          en: 3122,
+          pli: 2408,
+        },
+        duration: 490,
+        segments: {
+          pli: 40,
+          en: 38,
+        },
+      });
 
-          // Pali only
-          var playlist = await store.createPlaylist({
-            pattern: "an3.76-77",
-            languages: ["pli"],
-          });
-          should(playlist.tracks.length).equal(4);
-          should.deepEqual(
-            playlist.tracks.map((track) => track.segments[0].scid),
-            ["an3.76:0.1", "an3.76:1.1", "an3.77:0.1", "an3.77:1.1"]
-          );
-          should.deepEqual(playlist.stats(), {
-            tracks: 4,
-            chars: {
-              pli: 2408,
-            },
-            duration: 220,
-            segments: {
-              pli: 40,
-            },
-          });
-
-          done();
-        } catch (e) {
-          done(e);
-        }
-      })();
+      // Pali only
+      var playlist = await store.createPlaylist({
+        pattern: "an3.76-77",
+        languages: ["pli"],
+      });
+      should(playlist.tracks.length).equal(4);
+      should.deepEqual(
+        playlist.tracks.map((track) => track.segments[0].scid),
+        ["an3.76:0.1", "an3.76:1.1", "an3.77:0.1", "an3.77:1.1"]
+      );
+      should.deepEqual(playlist.stats(), {
+        tracks: 4,
+        chars: {
+          pli: 2408,
+        },
+        duration: 220,
+        segments: {
+          pli: 40,
+        },
+      });
     });
     it("maxDuration limits createPlaylist()", function (done) {
       (async function () {

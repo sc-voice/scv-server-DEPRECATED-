@@ -352,7 +352,7 @@ typeof describe === "function" &&
         'sn42.11', 'sn56.21', 'dn16',
       ]);
     })
-    it("TESTTESTGET /scv/play/segment/...", async()=>{
+    it("GET /scv/play/segment/...", async()=>{
       let scv = await sharedTestServer();
       let sutta_uid = 'thig1.1';
       let scid = `${sutta_uid}:1.1`;
@@ -437,7 +437,7 @@ typeof describe === "function" &&
         .expect(401)
         .expect({ error: errMsg });
     })
-    it("TESTTESTGET /scv/audio/:sutta_uid/...", async()=>{
+    it("GET /scv/audio/:sutta_uid/...", async()=>{
       let scv = await sharedTestServer();
       let filename = 'test-file.mp3';
       let guid = '37cedc61727373870e197793e653330d';
@@ -449,6 +449,35 @@ typeof describe === "function" &&
         '/scv/audio',
         sutta_uid,
         langTrans,
+        translator,
+        vnameTrans,
+        guid,
+      ].join('/');
+      await supertest(scv.app).get(url)
+        .expect(200)
+        .expect("Content-Type", /audio.mp3/)
+        .expect("Content-Length", "13524");
+    });
+    it("TESTTESTPOST /scv/build-download/...", async()=>{
+      return; // TODO
+      let scv = await sharedTestServer();
+      let filename = 'test-file.mp3';
+      let guid = '37cedc61727373870e197793e653330d';
+      let sutta_uid = 'thig1.1';
+      let langTrans = 'en';
+      let translator = 'soma';
+      let vnameTrans = 'Amy';
+      let vnameRoot = 'Aditi';
+      let audio = "opus";
+      let audioLang = "pli+en";
+    // https://voice.suttacentral.net/scv/download/opus/pli+en/Amy/thig1.1/Aditi
+      let url = [
+        '/scv/download',
+        audio,
+        audioLang,
+        vnameTrans,
+        sutta_uid,
+        vnameRoot,
         translator,
         vnameTrans,
         guid,
