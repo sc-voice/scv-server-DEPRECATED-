@@ -57,7 +57,7 @@
         var nLang = this.languages.length;
         this.languages.forEach((lang) => {
           if (voices[lang] == null) {
-            throw new Error(`no voice for lang:${lang}`);
+            throw new Error(`no voice for lang:${lang} voices:${Object.keys(voices)}`);
           }
         });
         var tts = this.languages.reduce((acc, lang) => {

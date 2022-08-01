@@ -272,6 +272,20 @@ typeof describe === "function" &&
         )
       );
     });
+    it("search() => thig1.1-3/en/soma maxResults", async () => {
+      var scApi = await new ScApi(PRODUCTION).initialize();
+      var store = await new SuttaStore({ scApi, }).initialize();
+
+      var opts = {
+        pattern: "thig1.1-3/en/soma",
+        maxResults: 2,
+      };
+      var { method, results } = await store.search(opts);
+      should(results).instanceOf(Array);
+      should(method).equal("sutta_uid");
+      should.deepEqual(results.map((r) => r.uid), ["thig1.1", "thig1.2", ]);
+      should.deepEqual(results.map((r) => r.author_uid), ["soma", "soma", ]);
+    });
     it("search(pattern) => dn7/de", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
@@ -631,7 +645,7 @@ typeof describe === "function" &&
       should(result0.suttaplex.original_title).equal("Suddhikasutta");
       should(result0.suttaplex.root_lang).equal("pli");
     });
-    it("TESTTESTcreatePlaylist(opts) => Soma playlist", async()=>{
+    it("createPlaylist(opts) => Soma playlist", async()=>{
       var store = await new SuttaStore().initialize();
       var playlist = await store.createPlaylist({
         pattern: "thig1.1/en/soma, thig1.2/en/soma",

@@ -66,6 +66,10 @@ export const useSettingsStore = defineStore('settings', {
           title: 'localhost:3000',
           value: 'http://localhost:3000/scv',
         });
+        servers.push({
+          title: 'localhost:8080',
+          value: 'http://localhost:8080/scv',
+        });
       }
       return servers;
     },

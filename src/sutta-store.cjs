@@ -361,8 +361,7 @@
         }
         var pattern = SuttaStore.sanitizePattern(opts.pattern);
         var lang = opts.language || "en";
-        var maxDoc =
-          opts.maxResults == null ? this.maxResults : opts.maxResults;
+        var maxDoc = opts.maxResults ?? this.maxResults;
         var maxDoc = Number(maxDoc);
         if (isNaN(maxDoc)) {
           throw new Error("search() maxResults must be a number");

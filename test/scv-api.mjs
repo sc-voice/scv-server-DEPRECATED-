@@ -1,4 +1,5 @@
 import ScvApi from "../src/scv-api.cjs";
+import { BilaraData } from "scv-bilara";
 import AudioUrls from "../src/audio-urls.cjs";
 import SoundStore from "../src/sound-store.cjs";
 import SuttaStore from "../src/sutta-store.cjs";
@@ -19,24 +20,32 @@ class MockResponse {
   set(key, value) { this.mockHeaders[key] = value; }
 }
 
-
 typeof describe === "function" &&
   describe("scv-api", function() {
-    this.timeout(5*1000);
+    this.timeout(15*1000);
     let params = {};              // testing default
     let query = { maxResults: 3}; // testing default
+    let bilaraData;
 
     // Create a test singleton to speed up testing
     const TESTSINGLETON = 1;
     var scvApi; 
     async function testScvApi(singleton=TESTSINGLETON) {
+      if (bilaraData == null) {
+        bilaraData = new BilaraData();
+        await bilaraData.initialize();
+      }
+      should(bilaraData.initialized).equal(true);
       if (!singleton) {
-        return await new ScvApi().initialize();
+        return await new ScvApi({bilaraData}).initialize();
       }
       if (scvApi == null) {
-        scvApi = new ScvApi();
+        scvApi = new ScvApi({bilaraData});
       }
-      return await scvApi.initialize();
+      let resInit = await scvApi.initialize();
+      should(resInit).equal(scvApi);
+      should(scvApi.voices.length).equal(13);
+      return scvApi;
     }
 
     it ("default ctor", ()=>{
@@ -290,6 +299,121 @@ typeof describe === "function" &&
           'Content-disposition': `attachment; filename=${filename}`
         }
       });
+    });
+    it("downloadArgs() => validated args", async()=>{
+      let api = await testScvApi();
+      let pattern = "thig1.1/en/soma";
+      let vtrans = 'Vicki';
+      let vroot = 'Raveena';
+      let langs = ['de', 'pli'];
+      let lang = 'de';
+
+      should(api.downloadArgs({pattern})).properties({pattern});
+      should.throws(()=>api.downloadArgs()); // no pattern
+
+      should(api.downloadArgs({pattern, })).properties({vtrans: 'Amy'});
+      should(api.downloadArgs({pattern, vtrans})).properties({vtrans});
+
+      should(api.downloadArgs({pattern, })).properties({vroot: 'Aditi'});
+      should(api.downloadArgs({pattern, vroot})).properties({vroot});
+
+      should(api.downloadArgs({pattern, audioSuffix:".OGG"}))
+        .properties({audioSuffix: '.ogg'});
+      should(api.downloadArgs({pattern, audioSuffix:".ogg"}))
+        .properties({audioSuffix: '.ogg'});
+      should(api.downloadArgs({pattern, audioSuffix:"opus"}))
+        .properties({audioSuffix: '.opus'});
+      should(api.downloadArgs({pattern, audioSuffix:".opus"}))
+        .properties({audioSuffix: '.opus'});
+      should(api.downloadArgs({pattern, audioSuffix:"mp3"}))
+        .properties({audioSuffix: '.mp3'});
+      should(api.downloadArgs({pattern, audioSuffix:".mp3"}))
+        .properties({audioSuffix: '.mp3'});
+      should.throws(()=>api.downloadArgs({pattern, audioSuffix:"bad"}));
+
+      should(api.downloadArgs({pattern})).properties({langs: ['pli', 'en']});
+      should(api.downloadArgs({pattern, langs})).properties({langs});
+      should(api.downloadArgs({pattern, langs:'de+pli'})).properties({langs});
+      should.throws(()=>api.downloadArgs({pattern, langs:911}));
+      should.throws(()=>api.downloadArgs({pattern, langs:{BAD:911}}));
+
+      should(api.downloadArgs({pattern})).properties({lang: 'en'});
+      should(api.downloadArgs({pattern, lang:'jpn'})).properties({lang: 'jpn'});
+      should(api.downloadArgs({pattern, lang:'jpn'})).properties({lang: 'jpn'});
+      should(api.downloadArgs({pattern, lang})).properties({lang});
+      should.throws(()=>api.downloadArgs({pattern, lang:911}));
+    });
+    it("buildDownload() => thig1.1/en/soma", async()=>{
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
+      let audioSuffix = "opus";
+      let lang = 'en';
+      let langs = 'pli+en';
+      let maxResults = 5;
+      let pattern = "thig1.1/en/soma";
+      let vroot = "Aditi";
+      let vtrans = "Matthew";
+
+      let params = { 
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
+      };
+      let api = await testScvApi();
+       
+      let res = await api.buildDownload({
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
+      });
+      should(res.filepath).match(/scv-server\/local\/sounds\/common/);
+      should(res.filepath).match(/0918619f6f55981105031005434c236f.opus/);
+      should(res.filename).equal('thig1.1-en-soma_pli+en_Matthew.opus');
+      should.deepEqual(res.stats, {
+        chars: {
+          en: 332,
+          pli: 257,
+        },
+        duration: 53,
+        segments: { 
+          en: 9,
+          pli: 9,
+        },
+        tracks: 2,
+      });
+      should(Date.now() - res.buildDate).above(0).below(15*1000);
+    });
+    it("TESTTESTbuildDownload() => thig1.1, thig1.2, thig1.3", async()=>{
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
+      let audioSuffix = "opus";
+      let lang = 'en';
+      let langs = 'pli+en';
+      let maxResults = 2; // expect only thig1.1, thig1.2
+      let pattern = "thig1.1-3/en/soma";
+      let vroot = "Aditi";
+      let vtrans = "Matthew";
+
+      let params = { 
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
+      };
+      let api = await testScvApi();
+       
+      let res = await api.buildDownload({
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
+      });
+      should(res.filename).equal('thig1.1-3-en-soma_pli+en_Matthew.opus');
+      should(res.filepath).match(/scv-server\/local\/sounds\/common/);
+      should(res.filepath).match(/3e36385496eba89a47f26f16f55d07bb.opus/);
+      should.deepEqual(res.stats, {
+        chars: {
+          en: 607,
+          pli: 467,
+        },
+        duration: 95,
+        segments: { 
+          en: 17,
+          pli: 17,
+        },
+        tracks: 4,
+      });
+      should(Date.now() - res.buildDate).above(0).below(15*1000);
     });
   });
 

@@ -8,7 +8,7 @@
   const jwt = require("jsonwebtoken");
   const tmp = require("tmp");
   const { js } = require("just-simple").JustSimple;
-  const { English, Pali } = require("scv-bilara");
+  const { BilaraData, English, Pali } = require("scv-bilara");
   const { logger } = require("log-instance");
   const { MerkleJson } = require("merkle-json");
   const srcPkg = require("../package.json");
@@ -78,10 +78,12 @@ TODO*/
       let scAudio = opts.scAudio || new SCAudio();
       let voiceFactory = opts.voiceFactory 
         || new VoiceFactory({ scAudio, soundStore, });
+      let bilaraData = opts.bilaraData || new BilaraData();
 
       Object.defineProperty(this, "audioUrls", {
         value: opts.audioUrls || new AudioUrls(),
       });
+      Object.defineProperty(this, "bilaraData", { value: bilaraData});
       Object.defineProperty(this, "scAudio", { value: scAudio, });
       Object.defineProperty(this, "voiceFactory", { value: voiceFactory, });
       Object.defineProperty(this, "soundStore", { value: soundStore, });
@@ -104,7 +106,7 @@ TODO*/
         //await this.scApi.initialize();
         //await this.suttaFactory.initialize();
         await this.suttaStore.initialize();
-        //this.voices = Voice.loadVoices();
+        this.voices = Voice.loadVoices();
         this.info(`ScvApi initialize() COMPLETED`);
         this.initialized = true;
         return this;
@@ -286,98 +288,140 @@ TODO*/
       return data;
     }
 
-    async buildDownload(args) {
-      try {
-        var { soundStore, suttaStore, voiceFactory, bilaraData } = this;
-        var {
-          audioSuffix,
-          langs,
-          language,
-          maxResults,
-          pattern,
-          vname,
-          vroot,
+    downloadArgs(reqArgs) {
+      let { suttaStore, soundStore } = this;
+      let { 
+        audioSuffix = ".mp3", 
+        vroot = 'Aditi', 
+        vtrans = 'Amy',
+        langs = 'pli+en', 
+        lang = 'en',
+        maxResults = suttaStore.maxResults,
+        pattern,
+      } = reqArgs;
 
-        } = args;
-
-        if (isNaN(maxResults)) {
-          throw new Error("Expected number for maxResults");
-        }
-        try {
-          var playlist = await suttaStore.createPlaylist({
-            pattern,
-            languages: langs,
-            language,
-            maxResults,
-            audioSuffix,
-          });
-        } catch (e) {
-          console.log(`oopsie`, e.stack);
-          return e.stack.toString();
-        }
-
-        var voiceLang = voiceFactory.voiceOfName(vname);
-        var voiceRoot = voiceFactory.voiceOfName(vroot);
-        let voices = langs.map((l) => {
-          return l === "pli" ? voiceRoot.name : voiceLang.name;
-        });
-        let artists = playlist
-          .author_uids()
-          .map((a) => {
-            let ai = bilaraData.authorInfo(a);
-            return ai ? ai.name : a;
-          })
-          .concat(voices);
-        let artist = artists.join(", ");
-        var stats = playlist.stats();
-        let buildDate = new Date();
-        let yyyy = buildDate.toLocaleString(undefined, {
-          year: "numeric",
-        });
-        let mm = buildDate.toLocaleString(undefined, {
-          month: "2-digit",
-        });
-        let album = `${yyyy}-${mm} voice.suttacentral.net`;
-        var audio = await playlist.speak({
-          voices: {
-            pli: voiceRoot,
-            [language]: voiceLang,
-          },
-
-          album,
-          artist,
-          album_artist: artist,
-          languages: langs.join(","),
-          audioSuffix,
-          copyright: "https://suttacentral.net/licensing",
-          publisher: "voice.suttacentral.net",
-          title: pattern,
-        });
-        var result = {
-          audio,
-        };
-        var guid = audio.signature.guid;
-        var filepath = soundStore.guidPath(guid, audioSuffix);
-        var uriPattern = encodeURIComponent(
-          decodeURIComponent(pattern)
-            .replace(/[ ,\t]/g, "_")
-            .replace(/[\/]/g, "-")
-        );
-        var filename = `${uriPattern}_${langs.join(
-          "+"
-        )}_${vname}${audioSuffix}`;
-        return {
-          filepath,
-          filename,
-          guid,
-          stats,
-          buildDate,
-        };
-      } catch (e) {
-        this.warn(`buildDownload()`, JSON.stringify(args, null, 2), e.message);
-        throw e;
+      if (isNaN(maxResults)) {
+        throw new Error("Expected number for maxResults");
       }
+      const AUDIO_SUFFIXES = {
+        ".opus": ".opus",
+        "opus": ".opus",
+        ".ogg": ".ogg",
+        "ogg": ".ogg",
+        ".mp3": ".mp3",
+        "mp3": ".mp3",
+      }
+
+      lang = LANG_MAP[lang] || lang;
+
+      audioSuffix = AUDIO_SUFFIXES[audioSuffix.toLowerCase()];
+      if (audioSuffix == null) {
+        throw new Error(`Unsupported audio type:${audioSuffix}`);
+      }
+
+      if (typeof langs === 'string') {
+        langs = langs.toLowerCase() .split("+") .map(l=> LANG_MAP[l] || l);
+      } else if (langs instanceof Array) {
+        // ok
+      } else {
+        throw new Error(`downloadArgs() expected:array-or-string actual:${langs}`);
+      }
+
+      if (!pattern) {
+        throw new Error("Search pattern is required");
+      }
+
+      if (typeof lang !== 'string') {
+        throw new Error("Expected 2- or 3-letter ISO language identifier");
+      }
+      lang = lang.toLowerCase();
+
+      maxResults = Number(maxResults);
+      if (isNaN(maxResults)) {
+        throw new Error("Expected number for maxResults");
+      }
+
+      return { audioSuffix, vroot, vtrans, langs, pattern, maxResults, lang}
     }
+
+    async buildDownload(args) {
+      let { soundStore, suttaStore, voiceFactory, bilaraData, } = this;
+      let {
+        audioSuffix,
+        langs,
+        lang,
+        maxResults,
+        pattern,
+        vroot,
+        vtrans,
+      } = this.downloadArgs(args);
+
+      var playlist = await suttaStore.createPlaylist({
+        pattern,
+        languages: langs,
+        lang,
+        maxResults,
+        audioSuffix,
+      });
+
+      var voiceLang = voiceFactory.voiceOfName(vtrans);
+      var voiceRoot = voiceFactory.voiceOfName(vroot);
+      let voices = langs.map((l) => {
+        return l === "pli" ? voiceRoot.name : voiceLang.name;
+      });
+      let artists = playlist
+        .author_uids()
+        .map((a) => {
+          let ai = bilaraData.authorInfo(a);
+          return ai ? ai.name : a;
+        })
+        .concat(voices);
+      let artist = artists.join(", ");
+      var stats = playlist.stats();
+      let buildDate = new Date();
+      let yyyy = buildDate.toLocaleString(undefined, {
+        year: "numeric",
+      });
+      let mm = buildDate.toLocaleString(undefined, {
+        month: "2-digit",
+      });
+      let album = `${yyyy}-${mm} voice.suttacentral.net`;
+      var audio = await playlist.speak({
+        voices: {
+          pli: voiceRoot,
+          [lang]: voiceLang,
+        },
+
+        album,
+        artist,
+        album_artist: artist,
+        languages: langs.join(","),
+        audioSuffix,
+        copyright: "https://suttacentral.net/licensing",
+        publisher: "voice.suttacentral.net",
+        title: pattern,
+      });
+      var result = {
+        audio,
+      };
+      var guid = audio.signature.guid;
+      var filepath = soundStore.guidPath(guid, audioSuffix);
+      var uriPattern = encodeURIComponent(
+        decodeURIComponent(pattern)
+          .replace(/[ ,\t]/g, "_")
+          .replace(/[\/]/g, "-")
+      );
+      let langExpr = langs.join("+")
+      var filename = `${uriPattern}_${langExpr}_${vtrans}${audioSuffix}`;
+      return {
+        filepath,
+        filename,
+        guid,
+        stats,
+        buildDate,
+      };
+    }
+
 
     async getBuildDownload(req, res, next) {
       try {
@@ -385,25 +429,25 @@ TODO*/
         if (!initialized) {
           throw new Error(`${this.constructor.name} is not initialized`);
         }
-        var type = req.params.type || "unknown-type";
-        let audioSuffix = soundStore.audioSuffix;
-        audioSuffix = type === "opus" ? ".opus" : audioSuffix;
-        audioSuffix = type === "ogg" ? ".ogg" : audioSuffix;
-        audioSuffix = type === "mp3" ? ".mp3" : audioSuffix;
-        var vroot = req.params.vroot || "Aditi";
-        var langs = (req.params.langs || "pli+en")
-          .toLowerCase()
-          .split("+")
-          .map((l) => LANG_MAP[l] || l);
-        var language = langs.filter((l) => l !== "pli")[0];
-        var language =
-          language || LANG_MAP[req.query.lang] || req.query.lang || "en";
-        var vname = (req.params.voice || "Amy").toLowerCase();
-        var pattern = req.params.pattern;
-        if (!pattern) {
-          throw new Error("Search pattern is required");
-        }
-        var maxResults = Number(req.query.maxResults || suttaStore.maxResults);
+        let { 
+          type, audioSuffix, vroot, vname, lang, langs, pattern, maxResults,
+        } = downloadArgs(req.params);
+        //var type = req.params.type || "unknown-type";
+        //let audioSuffix = this.toAudioSuffix(type);
+        //var vroot = req.params.vroot || "Aditi";
+        //var langs = (req.params.langs || "pli+en")
+          //.toLowerCase()
+          //.split("+")
+          //.map((l) => LANG_MAP[l] || l);
+        //var language = langs.filter((l) => l !== "pli")[0];
+        //var language =
+          //language || LANG_MAP[req.query.lang] || req.query.lang || "en";
+        //var vname = (req.params.voice || "Amy").toLowerCase();
+        //var pattern = req.params.pattern;
+        //if (!pattern) {
+          //throw new Error("Search pattern is required");
+        //}
+        //var maxResults = Number(req.query.maxResults || suttaStore.maxResults);
 
         let downloadArgs = {
           audioSuffix,
@@ -442,61 +486,59 @@ TODO*/
       }
     }
 
+/*
     async getDownloadPlaylist(req, res, next) {
-      try {
-        var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
-        if (!initialized) {
-          throw new Error(`${this.constructor.name} is not initialized`);
-        }
-        let route = req.route.path.split("/");
-        let audioSuffix = soundStore.audioSuffix;
-        audioSuffix = route[2] === "opus" ? ".opus" : audioSuffix;
-        audioSuffix = route[2] === "ogg" ? ".ogg" : audioSuffix;
-        var vroot = req.params.vroot || "Aditi";
-        var langs = (req.params.langs || "pli+en")
-          .toLowerCase()
-          .split("+")
-          .map((l) => LANG_MAP[l] || l);
-        var language = langs.filter((l) => l !== "pli")[0];
-        var language =
-          language || LANG_MAP[req.query.lang] || req.query.lang || "en";
-        var vname = (req.params.voice || "Amy").toLowerCase();
-        var pattern = req.params.pattern;
-        if (!pattern) {
-          throw new Error("Search pattern is required");
-        }
-        var maxResults = Number(req.query.maxResults || suttaStore.maxResults);
-
-        let downloadArgs = {
-          audioSuffix,
-          vroot,
-          langs,
-          language,
-          vname,
-          pattern,
-          maxResults,
-        };
-        let hash = mj.hash(downloadArgs);
-        let value = downloadMap[hash];
-        if (!value || value instanceof Promise) {
-          value = await this.buildDownload(downloadArgs);
-        }
-        let { filepath, filename, guid, stats } = value;
-        var data = await fs.promises.readFile(filepath);
-        res.set("Content-disposition", "attachment; filename=" + filename);
-        this.info(
-          `GET download/${langs}/${pattern} => ` +
-            `${filename} size:${data.length} ` +
-            `secs:${stats.duration} ${guid}`
-        );
-        let date = new Date();
-        res.cookie("download-date", date.toISOString()); // DEPRECATED
-        return data;
-      } catch (e) {
-        this.warn(`getDownloadPlaylist`, JSON.stringify({}), e.message);
-        throw e;
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
+      var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
+      if (!initialized) {
+        throw new Error(`${this.constructor.name} is not initialized`);
       }
+      let { params, route, query } = req;
+      let { 
+        vroot = "Aditi", 
+        vtrans = "Amy",
+        lang = 'en',
+        langs = "pli+en",
+        audioSuffix,
+        pattern,
+      } = params;
+      audioSuffix = this.toAudioSuffix(audioSuffix);
+      let { maxResults=suttaStore.maxResults } = query;
+      maxResults = Number(maxResults);
+
+      let routeParts = route.path.split("/");
+      var langs = langList.toLowerCase().split("+").map((l) => LANG_MAP[l] || l);
+      var language = langs.filter((l) => l !== "pli")[0];
+      var language = language || LANG_MAP[lang] || lang;
+
+      let downloadArgs = {
+        audioSuffix,
+        vroot,
+        langs,
+        language,
+        vname,
+        pattern,
+        maxResults,
+      };
+      let hash = mj.hash(downloadArgs);
+      let value = downloadMap[hash];
+      if (!value || value instanceof Promise) {
+        value = await this.buildDownload(downloadArgs);
+      }
+      let { filepath, filename, guid, stats } = value;
+      var audioData = await fs.promises.readFile(filepath);
+      res.set("Content-disposition", "attachment; filename=" + filename);
+      this.info(
+        `GET download/${langs}/${pattern} => ` +
+          `${filename} size:${audioData.length} ` +
+          `secs:${stats.duration} ${guid}`
+      );
+      let date = new Date();
+      res.cookie("download-date", date.toISOString()); // DEPRECATED
+      return audioData;
     }
+*/
 
 
   }
