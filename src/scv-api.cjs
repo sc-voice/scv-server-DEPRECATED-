@@ -79,6 +79,7 @@ TODO*/
       let voiceFactory = opts.voiceFactory 
         || new VoiceFactory({ scAudio, soundStore, });
       let bilaraData = opts.bilaraData || new BilaraData();
+      this.download = null;
 
       Object.defineProperty(this, "audioUrls", {
         value: opts.audioUrls || new AudioUrls(),
@@ -298,6 +299,7 @@ TODO*/
         lang = 'en',
         maxResults = suttaStore.maxResults,
         pattern,
+        task,
       } = reqArgs;
 
       if (isNaN(maxResults)) {
@@ -341,11 +343,15 @@ TODO*/
         throw new Error("Expected number for maxResults");
       }
 
-      return { audioSuffix, vroot, vtrans, langs, pattern, maxResults, lang}
+      return { 
+        audioSuffix, vroot, vtrans, langs, pattern, maxResults, lang, task
+      }
     }
 
     async buildDownload(args) {
-      let { soundStore, suttaStore, voiceFactory, bilaraData, } = this;
+      let { 
+        download, soundStore, suttaStore, voiceFactory, bilaraData, 
+      } = this;
       let {
         audioSuffix,
         langs,
@@ -354,8 +360,10 @@ TODO*/
         pattern,
         vroot,
         vtrans,
+        task,
       } = this.downloadArgs(args);
 
+      task && (task.actionsTotal += 2);
       var playlist = await suttaStore.createPlaylist({
         pattern,
         languages: langs,
@@ -363,6 +371,7 @@ TODO*/
         maxResults,
         audioSuffix,
       });
+      task && (task.actionsDone++);
 
       var voiceLang = voiceFactory.voiceOfName(vtrans);
       var voiceRoot = voiceFactory.voiceOfName(vroot);
@@ -387,6 +396,7 @@ TODO*/
       });
       let album = `${yyyy}-${mm} voice.suttacentral.net`;
       var audio = await playlist.speak({
+        task,
         voices: {
           pli: voiceRoot,
           [lang]: voiceLang,
@@ -411,8 +421,9 @@ TODO*/
           .replace(/[ ,\t]/g, "_")
           .replace(/[\/]/g, "-")
       );
-      let langExpr = langs.join("+")
+      let langExpr = langs.join("+");
       var filename = `${uriPattern}_${langExpr}_${vtrans}${audioSuffix}`;
+      task && (task.actionsDone++);
       return {
         filepath,
         filename,

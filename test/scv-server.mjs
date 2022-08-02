@@ -458,7 +458,9 @@ typeof describe === "function" &&
         .expect("Content-Type", /audio.mp3/)
         .expect("Content-Length", "13524");
     });
-    it("TESTTESTPOST /scv/build-download/...", async()=>{
+    it("TESTTESTGET /scv/build-download/...", async()=>{
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
       return; // TODO
       let scv = await sharedTestServer();
       let filename = 'test-file.mp3';

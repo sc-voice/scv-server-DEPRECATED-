@@ -3,6 +3,7 @@ import { BilaraData } from "scv-bilara";
 import AudioUrls from "../src/audio-urls.cjs";
 import SoundStore from "../src/sound-store.cjs";
 import SuttaStore from "../src/sutta-store.cjs";
+import Task from "../src/task.cjs";
 
 import { MerkleJson } from "merkle-json";
 
@@ -380,8 +381,6 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
     });
     it("TESTTESTbuildDownload() => thig1.1, thig1.2, thig1.3", async()=>{
-      // https://voice.suttacentral.net/
-      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
       let audioSuffix = "opus";
       let lang = 'en';
       let langs = 'pli+en';
@@ -389,6 +388,7 @@ typeof describe === "function" &&
       let pattern = "thig1.1-3/en/soma";
       let vroot = "Aditi";
       let vtrans = "Matthew";
+      let task = new Task({name: `test buildDownload()`});
 
       let params = { 
         audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
@@ -396,11 +396,12 @@ typeof describe === "function" &&
       let api = await testScvApi();
        
       let res = await api.buildDownload({
-        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans, task,
       });
       should(res.filename).equal('thig1.1-3-en-soma_pli+en_Matthew.opus');
       should(res.filepath).match(/scv-server\/local\/sounds\/common/);
       should(res.filepath).match(/3e36385496eba89a47f26f16f55d07bb.opus/);
+      let nSegments = 17;
       should.deepEqual(res.stats, {
         chars: {
           en: 607,
@@ -408,12 +409,13 @@ typeof describe === "function" &&
         },
         duration: 95,
         segments: { 
-          en: 17,
-          pli: 17,
+          en: nSegments,
+          pli: nSegments,
         },
         tracks: 4,
       });
       should(Date.now() - res.buildDate).above(0).below(15*1000);
+      should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
   });
 

@@ -11,6 +11,7 @@ typeof describe === "function" &&
     const SuttaFactory = require('../src/sutta-factory.cjs');
     const SuttaStore = require('../src/sutta-store.cjs');
     const Voice = require('../src/voice.cjs');
+    const Task = require('../src/task.cjs');
     this.timeout(20 * 1000);
 
     var suttaFactory;
@@ -279,4 +280,34 @@ typeof describe === "function" &&
       });
       should(result.signature.guid).match(/138aa18fd821f3622094a2faf97e0c87/);
     });
-  });
+    it("TESTTESTspeak(opts) => task progress", async () => {
+      let factory = await testSuttaFactory();
+      let pattern = 'thig1.1/en/soma';
+      let sutta = await factory.loadSutta(pattern);
+      let voiceTrans = Voice.createVoice({ name: "matthew" });
+      let voices = { en: voiceTrans };
+      let comment = `test ${pattern}`;
+      let pl = new Playlist({
+        languages: ["en"], // speaking order
+      });
+      pl.addSutta(sutta);
+      let task = new Task({
+        name: `test playlist ${pattern}`
+      });
+      task.start(`task ${pattern}`);
+      let promise = pl.speak({
+        voices,
+        volume: "test-playlist",
+        comment,
+        task,
+      });
+      console.log(task.summary, task.actionsTotal);
+      let nSegments = sutta.segments.length;
+      should(task.actionsTotal).equal(nSegments+2);
+      should(task.actionsDone).equal(0);
+
+      let result = await promise;
+      should(task.actionsDone).equal(task.actionsTotal);
+      should(result.signature.guid).match(/9bbab83cf942a893d394462292625511/);
+    });
+  })

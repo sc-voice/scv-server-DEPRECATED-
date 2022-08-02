@@ -50,10 +50,30 @@
       return result;
     }
 
-    async speak(opts) {
+    async speak(opts={}) {
       try {
-        var voices = opts.voices || this.voices;
-        let audioSuffix = opts.audioSuffix || ".mp3";
+        var {
+          voices = this.voices,
+          audioSuffix = ".mp3",
+          task,
+          album,
+          artist,
+          album_artist = opts.artist,
+          audioSuffix,
+          copyright,
+          publisher,
+          title,
+          comment = '',
+          volume,
+          chapter,
+        } = opts;
+
+        var nSegments = 0;
+        for (var iTrk = 0; iTrk < this.tracks.length; iTrk++) {
+          var track = this.tracks[iTrk];
+          nSegments += track.segments.length;
+        }
+        task && (task.actionsTotal += nSegments + 2);
         var nLang = this.languages.length;
         this.languages.forEach((lang) => {
           if (voices[lang] == null) {
@@ -66,6 +86,9 @@
         var trackAudioFiles = [];
         var sectionBreak = await tts.synthesizeBreak(tts.SECTION_BREAK);
         var prevSuid;
+        comment && (comment += ' ');
+        comment += `(segments:${nSegments})`;
+        task && task.actionsDone++;
         for (var iTrk = 0; iTrk < this.tracks.length; iTrk++) {
           var track = this.tracks[iTrk];
           var sutta_uid = track.sutta_uid.toLowerCase();
@@ -79,15 +102,11 @@
               var lang = this.languages[iLang];
               var voice = voices[lang];
               var vname = voice.name.toLowerCase();
-              var volume =
-                opts.volume ||
-                SoundStore.suttaVolumeName(sutta_uid, lang, auid, voice.name);
+              volume = volume 
+                ?? SoundStore.suttaVolumeName(sutta_uid, lang, auid, voice.name);
               var text = segment[lang];
               if (voice && text) {
-                var segOpts = {
-                  volume,
-                  chapter: opts.chapter,
-                };
+                var segOpts = { volume, chapter, };
                 segOpts = Object.assign(segOpts, opts);
                 delete segOpts.voices; // not used
 
@@ -112,6 +131,7 @@
                 segment.audio[lang] = vdata.signature.guid;
               }
             }
+            task && task.actionsDone++;
           }
           segmentAudioFiles.push(sectionBreak.file);
           var audio = await tts.concatAudio(segmentAudioFiles);
@@ -119,16 +139,17 @@
           trackAudioFiles.push(audio.file);
         }
         this.audio = await tts.concatAudio(trackAudioFiles, {
-          album: opts.album,
-          artist: opts.artist,
-          album_artist: opts.album_artist || opts.artist,
+          album,
+          artist,
+          album_artist,
           audioSuffix,
-          copyright: opts.copyright,
-          publisher: opts.publisher,
+          copyright,
+          publisher,
           languages: this.languages.join(", "),
-          title: opts.title,
-          comment: opts.comment,
+          title,
+          comment,
         });
+        task && task.actionsDone++;
         return this.audio;
       } catch (e) {
         this.warn(`speak()`, e.message);
