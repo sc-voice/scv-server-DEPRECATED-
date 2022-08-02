@@ -346,8 +346,6 @@ typeof describe === "function" &&
       should.throws(()=>api.downloadArgs({pattern, lang:911}));
     });
     it("buildDownload() => thig1.1/en/soma", async()=>{
-      // https://voice.suttacentral.net/
-      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
       let audioSuffix = "opus";
       let lang = 'en';
       let langs = 'pli+en';
@@ -451,8 +449,6 @@ typeof describe === "function" &&
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
       should(resDone.guid).equal('858cdb384ffb24de29ffe5703258dd30');
     });
-      // https://voice.suttacentral.net/
-      // scv/build-download/opus/pli+en/Amy/thig1.1%2fen%2fsoma/Aditi
   });
 
 /*TODO

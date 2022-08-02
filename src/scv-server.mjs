@@ -62,11 +62,16 @@ export default class ScvServer extends RestApi {
 
   _addResourceMethods() {
     let that = this;
+    let jsonMime = "application/json";
     let { resourceMethods, scvApi } = this;
+
+    // search
     resourceMethods.push(new ResourceMethod( "get", 
       "search/:pattern", (req,res)=>scvApi.getSearch(req,res) ));
     resourceMethods.push(new ResourceMethod( "get", 
       "search/:pattern/:lang", (req,res)=>scvApi.getSearch(req,res) ));
+
+    // play segment
     resourceMethods.push(new ResourceMethod( "get", 
       "play/segment/:sutta_uid/:langTrans/:translator/:scid/:vnameTrans", 
       (req,res)=>scvApi.getPlaySegment(req,res) ));
@@ -82,6 +87,19 @@ export default class ScvServer extends RestApi {
     resourceMethods.push(new ResourceMethod( "get", 
       "audio/:sutta_uid/:langTrans/:translator/:vnameTrans/:guid", 
       (req,res)=>scvApi.getAudio(req,res), scvApi.audioMIME ));
+
+    // download
+    resourceMethods.push(new ResourceMethod( "get", [
+      'build-download',
+      ':audioSuffix',
+      ':langs',
+      ':vtrans',
+      ':pattern',
+      ':vroot', 
+      ].join('/'),
+      (req,res)=>scvApi.getBuildDownload(req,res), jsonMime));
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1%2fen%2fsoma/Aditi
 
     // authenticated
     resourceMethods.push(new ResourceMethod( "get", 

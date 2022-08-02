@@ -24,7 +24,7 @@ typeof describe === "function" &&
   describe("scv-server", function() {
     const msStart = Date.now();
     const TEST_SERVERS = {};
-    this.timeout(5*1000);
+    this.timeout(15*1000);
 
     after(async() => {
       let ports = Object.keys(TEST_SERVERS);
@@ -459,35 +459,54 @@ typeof describe === "function" &&
         .expect("Content-Length", "13524");
     });
     it("TESTTESTGET /scv/build-download/...", async()=>{
-      // https://voice.suttacentral.net/
-      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
-      return; // TODO
       let scv = await sharedTestServer();
-      let filename = 'test-file.mp3';
-      let guid = '37cedc61727373870e197793e653330d';
-      let sutta_uid = 'thig1.1';
-      let langTrans = 'en';
-      let translator = 'soma';
-      let vnameTrans = 'Amy';
-      let vnameRoot = 'Aditi';
-      let audio = "opus";
-      let audioLang = "pli+en";
-    // https://voice.suttacentral.net/scv/download/opus/pli+en/Amy/thig1.1/Aditi
+      let audioSuffix = "opus";
+      let langs = "pli+en";
+      let pattern = "thig1.1/en/soma";
+      let vroot = 'Aditi';
+      let vtrans = 'Amy';
+      let maxResults = 2;
+
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1%2fen%2fsoma/Aditi
       let url = [
-        '/scv/download',
-        audio,
-        audioLang,
-        vnameTrans,
-        sutta_uid,
-        vnameRoot,
-        translator,
-        vnameTrans,
-        guid,
+        '/scv/build-download',
+        audioSuffix,
+        langs,
+        vtrans,
+        encodeURIComponent(pattern),
+        vroot,
       ].join('/');
-      await supertest(scv.app).get(url)
+      url += `?maxResults=${maxResults}`;
+
+      let res = await supertest(scv.app).get(url)
         .expect(200)
-        .expect("Content-Type", /audio.mp3/)
-        .expect("Content-Length", "13524");
+        .expect('Content-Type', /application.*json/);
+      let expectedProps = {
+        audioSuffix: '.opus',
+        lang: 'en',
+        langs: ['pli', 'en'],
+        maxResults,
+        pattern,
+        vroot,
+        vtrans,
+      }
+      await new Promise(r=>setTimeout(()=>r(),3*1000));
+      let resDone = await supertest(scv.app).get(url)
+        .expect(200)
+        .expect('Content-Type', /application.*json/)
+      should(resDone.body).properties(expectedProps);
+      should(resDone.body).properties({
+        filename: 'thig1.1-en-soma_pli+en_Amy.opus',
+        guid: '5b5a9ae2ec28ea2f4642b88dfe03f191',
+        stats: {
+          duration: 53,
+          tracks: 2,
+          chars: { pli:257, en:332 },
+          segments: { pli:9, en:9},
+        },
+      });
+      //console.log(res.body);
     });
 
   });

@@ -480,6 +480,7 @@ TODO*/
       if (task && !task.isActive) {
         result.filename = task.download.filename;
         result.guid = task.download.guid;
+        result.stats = task.download.stats;
       }
       return result;
     }
