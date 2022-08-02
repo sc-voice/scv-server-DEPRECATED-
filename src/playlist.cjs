@@ -11,6 +11,7 @@
   class Playlist {
     constructor(opts = {}) {
       (opts.logger || logger).logInstance(this);
+      opts.logLevel && (this.logLevel = opts.logLevel);
       this.tracks = opts.tracks || [];
       this.languages = opts.languages || ["pli", "en"];
       this.maxSeconds = opts.maxSeconds || 0;
@@ -131,7 +132,11 @@
                 segment.audio[lang] = vdata.signature.guid;
               }
             }
-            task && task.actionsDone++;
+            if (task) {
+              task.actionsDone++;
+              this.debug(`Playlist.speak() segment`,
+                `task:${task.actionsDone}/${task.actionsTotal}`);
+            }
           }
           segmentAudioFiles.push(sectionBreak.file);
           var audio = await tts.concatAudio(segmentAudioFiles);
@@ -149,7 +154,11 @@
           title,
           comment,
         });
-        task && task.actionsDone++;
+        if (task) {
+          task.actionsDone++;
+          this.debug(`Playlist.speak() done`,
+            `task:${task.actionsDone}/${task.actionsTotal}`);
+        }
         return this.audio;
       } catch (e) {
         this.warn(`speak()`, e.message);

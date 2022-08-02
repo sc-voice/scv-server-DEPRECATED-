@@ -301,15 +301,16 @@ typeof describe === "function" &&
         }
       });
     });
-    it("downloadArgs() => validated args", async()=>{
+    it("TESTTESTdownloadArgs() => validated args", async()=>{
       let api = await testScvApi();
-      let pattern = "thig1.1/en/soma";
+      let suidref = "thig1.1/en/soma";
+      let pattern = encodeURIComponent(suidref);
       let vtrans = 'Vicki';
       let vroot = 'Raveena';
       let langs = ['de', 'pli'];
       let lang = 'de';
 
-      should(api.downloadArgs({pattern})).properties({pattern});
+      should(api.downloadArgs({pattern})).properties({pattern:suidref});
       should.throws(()=>api.downloadArgs()); // no pattern
 
       should(api.downloadArgs({pattern, })).properties({vtrans: 'Amy'});
@@ -417,6 +418,41 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
+    it("TESTTESTgetBuildDownload() => thig1.1-3/en/soma", async()=>{
+      let api = await testScvApi();
+      let audioSuffix = "ogg";
+      let lang = 'en';
+      let langs = 'pli+en';
+      let maxResults = 2;
+      let pattern = "thig1.1-3/en/soma";
+      let vroot = "aditi";
+      let vtrans = "amy";
+      let params = { 
+        audioSuffix, langs, vtrans, pattern: encodeURIComponent(pattern),
+      };
+      let query = { maxResults: "2", lang };
+      //api.logLevel = 'debug';
+      let res = await api.getBuildDownload({params, query});
+      should.deepEqual(res, { 
+        audioSuffix: ".ogg", 
+        lang, 
+        langs: ['pli', 'en'],
+        maxResults: 2, 
+        pattern, 
+        vroot: 'Aditi', 
+        vtrans,
+      });
+      should(res.filename).equal(undefined);
+      should(res.guid).equal(undefined);
+      await new Promise(r=>setTimeout(()=>r(),5*1000))
+
+      let resDone = await api.getBuildDownload({params, query});
+      should(resDone).properties(res);
+      should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
+      should(resDone.guid).equal('858cdb384ffb24de29ffe5703258dd30');
+    });
+      // https://voice.suttacentral.net/
+      // scv/build-download/opus/pli+en/Amy/thig1.1%2fen%2fsoma/Aditi
   });
 
 /*TODO

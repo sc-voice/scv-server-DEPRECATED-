@@ -182,14 +182,15 @@
         var { lang, language, method, suttaRefs, suttas, resultPattern } =
           await this.findSuttas(opts);
         lang = lang || language;
+        let logLevel = opts.logLevel ?? this.logLevel;
         var maxDuration = opts.maxDuration || this.maxDuration;
         var languages = opts.languages || ["pli", lang];
-        var playlist = new Playlist({ languages });
+        var playlist = new Playlist({ languages, logLevel });
         suttas.forEach((sutta) => playlist.addSutta(sutta));
         var duration = playlist.stats().duration;
         if (duration > this.maxDuration) {
           languages = opts.languages || [lang];
-          playlist = new Playlist({ languages });
+          playlist = new Playlist({ languages, logLevel });
           var minutes = (this.maxDuration / 60).toFixed(0);
           playlist.addTrack(
             "createPlaylist_error1",

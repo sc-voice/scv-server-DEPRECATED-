@@ -301,7 +301,6 @@ typeof describe === "function" &&
         comment,
         task,
       });
-      console.log(task.summary, task.actionsTotal);
       let nSegments = sutta.segments.length;
       should(task.actionsTotal).equal(nSegments+2);
       should(task.actionsDone).equal(0);

@@ -17,6 +17,7 @@
   const SoundStore = require("./sound-store.cjs");
   const SuttaStore = require("./sutta-store.cjs");
   const S3Creds = require("./s3-creds.cjs");
+  const Task = require("./task.cjs");
   const Voice = require("./voice.cjs");
   const VoiceFactory = require("./voice-factory.cjs");
 
@@ -332,6 +333,7 @@ TODO*/
       if (!pattern) {
         throw new Error("Search pattern is required");
       }
+      pattern = decodeURIComponent(pattern);
 
       if (typeof lang !== 'string') {
         throw new Error("Expected 2- or 3-letter ISO language identifier");
@@ -350,7 +352,7 @@ TODO*/
 
     async buildDownload(args) {
       let { 
-        download, soundStore, suttaStore, voiceFactory, bilaraData, 
+        logLevel, download, soundStore, suttaStore, voiceFactory, bilaraData, 
       } = this;
       let {
         audioSuffix,
@@ -358,9 +360,9 @@ TODO*/
         lang,
         maxResults,
         pattern,
+        task,
         vroot,
         vtrans,
-        task,
       } = this.downloadArgs(args);
 
       task && (task.actionsTotal += 2);
@@ -370,6 +372,7 @@ TODO*/
         lang,
         maxResults,
         audioSuffix,
+        logLevel,
       });
       task && (task.actionsDone++);
 
@@ -423,7 +426,11 @@ TODO*/
       );
       let langExpr = langs.join("+");
       var filename = `${uriPattern}_${langExpr}_${vtrans}${audioSuffix}`;
-      task && (task.actionsDone++);
+      if (task) {
+        task.actionsDone++;
+        this.debug(`buildDownload() done`,
+          `task:${task.actionsDone}/${task.actionsTotal}`);
+      }
       return {
         filepath,
         filename,
@@ -433,74 +440,52 @@ TODO*/
       };
     }
 
-
-    async getBuildDownload(req, res, next) {
-      try {
-        var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
-        if (!initialized) {
-          throw new Error(`${this.constructor.name} is not initialized`);
-        }
-        let { 
-          type, audioSuffix, vroot, vname, lang, langs, pattern, maxResults,
-        } = downloadArgs(req.params);
-        //var type = req.params.type || "unknown-type";
-        //let audioSuffix = this.toAudioSuffix(type);
-        //var vroot = req.params.vroot || "Aditi";
-        //var langs = (req.params.langs || "pli+en")
-          //.toLowerCase()
-          //.split("+")
-          //.map((l) => LANG_MAP[l] || l);
-        //var language = langs.filter((l) => l !== "pli")[0];
-        //var language =
-          //language || LANG_MAP[req.query.lang] || req.query.lang || "en";
-        //var vname = (req.params.voice || "Amy").toLowerCase();
-        //var pattern = req.params.pattern;
-        //if (!pattern) {
-          //throw new Error("Search pattern is required");
-        //}
-        //var maxResults = Number(req.query.maxResults || suttaStore.maxResults);
-
-        let downloadArgs = {
-          audioSuffix,
-          vroot,
-          langs,
-          language,
-          vname,
-          pattern,
-          maxResults,
-        };
-        let hash = mj.hash(downloadArgs);
-        let value = downloadMap[hash];
-        if (value && !(value instanceof Promise)) {
-          if (!fs.existsSync(value.filepath)) {
-            // downloadMap is stale.
-            downloadMap[hash] = value = null;
-          }
-        }
-        if (value == null) {
-          this.info(`buildDownload(${hash}) started`);
-          value = this.buildDownload(downloadArgs);
-          downloadMap[hash] = value;
-          value.then((v) => {
-            downloadMap[hash] = v;
-            this.info(`buildDownload(${hash}) ok:`, JSON.stringify(v));
-          });
-        }
-        if (value && !(value instanceof Promise)) {
-          downloadArgs.filename = value.filename;
-          downloadArgs.guid = value.guid;
-        }
-        return downloadArgs;
-      } catch (e) {
-        this.warn(`getBuildDownload`, JSON.stringify({}), e.message);
-        throw e;
+    async getBuildDownload(req, res) {
+      var {
+        downloadMap, initialized, mj, soundStore, suttaStore,
+      } = this;
+      if (!initialized) {
+        throw new Error(`${this.constructor.name} is not initialized`);
       }
+      let { 
+        audioSuffix, vroot, vtrans, lang, langs, pattern, maxResults,
+      } = this.downloadArgs(Object.assign({}, req.params, req.query));
+      let result = {
+        audioSuffix,
+        lang,
+        langs,
+        maxResults,
+        pattern,
+        vroot,
+        vtrans,
+      };
+      let hash = mj.hash(result);
+      let task = downloadMap[hash];
+      if (task && !task.isActive && task.download) {
+        if (!fs.existsSync(task.download.filepath)) {
+          downloadMap[hash] = task = null; // downloadMap is stale.
+        }
+      }
+      if (task == null) {
+        this.info(`buildDownload(${hash}) started`);
+        task = new Task({name: `download ${pattern}`});
+        task.download = this.buildDownload( 
+          Object.assign({task}, result));
+        downloadMap[hash] = task;
+        task.download.then(v=>{
+          this.info(`getBuildDownload(${hash}) ok:`, JSON.stringify(v));
+          task.download = v;
+        });
+      }
+      if (task && !task.isActive) {
+        result.filename = task.download.filename;
+        result.guid = task.download.guid;
+      }
+      return result;
     }
 
 /*
     async getDownloadPlaylist(req, res, next) {
-      // https://voice.suttacentral.net/
-      // scv/build-download/opus/pli+en/Amy/thig1.1/en/soma/Aditi
       var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
       if (!initialized) {
         throw new Error(`${this.constructor.name} is not initialized`);
