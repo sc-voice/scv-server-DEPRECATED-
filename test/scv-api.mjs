@@ -431,7 +431,7 @@ typeof describe === "function" &&
       let query = { maxResults: "2", lang };
       //api.logLevel = 'debug';
       let res = await api.getBuildDownload({params, query});
-      should.deepEqual(res, { 
+      should(res).properties({ 
         audioSuffix: ".ogg", 
         lang, 
         langs: ['pli', 'en'],
@@ -440,16 +440,20 @@ typeof describe === "function" &&
         vroot: 'Aditi', 
         vtrans,
       });
+      let taskProperties = [
+        "actionsDone", "actionsTotal", "msActive", "started", "lastActive", "summary",
+      ];
+      should(res.task).properties(taskProperties);
       should(res.filename).equal(undefined);
       should(res.guid).equal(undefined);
       await new Promise(r=>setTimeout(()=>r(),5*1000))
 
       let resDone = await api.getBuildDownload({params, query});
-      should(resDone).properties(res);
+      should(resDone.task).properties(taskProperties);
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
       should(resDone.guid).equal('858cdb384ffb24de29ffe5703258dd30');
     });
-    it("getDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
+    it("TESTTESTgetDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -463,7 +467,10 @@ typeof describe === "function" &&
       };
       let query = { maxResults: "2", lang };
       //api.logLevel = 'debug';
-      let req = {params, query};
+      let url = [ "/download", audioSuffix, langs, 
+        vtrans, encodeURIComponent(pattern), vroot, 
+      ].join('/');
+      let req = {params, query, url};
       let res = new MockResponse();
       let audio = await api.getDownloadPlaylist(req, res);
       should(audio.length).equal(255935);
