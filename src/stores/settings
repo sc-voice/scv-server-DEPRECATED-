@@ -11,11 +11,15 @@ const SERVERS = [{
 
 const INITIAL_STATE = {
   theme: 'dark',
+  search: undefined,
+  audioSuffix: 'mp3',
+  langs: 'pli+en',
   sutta_uid: undefined,
   scid: undefined,
   serverUrl: SERVERS[0].value,
   langTrans: 'en',
   langRoot: 'pli',
+  maxResults: 5,
   translator: 'sujato',
   vnameTrans: 'Amy',
   vnameRoot: 'Aditi',

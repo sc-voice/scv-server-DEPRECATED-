@@ -27,6 +27,7 @@
         <v-expansion-panels variant="inset">
           <Search/>
           <PlaySegment/>
+          <Download/>
         </v-expansion-panels>
       </v-card>
     </v-main>
@@ -41,6 +42,7 @@ import { useSettingsStore } from './stores/settings'
 import { useVolatileStore } from './stores/volatile'
 import Search from './components/Search.vue'
 import PlaySegment from './components/PlaySegment.vue'
+import Download from './components/Download.vue'
 import { onMounted, ref } from 'vue'
 import * as vue from 'vue'
 

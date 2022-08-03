@@ -458,7 +458,7 @@ typeof describe === "function" &&
         .expect("Content-Type", /audio.mp3/)
         .expect("Content-Length", "13524");
     });
-    it("TESTTESTGET /scv/build-download/...", async()=>{
+    it("GET /scv/build-download/...", async()=>{
       let scv = await sharedTestServer();
       let audioSuffix = "opus";
       let langs = "pli+en";
@@ -507,6 +507,31 @@ typeof describe === "function" &&
         },
       });
       //console.log(res.body);
+    });
+    it("TESTTESTGET /scv/download/...", async()=>{
+      let scv = await sharedTestServer();
+      let audioSuffix = "opus";
+      let langs = "pli+en";
+      let pattern = "thig1.1/en/soma";
+      let vroot = 'Aditi';
+      let vtrans = 'Amy';
+      let maxResults = 2;
+
+      let url = [
+        '/scv/download',
+        audioSuffix,
+        langs,
+        vtrans,
+        encodeURIComponent(pattern),
+        vroot,
+      ].join('/');
+      url += `?maxResults=${maxResults}`;
+
+      let res = await supertest(scv.app).get(url)
+        .expect(200)
+        .expect('Content-Type', /audio.opus/)
+        .expect('Content-disposition', /.*thig1.1-en-soma_pli\+en_Amy.opus/)
+        .expect('Content-length', '143539');
     });
 
   });

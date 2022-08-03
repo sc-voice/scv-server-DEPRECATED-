@@ -291,7 +291,7 @@ TODO*/
     }
 
     downloadArgs(reqArgs) {
-      let { suttaStore, soundStore } = this;
+      let { suttaStore, soundStore, mj } = this;
       let { 
         audioSuffix = ".mp3", 
         vroot = 'Aditi', 
@@ -345,9 +345,11 @@ TODO*/
         throw new Error("Expected number for maxResults");
       }
 
-      return { 
+      let result = { 
         audioSuffix, vroot, vtrans, langs, pattern, maxResults, lang, task
       }
+      result.hash = mj.hash(result);
+      return result;
     }
 
     async buildDownload(args) {
@@ -442,13 +444,13 @@ TODO*/
 
     async getBuildDownload(req, res) {
       var {
-        downloadMap, initialized, mj, soundStore, suttaStore,
+        downloadMap, initialized, soundStore, suttaStore,
       } = this;
       if (!initialized) {
         throw new Error(`${this.constructor.name} is not initialized`);
       }
       let { 
-        audioSuffix, vroot, vtrans, lang, langs, pattern, maxResults,
+        audioSuffix, vroot, vtrans, lang, langs, pattern, maxResults, hash,
       } = this.downloadArgs(Object.assign({}, req.params, req.query));
       let result = {
         audioSuffix,
@@ -458,85 +460,74 @@ TODO*/
         pattern,
         vroot,
         vtrans,
+        language: lang, // deprecated (used by Voice)
+        vname: vtrans, // deprecated (used by Voice)
       };
-      let hash = mj.hash(result);
       let task = downloadMap[hash];
       if (task && !task.isActive && task.download) {
         if (!fs.existsSync(task.download.filepath)) {
-          downloadMap[hash] = task = null; // downloadMap is stale.
+          downloadMap[hash] = null; // downloadMap is stale.
+          task = null; // task is stale.
         }
       }
       if (task == null) {
         this.info(`buildDownload(${hash}) started`);
         task = new Task({name: `download ${pattern}`});
-        task.download = this.buildDownload( 
+        let promise = this.buildDownload( 
           Object.assign({task}, result));
         downloadMap[hash] = task;
-        task.download.then(v=>{
+        promise.then(v=>{
           this.info(`getBuildDownload(${hash}) ok:`, JSON.stringify(v));
           task.download = v;
         });
       }
-      if (task && !task.isActive) {
-        result.filename = task.download.filename;
-        result.guid = task.download.guid;
-        result.stats = task.download.stats;
+      if (task) {
+        result.task = {
+          actionsDone: task.actionsDone,
+          actionsTotal: task.actionsTotal,
+          msActive: task.msActive,
+          started: task.started,
+          lastActive: task.lastActive,
+          summary: task.summary,
+        }
+
+        if (task.download) {
+          result.filename = task.download.filename;
+          result.guid = task.download.guid;
+          result.stats = task.download.stats;
+        }
       }
       return result;
     }
 
-/*
-    async getDownloadPlaylist(req, res, next) {
-      var { initialized, soundStore, suttaStore, mj, downloadMap } = this;
+    async getDownloadPlaylist(req, res, next) { 
+      var { 
+        initialized, soundStore, suttaStore, downloadMap,
+      } = this;
       if (!initialized) {
         throw new Error(`${this.constructor.name} is not initialized`);
       }
-      let { params, route, query } = req;
+      let audioSuffix = req.url.split('/')[2];
+      let opts = Object.assign({audioSuffix}, req.params, req.query);
       let { 
-        vroot = "Aditi", 
-        vtrans = "Amy",
-        lang = 'en',
-        langs = "pli+en",
-        audioSuffix,
-        pattern,
-      } = params;
-      audioSuffix = this.toAudioSuffix(audioSuffix);
-      let { maxResults=suttaStore.maxResults } = query;
-      maxResults = Number(maxResults);
-
-      let routeParts = route.path.split("/");
-      var langs = langList.toLowerCase().split("+").map((l) => LANG_MAP[l] || l);
-      var language = langs.filter((l) => l !== "pli")[0];
-      var language = language || LANG_MAP[lang] || lang;
-
-      let downloadArgs = {
-        audioSuffix,
-        vroot,
-        langs,
-        language,
-        vname,
-        pattern,
-        maxResults,
-      };
-      let hash = mj.hash(downloadArgs);
-      let value = downloadMap[hash];
-      if (!value || value instanceof Promise) {
-        value = await this.buildDownload(downloadArgs);
+        vroot, vtrans, lang, langs, pattern, maxResults, hash,
+      } = this.downloadArgs(opts);
+      let spec = [
+        audioSuffix, vtrans, langs.join('+'), pattern, vroot,
+      ].join(',');
+      let downloadInfo = downloadMap[hash]?.download;
+      if (!downloadInfo) {
+        this.info(`rebuilding download:${spec} guid:${hash}...`);
+        downloadInfo = await this.buildDownload(opts);
       }
-      let { filepath, filename, guid, stats } = value;
-      var audioData = await fs.promises.readFile(filepath);
-      res.set("Content-disposition", "attachment; filename=" + filename);
-      this.info(
-        `GET download/${langs}/${pattern} => ` +
-          `${filename} size:${audioData.length} ` +
-          `secs:${stats.duration} ${guid}`
-      );
-      let date = new Date();
-      res.cookie("download-date", date.toISOString()); // DEPRECATED
-      return audioData;
+      let { filepath, filename, guid, stats, } = downloadInfo;
+      var data = await fs.promises.readFile(filepath);
+      res.set('Content-disposition', 'attachment; filename=' + filename);
+      this.info(`GET ${req.path} => ` +
+          `${filename} size:${data.length} `+
+          `secs:${stats.duration} guid:${guid}`);
+      return data;
     }
-*/
-
 
   }
 

@@ -280,7 +280,7 @@ typeof describe === "function" &&
       });
       should(result.signature.guid).match(/138aa18fd821f3622094a2faf97e0c87/);
     });
-    it("TESTTESTspeak(opts) => task progress", async () => {
+    it("speak(opts) => task progress", async () => {
       let factory = await testSuttaFactory();
       let pattern = 'thig1.1/en/soma';
       let sutta = await factory.loadSutta(pattern);

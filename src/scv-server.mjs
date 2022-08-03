@@ -100,6 +100,24 @@ export default class ScvServer extends RestApi {
       (req,res)=>scvApi.getBuildDownload(req,res), jsonMime));
       // https://voice.suttacentral.net/
       // scv/build-download/opus/pli+en/Amy/thig1.1%2fen%2fsoma/Aditi
+    resourceMethods.push(new ResourceMethod( "get", 
+      'download/ogg/:langs/:vtrans/:pattern',
+      (req,res)=>scvApi.getDownloadPlaylist(req,res), 'audio/ogg'));
+    resourceMethods.push(new ResourceMethod( "get", 
+      'download/ogg/:langs/:vtrans/:pattern/:vroot',
+      (req,res)=>scvApi.getDownloadPlaylist(req,res), 'audio/ogg'));
+    resourceMethods.push(new ResourceMethod( "get", 
+      'download/opus/:langs/:vtrans/:pattern',
+      (req,res)=>scvApi.getDownloadPlaylist(req,res), 'audio/opus'));
+    resourceMethods.push(new ResourceMethod( "get", 
+      'download/opus/:langs/:vtrans/:pattern/:vroot',
+      (req,res)=>scvApi.getDownloadPlaylist(req,res), 'audio/opus'));
+    resourceMethods.push(new ResourceMethod( "get", 
+      'download/mp3/:langs/:vtrans/:pattern',
+      (req,res)=>scvApi.getDownloadPlaylist(req,res), 'audio/mp3'));
+    resourceMethods.push(new ResourceMethod( "get", 
+      'download/mp3/:langs/:vtrans/:pattern/:vroot',
+      (req,res)=>scvApi.getDownloadPlaylist(req,res), 'audio/mp3'));
 
     // authenticated
     resourceMethods.push(new ResourceMethod( "get", 

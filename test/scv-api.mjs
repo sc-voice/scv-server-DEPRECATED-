@@ -301,7 +301,7 @@ typeof describe === "function" &&
         }
       });
     });
-    it("TESTTESTdownloadArgs() => validated args", async()=>{
+    it("downloadArgs() => validated args", async()=>{
       let api = await testScvApi();
       let suidref = "thig1.1/en/soma";
       let pattern = encodeURIComponent(suidref);
@@ -379,7 +379,7 @@ typeof describe === "function" &&
       });
       should(Date.now() - res.buildDate).above(0).below(15*1000);
     });
-    it("TESTTESTbuildDownload() => thig1.1, thig1.2, thig1.3", async()=>{
+    it("buildDownload() => thig1.1, thig1.2, thig1.3", async()=>{
       let audioSuffix = "opus";
       let lang = 'en';
       let langs = 'pli+en';
@@ -416,7 +416,7 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
-    it("TESTTESTgetBuildDownload() => thig1.1-3/en/soma", async()=>{
+    it("getBuildDownload() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -448,6 +448,29 @@ typeof describe === "function" &&
       should(resDone).properties(res);
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
       should(resDone.guid).equal('858cdb384ffb24de29ffe5703258dd30');
+    });
+    it("getDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
+      let api = await testScvApi();
+      let audioSuffix = "ogg";
+      let lang = 'en';
+      let langs = 'pli+en';
+      let maxResults = 2;
+      let pattern = "thig1.1-3/en/soma";
+      let vroot = "aditi";
+      let vtrans = "amy";
+      let params = { 
+        audioSuffix, langs, vtrans, pattern: encodeURIComponent(pattern),
+      };
+      let query = { maxResults: "2", lang };
+      //api.logLevel = 'debug';
+      let req = {params, query};
+      let res = new MockResponse();
+      let audio = await api.getDownloadPlaylist(req, res);
+      should(audio.length).equal(255935);
+      should.deepEqual(res.mockHeaders, {
+        'Content-disposition': 
+          `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,
+      });
     });
   });
 

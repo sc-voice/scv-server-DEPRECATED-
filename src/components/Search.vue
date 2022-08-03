@@ -7,13 +7,13 @@
       <v-container>
         <v-row centered>
           <v-col >
-            <v-text-field v-model="search" 
+            <v-text-field v-model="settings.search" 
               clearable density="compact" variant="underlined"
               label="pattern"
               @click:append="onSearch"
               @click:clear="onSearchCleared"
               @keypress="onSearchKey"
-              :append-icon="search ? 'mdi-magnify' : ''"
+              :append-icon="settings.search ? 'mdi-magnify' : ''"
               hint="Required"
               placeholder="Enter sutta id or search text">
             </v-text-field>
@@ -28,10 +28,10 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <a v-if="search" :href="url" target="_blank">{{url}}</a>
+        <a v-if="settings.search" :href="url" target="_blank">{{url}}</a>
         <v-row v-if="results">
           <v-col>
-            <h3>Search results ({{search}})</h3>
+            <h3>Search results ({{settings.search}})</h3>
             <pre>{{
   JSON.stringify(results,null,2)
             }}</pre>
@@ -48,13 +48,13 @@
   import { useVolatileStore } from "../stores/volatile";
 
   const lang = ref('');
-  const search = ref('');
   const results = ref(undefined);
   const settings = useSettingsStore(); 
   const volatile = useVolatileStore();
 
   const url = computed(()=>{
-    let pattern = search.value && search.value.toLowerCase().trim();
+    let { search } = settings;
+    let pattern = search && search.toLowerCase().trim();
     let url = [
       settings.serverUrl,
       `search`,
@@ -91,7 +91,7 @@
 
   function onSearchKey(evt) {
     if (evt.code === "Enter") {
-      search && onSearch(evt);
+      settings.search && onSearch(evt);
       evt.preventDefault();
     }
   }
