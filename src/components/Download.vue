@@ -110,8 +110,8 @@
   const guid = ref(undefined);
 
   const valid = computed(()=>{
-    let { sutta_uid, scid, langTrans, translator, vnameTrans } = settings;
-    return sutta_uid && scid && langTrans && translator && vnameTrans != null;
+    let { audioSuffix, langs, vnameTrans, search, vnameRoot } = settings;
+    return audioSuffix && langs && vnameTrans && search != null;
   })
 
   const urlBuild = computed(()=>{
@@ -125,7 +125,7 @@
       langs,
       encodeURIComponent(vnameTrans),
       encodeURIComponent(search),
-      encodeURIComponent(vnameRoot),
+      encodeURIComponent(vnameRoot ?? 'Aditi'),
     ].join('/');
 
     return `${url}?maxResults=${maxResults}`;
