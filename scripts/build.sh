@@ -7,7 +7,8 @@ set -e
 echo "$SCRIPT: git subtree pull --prefix dist origin gh-pages"
 git subtree pull --prefix dist origin gh-pages
 
-npm run version:minor
+VERSION=`node scripts/version.cjs`
+echo "<template>$VERSION</template>" | tee $APP/src/components/Version.vue
 
 echo "$SCRIPT: vite build"
 vite build
