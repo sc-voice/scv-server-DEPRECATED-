@@ -57,32 +57,49 @@
               </v-text-field>
             </v-col>
           </v-row>
+          <v-col>
           <v-row align="center">
-            <v-col cols="2" align="end">
+            <v-col cols="12" align="center">
               <v-btn :disabled="!valid" @click="onFetch">
                 Build Audio
               </v-btn>
             </v-col>
-            <v-col>
+          </v-row>
+          </v-col>
+          <v-row align="center">
+            <v-col cols="12" align="center">
               <a v-if="valid" :href="urlBuild" target="_blank">{{urlBuild}}</a>
             </v-col>
           </v-row>
-          <v-row v-if="filename" align="center">
-            <v-col cols="2" align="end"> File name </v-col>
-            <v-col> {{filename}} </v-col>
-          </v-row>
-          <v-row v-if="filename" align="center">
-            <v-col cols="2" align="end"> Guid </v-col>
-            <v-col> {{guid}} </v-col>
-          </v-row>
-          <v-row v-if="filename" align="center">
-            <v-col cols="2" align="end">
-              Download Url
-            </v-col>
-            <v-col>
-              <a v-if="valid" type="audio" :href="urlDownload">
-                Download Audio
-              </a>
+          <v-row>
+            <v-col cols="12" align="center">
+              <v-card v-if="filename" hover elevation=4 width="90%">
+                <v-card-title>
+                  <v-btn @click='downloadLink.click()'>
+                    Download Audio
+                  </v-btn>
+                </v-card-title>
+                <v-container>
+                  <v-row v-if="filename" >
+                    <v-col cols="2" align="end"> File name </v-col>
+                    <v-col align="start"> {{filename}} </v-col>
+                  </v-row>
+                  <v-row v-if="filename" >
+                    <v-col cols="2" align="end"> Guid </v-col>
+                    <v-col align="start"> {{guid}} </v-col>
+                  </v-row>
+                  <v-row v-if="filename" >
+                    <v-col cols="2" align="end">
+                      Download Url
+                    </v-col>
+                    <v-col align="start">
+                      <a ref="downloadLink" type="audio" :href="urlDownload">
+                        {{urlDownload}}
+                      </a>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
             </v-col>
           </v-row>
           <v-row v-if="results">
@@ -102,6 +119,7 @@
   import { useSettingsStore } from "../stores/settings";
   import { useVolatileStore } from "../stores/volatile";
 
+  const downloadLink = ref(undefined);
   const results = ref(undefined); 
   const settings = useSettingsStore(); 
   const volatile = useVolatileStore();
@@ -152,6 +170,10 @@
     console.log("Download.mounted()");
   })
 
+  function debug() {
+    console.log("downloadLink", downloadLink.value);
+  }
+
   async function onFetch(evt) {
     let res;
     try {
@@ -177,3 +199,9 @@
   }
 
 </script>
+<style scoped>
+.download {
+  border: 1pt solid red;
+  border-radius: 5pt;
+}
+</style>
