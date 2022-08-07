@@ -299,6 +299,7 @@ TODO*/
         langs = 'pli+en', 
         lang = 'en',
         maxResults = suttaStore.maxResults,
+        maxDuration,
         pattern,
         task,
       } = reqArgs;
@@ -320,6 +321,12 @@ TODO*/
       audioSuffix = AUDIO_SUFFIXES[audioSuffix.toLowerCase()];
       if (audioSuffix == null) {
         throw new Error(`Unsupported audio type:${audioSuffix}`);
+      }
+
+      const MAX_DURATION = 8*60*60;
+      maxDuration = Math.min(MAX_DURATION, Number(maxDuration));
+      if (isNaN(maxDuration)) {
+        maxDuration = undefined;
       }
 
       if (typeof langs === 'string') {
@@ -346,7 +353,7 @@ TODO*/
       }
 
       let result = { 
-        audioSuffix, vroot, vtrans, langs, pattern, maxResults, lang, task
+        audioSuffix, vroot, vtrans, langs, pattern, maxDuration, maxResults, lang, task
       }
       result.hash = mj.hash(result);
       return result;
@@ -361,6 +368,7 @@ TODO*/
         langs,
         lang,
         maxResults,
+        maxDuration,
         pattern,
         task,
         vroot,
@@ -375,6 +383,7 @@ TODO*/
         maxResults,
         audioSuffix,
         logLevel,
+        maxDuration,
       });
       task && (task.actionsDone++);
 
@@ -450,12 +459,13 @@ TODO*/
         throw new Error(`${this.constructor.name} is not initialized`);
       }
       let { 
-        audioSuffix, vroot, vtrans, lang, langs, pattern, maxResults, hash,
+        audioSuffix, vroot, vtrans, lang, langs, pattern, maxDuration, maxResults, hash,
       } = this.downloadArgs(Object.assign({}, req.params, req.query));
       let result = {
         audioSuffix,
         lang,
         langs,
+        maxDuration,
         maxResults,
         pattern,
         vroot,

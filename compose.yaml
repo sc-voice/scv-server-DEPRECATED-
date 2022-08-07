@@ -1,0 +1,13 @@
+services:
+  scv-server:
+    image: sc-voice/scv-server
+    ports: 
+      - "8080:8080"
+      - "3000:3000"
+      - "443:443"
+    volumes:
+      - type: volume
+        source: scv-local
+        target: /home/unroot/scv-server/local
+volumes:
+  scv-local:

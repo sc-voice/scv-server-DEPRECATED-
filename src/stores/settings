@@ -20,6 +20,7 @@ const INITIAL_STATE = {
   langTrans: 'en',
   langRoot: 'pli',
   maxResults: 5,
+  maxDuration: 3*60*60,
   translator: 'sujato',
   vnameTrans: 'Amy',
   vnameRoot: 'Aditi',
@@ -66,10 +67,6 @@ export const useSettingsStore = defineStore('settings', {
     servers: (state)=>{ 
       let servers = SERVERS;
       if (window.location.host.startsWith("localhost")) {
-        servers.push({
-          title: 'localhost:3000',
-          value: 'http://localhost:3000/scv',
-        });
         servers.push({
           title: 'localhost:8080',
           value: 'http://localhost:8080/scv',

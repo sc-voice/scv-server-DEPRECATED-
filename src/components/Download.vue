@@ -55,6 +55,14 @@
                 hint="Enter maximum number of suttas to download"
                 placeholder='5'>
               </v-text-field>
+              <v-text-field v-model="settings.maxDuration" 
+                clearable density="compact" variant="underlined"
+                @keypress="onFetchKey"
+                label="Maximum Audio Size (seconds)" 
+                required
+                hint="Enter maximum duration for audio download"
+                placeholder='18000'>
+              </v-text-field>
             </v-col>
           </v-row>
           <v-col>
@@ -134,7 +142,8 @@
 
   const urlBuild = computed(()=>{
     let { 
-      serverUrl, audioSuffix, langs, maxResults, vnameRoot, vnameTrans, search, 
+      serverUrl, audioSuffix, langs, maxDuration, maxResults, 
+      vnameRoot, vnameTrans, search, 
     } = settings;
     let url = [
       serverUrl,
@@ -146,12 +155,17 @@
       encodeURIComponent(vnameRoot ?? 'Aditi'),
     ].join('/');
 
-    return `${url}?maxResults=${maxResults}`;
+    url = `${url}?maxResults=${maxResults}`;
+    if (maxDuration != null) {
+      url = `${url}&maxDuration=${maxDuration}`;
+    }
+    return url;
   })
 
   const urlDownload = computed(()=>{
     let { 
-      serverUrl, audioSuffix, langs, maxResults, vnameRoot, vnameTrans, search, 
+      serverUrl, audioSuffix, langs, maxDuration, maxResults, 
+      vnameRoot, vnameTrans, search, 
     } = settings;
     let url = [
       serverUrl,
@@ -163,7 +177,11 @@
       encodeURIComponent(vnameRoot),
     ].join('/');
 
-    return `${url}?maxResults=${maxResults}`;
+    url = `${url}?maxResults=${maxResults}`;
+    if (maxDuration != null) {
+      url = `${url}&maxDuration=${maxDuration}`;
+    }
+    return url;
   })
 
   onMounted(()=>{
