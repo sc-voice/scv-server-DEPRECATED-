@@ -1,6 +1,7 @@
+name: dev
 services:
   scv-server:
-    image: sc-voice/scv-server
+    image: scvoice/scv-server:latest
     ports: 
       - "8080:8080"
       - "3000:3000"
