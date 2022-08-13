@@ -65,6 +65,7 @@
               }
             });
           } catch (e) {
+            that.warn(`S3Bucket.initialize()`, e.message);
             reject(e);
           }
         })();

@@ -26,25 +26,20 @@ RUN <<AUDIO
   $INSTALL ffmpeg
 AUDIO
 
-USER unroot
-WORKDIR /home/unroot/scv-server
-COPY --link --chown=unroot index* LICENSE package* vite* .
-COPY --link --chown=unroot dist dist
-COPY --link --chown=unroot public public
-COPY --link --chown=unroot scripts scripts
-COPY --link --chown=unroot src src
-COPY --link --chown=unroot styles styles
-COPY --link --chown=unroot words words
+ENV USER=unroot
+USER $USER
+ENV APPDIR=/home/$USER/scv-server/
+WORKDIR $APPDIR
+COPY --link --chown=$USER package* $APPDIR
 RUN <<SCV_SERVER
-  #git clone https://github.com/sc-voice/scv-server scv-server
-  mkdir -p /home/unroot/scv-server/local
-  cd scv-server
+  mkdir -p $APPDIR/local
+  cd $APPDIR
   npm install --production
-  echo "cd scv-server" >> ~/.bashrc
+  echo "cd $APPDIR" >> ~/.bashrc
 SCV_SERVER
+COPY --link --chown=$USER . $APPDIR
 
 # Start application server
-USER unroot
 ENV START=start:8080
 EXPOSE 8080
-CMD cd /home/unroot/scv-server; npm run $START
+CMD npm run $START

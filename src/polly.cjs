@@ -95,7 +95,7 @@
                   }
                 });
               } else {
-                var err = new warn(
+                var err = new Error(
                   [
                     `synthesizeSpeech()`,
                     `expected:Buffer actual:${typeof data.AudioStream}`,

@@ -411,7 +411,7 @@
         resolve(this.createResponse(request, false, true));
       } else {
         this.warn(
-          `synthesizeResponse()`,
+          `AbstractTTS.synthesizeResponse()`,
           `no audio voice:${this.voice} outpath:${outpath}`
         );
         request.outpath = this.noAudioPath;
@@ -497,12 +497,12 @@
               resolve,
               (e) => {
                 if (/EAI_AGAIN/.test(e.message)) {
-                  that.warn(`synthesizeSSML() ${e.message} (retrying...)`);
+                  that.warn(`AbstractTTS.synthesizeSSML() ${e.message} (retrying...)`);
                   that.serviceSynthesize(
                     resolve,
                     (e) => {
                       that.warn(
-                        `synthesizeSSML() ${e.message}`,
+                        `AbstractTTS.synthesizeSSML() ${e.message}`,
                         `ssml:${ssmlFragment.length}utf16`,
                         `${ssmlFragment}`
                       );
@@ -512,7 +512,7 @@
                   );
                 } else {
                   that.warn(
-                    `synthesizeSSML() ${e.message}`,
+                    `AbstractTTS.synthesizeSSML() ${e.message}`,
                     `ssml:${ssmlFragment.length}utf16`,
                     `${ssmlFragment}`
                   );
@@ -523,7 +523,7 @@
             );
           }
         } catch (e) {
-          that.warn(`synthesizeSSML() ${e.message} ssml:${ssmlFragment}`);
+          that.warn(`AbstractTTS.synthesizeSSML() ${e.message} ssml:${ssmlFragment}`);
           reject(e);
         }
       });
@@ -708,7 +708,7 @@
           return this.createResponse(request, false);
         }
       } catch (e) {
-        this.warn(`concatAudio()`, e.message);
+        this.warn(`AbstractTTS.concatAudio()`, e.message);
         throw e;
       }
     }

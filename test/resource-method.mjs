@@ -29,7 +29,7 @@ typeof describe === "function" &&
       type(t) { this.mockType = t; }
     }
 
-    it("custom ctor()", async()=>{
+    it("TESTTESTcustom ctor()", async()=>{
       let name = 'testName';
       let method = 'testMethod';
       let METHOD = method.toUpperCase();
@@ -39,14 +39,24 @@ typeof describe === "function" &&
 
       { // all custom
         let rm = new ResourceMethod(method, name, handler, mime);
-        should(rm).properties({name, method:METHOD, mime, handler});
+        should(rm).properties({
+          name: `${method.toUpperCase()} ${name}`, 
+          method:METHOD, 
+          mime, 
+          handler,
+        });
         should(rm.handler()).equal(testResponse);
       }
 
       { // mime is optional
         let mime = "application/json";
         let rm = new ResourceMethod(method, name, handler, );
-        should(rm).properties({name, method:METHOD, mime, handler});
+        should(rm).properties({
+          name: `${method.toUpperCase()} ${name}`, 
+          method:METHOD, 
+          mime, 
+          handler,
+        });
         should(rm.handler()).equal(testResponse);
       }
     })

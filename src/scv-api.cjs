@@ -229,33 +229,7 @@ TODO*/
         section = sutta.sections[++iSection];
       }
       segment.audio = {};
-      if (segment[langTrans]) {
-        var resSpeak = await voiceTrans.speakSegment({
-          sutta_uid,
-          segment,
-          language: langTrans, 
-          translator,
-          usage,
-        });
-        segment.audio[langTrans] = resSpeak.signature.guid;
-      }
-      if (segment.pli) {
-        var pali = new Pali();
-        var resSpeak = await voiceRoot.speakSegment({
-          sutta_uid,
-          segment,
-          language: 'pli',
-          translator,
-          usage: 'recite',
-        });
-        segment.audio.pli = resSpeak.signature.guid;
-      }
-      var audio = segment.audio;
-      this.info(`GET ${req.url} =>`, 
-        audio[langTrans] ? `${langTrans}:${audio[langTrans]}` : ``,
-        audio.pli ? `pli:${audio.pli}` : ``,
-      );
-      return {
+      let result = {
         sutta_uid,
         scid,
         language: langTrans, // deprecated
@@ -268,7 +242,39 @@ TODO*/
         vnameRoot,
         iSegment,
         segment,
-      };
+      }
+      try {
+        if (segment[langTrans]) {
+          var resSpeak = await voiceTrans.speakSegment({
+            sutta_uid,
+            segment,
+            language: langTrans, 
+            translator,
+            usage,
+          });
+          segment.audio[langTrans] = resSpeak.signature.guid;
+        }
+        if (segment.pli) {
+          var pali = new Pali();
+          var resSpeak = await voiceRoot.speakSegment({
+            sutta_uid,
+            segment,
+            language: 'pli',
+            translator,
+            usage: 'recite',
+          });
+          segment.audio.pli = resSpeak.signature.guid;
+        }
+        var audio = segment.audio;
+        this.info(`GET ${req.url} =>`, 
+          audio[langTrans] ? `${langTrans}:${audio[langTrans]}` : ``,
+          audio.pli ? `pli:${audio.pli}` : ``,
+        );
+      } catch(e) {
+        this.warn(e);
+        result.error = e.message;
+      }
+      return result;
     }
 
     async getAudio(req, res) {
@@ -409,22 +415,32 @@ TODO*/
         month: "2-digit",
       });
       let album = `${yyyy}-${mm} voice.suttacentral.net`;
-      var audio = await playlist.speak({
-        task,
-        voices: {
-          pli: voiceRoot,
-          [lang]: voiceLang,
-        },
+      try {
+        var audio = await playlist.speak({
+          task,
+          voices: {
+            pli: voiceRoot,
+            [lang]: voiceLang,
+          },
 
-        album,
-        artist,
-        album_artist: artist,
-        languages: langs.join(","),
-        audioSuffix,
-        copyright: "https://suttacentral.net/licensing",
-        publisher: "voice.suttacentral.net",
-        title: pattern,
-      });
+          album,
+          artist,
+          album_artist: artist,
+          languages: langs.join(","),
+          audioSuffix,
+          copyright: "https://suttacentral.net/licensing",
+          publisher: "voice.suttacentral.net",
+          title: pattern,
+        });
+      } catch(e) {
+        let msg = `buildDownload() ERROR:${e.message}`;
+        this.warn(msg);
+        if (task) {
+          task.error = e.message;
+          task.summary = msg;
+        }
+        throw e;
+      }
       var result = {
         audio,
       };
@@ -482,24 +498,22 @@ TODO*/
       }
       if (task == null) {
         this.info(`buildDownload(${hash}) started`);
-        task = new Task({name: `download ${pattern}`});
-        let promise = this.buildDownload( 
-          Object.assign({task}, result));
+        task = new Task({name: `Create ${audioSuffix} audio download for:${pattern}`});
         downloadMap[hash] = task;
-        promise.then(v=>{
-          this.info(`getBuildDownload(${hash}) ok:`, JSON.stringify(v));
+        let promise = this.buildDownload(Object.assign({task}, result));
+        promise.then(v => {
           task.download = v;
+          this.info(`getBuildDownload(${hash}) ok:`, JSON.stringify(v));
+        }).catch(e=>{
+          let msg = `Cannot build audio download:${pattern}`;
+          this.warn(`getBuildDownload(${hash}) ${msg}`);
+          task.error = e.message;
+          task.summary = msg;
         });
       }
       if (task) {
-        result.task = {
-          actionsDone: task.actionsDone,
-          actionsTotal: task.actionsTotal,
-          msActive: task.msActive,
-          started: task.started,
-          lastActive: task.lastActive,
-          summary: task.summary,
-        }
+        result.task = Object.assign({}, task);
+        delete result.task.download;
 
         if (task.download) {
           result.filename = task.download.filename;
@@ -528,7 +542,12 @@ TODO*/
       let downloadInfo = downloadMap[hash]?.download;
       if (!downloadInfo) {
         this.info(`rebuilding download:${spec} guid:${hash}...`);
-        downloadInfo = await this.buildDownload(opts);
+        try {
+          downloadInfo = await this.buildDownload(opts);
+        } catch(e) {
+          this.warn(`getDownloadPlaylist() ERROR:${e.message}`);
+          throw e;
+        }
       }
       let { filepath, filename, guid, stats, } = downloadInfo;
       var data = await fs.promises.readFile(filepath);

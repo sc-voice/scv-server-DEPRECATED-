@@ -13,4 +13,5 @@ rm -f $SCVLOG
 
 node ${SCRIPT_DIR}/sc-voice.mjs $* 2>&1 | rotatelogs -L ${SCVLOG} -f ${LOGFILE} 86400
 
+tail -100 ${SCVLOG}
 echo -e "`date` EXIT sc-voice" | tee -a ${SCVLOG}

@@ -17,13 +17,14 @@
         throw new Error("ResourceMethod() expected: handler");
       }
       this.method = method.toUpperCase();
-      this.name = name;
+      this.path = name;
+      this.name = `${method.toUpperCase()} ${name}`;
       this.handler = handler;
       this.mime = mime;
     }
 
     async processRequest(req, res, next) {
-      let { method, name, mime, handler } = this;
+      let { method, mime, handler } = this;
       let statusOk = 200;
       try {
         res.type(mime);
@@ -34,39 +35,38 @@
         res.type("application/json");
         let { statusCode = statusOk } = res;
         statusCode === statusOk && res.status(500);
-        this.warn('ResourceMethod.processRequest()',
-          method, name, `HTTP${res.statusCode}:`, e.message);
+        this.warn(`processRequest() => HTTP${res.statusCode}:`, e.message);
         res.send({error:e.message});
       }
     }
 
     use(app) {
-      let { name, method } = this;
+      let { path, method } = this;
       let that = this;
       if (method === "GET") {
-        app.get(`/${name}`, async (req,res,next)=> {
+        app.get(`/${path}`, async (req,res,next)=> {
           await that.processRequest(req,res);
         });
       } else if (method === "PUT") {
-        app.put(`/${name}`, async (req,res,next)=> {
+        app.put(`/${path}`, async (req,res,next)=> {
           await that.processRequest(req,res);
         });
       } else if (method === "POST") {
-        app.post(`/${name}`, async (req,res,next)=> {
+        app.post(`/${path}`, async (req,res,next)=> {
           await that.processRequest(req,res);
         });
       } else if (method === "DELETE") {
-        app.delete(`/${name}`, async (req,res,next)=> {
+        app.delete(`/${path}`, async (req,res,next)=> {
           await that.processRequest(req,res);
         });
       } else if (method === "HEAD") {
-        app.get(`/${name}`, async (req,res,next)=> {
+        app.get(`/${path}`, async (req,res,next)=> {
           await that.processRequest(req,res);
         });
       } else {
         throw new Error([
           `ResourceMethod.use() unsupported HTTP method:${method}`,
-          `[${name}]`,
+          `[${path}]`,
         ].join(' '));
       }
     }

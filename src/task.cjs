@@ -8,11 +8,10 @@
       this.name = opts.name || `task${uuid}`;
       this.started = new Date();
       this.lastActive = this.started;
-      this.error = null;
       var { actionsTotal, actionsDone } = opts;
       Object.defineProperty(this, "_summary", {
         writable: true,
-        value: opts.summary || `${this.name} created`,
+        value: opts.summary || `Task: ${this.name}`,
       });
       Object.defineProperty(this, "_actionsDone", {
         writable: true,

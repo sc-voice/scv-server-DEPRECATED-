@@ -26,7 +26,7 @@ typeof describe === "function" &&
       should(updater.suttaStore.isInitialized).equal(true);
       should(updater.isInitialized).equal(true);
     });
-    it("update() updates content", async()=>{
+    it("TESTTESTupdate() updates content", async()=>{
       var updater = await new ContentUpdater().initialize();
       var resUpdate = await updater.update();
       var name = `ContentUpdater.update()`;
@@ -39,7 +39,6 @@ typeof describe === "function" &&
         actionsDone: actions,
         actionsTotal: actions,
         isActive: false,
-        error: null,
         summary: `Update completed`,
       });
     });
