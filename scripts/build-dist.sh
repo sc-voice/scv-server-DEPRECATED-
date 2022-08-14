@@ -13,4 +13,6 @@ echo "<template>v$VERSION</template>" | tee $APP/src/components/Version.vue
 echo "$SCRIPT: vite build"
 vite build
 
+echo $VERSION > $APP/dist/version
+
 
