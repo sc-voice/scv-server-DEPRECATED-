@@ -4,9 +4,6 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 APP=$DIR/..
 set -e
 
-#echo "$SCRIPT: git subtree pull --prefix dist origin gh-pages"
-#git subtree pull --prefix dist origin gh-pages
-
 VERSION=`node scripts/version.cjs`
 echo "<template>v$VERSION</template>" | tee $APP/src/components/Version.vue
 
@@ -19,3 +16,5 @@ cat > $APP/dist/.gitignore <<CATEOF
 local
 node_modules
 CATEOF
+
+git add -A $APP/dist
