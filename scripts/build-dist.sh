@@ -15,4 +15,7 @@ vite build
 
 echo $VERSION > $APP/dist/version
 
-
+cat > $APP/dist/.gitignore <<CATEOF
+local
+node_modules
+CATEOF
