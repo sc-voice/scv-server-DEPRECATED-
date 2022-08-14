@@ -1,11 +1,8 @@
-#!/usr/bin/env sh
+#!/bin/bash
 DIR=`dirname $0`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 APP=$DIR/..
 set -e
 
-VERSION=`npm version minor`
-
+VERSION=`json version < package.json`
 echo "<template>$VERSION</template>" | tee $APP/src/components/Version.vue
-
-git commit -am $VERSION
