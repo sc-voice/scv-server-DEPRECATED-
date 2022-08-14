@@ -13,6 +13,8 @@ if [ "$RC" != "0" ]; then
   exit 1
 fi
 
-echo "$SCRIPT: pushing dist..."
-git subtree pull --prefix dist origin gh-pages
+echo "$SCRIPT: pushing to gh-pages"
 git subtree push --prefix dist origin gh-pages
+git checkout gh-pages
+git pull
+git checkout main
