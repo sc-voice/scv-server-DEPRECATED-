@@ -17,4 +17,4 @@ local
 node_modules
 CATEOF
 
-git add -A $APP/dist
+git add -A $APP/dist $APP/components/Version.vue
