@@ -24,6 +24,10 @@ git commit -am $MSG
 npm version patch
 git push
 
+npm run build:docker
+docker login -u $DKR_USER -p $DKR_PWD
+docker image push -a scvoice/scv-server
+
 
 #TODO: solve github action AWS credential challenge
 #npm run test; RC=$?; 
