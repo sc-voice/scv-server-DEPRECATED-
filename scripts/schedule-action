@@ -6,10 +6,24 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 git pull
 npm install --save scv-bilara@latest\
-  just-simple\
+  just-simple@latest\
+  memo-again@latest\
   say-again@latest\
   suttacentral-api@latest\
   oya-ann@latest
+
+git status | grep 'nothing to commit' > /dev/null; RC=$?
+if [ "$RC" == "0" ]; then
+  echo "$SCRIPT: Nothing to commit"
+  exit 0
+fi
+
+MSG="$SCRIPT: updating package depedencies..."
+echo $MSG
+git commit -am $MSG
+npm version patch
+git push
+
 
 #TODO: solve github action AWS credential challenge
 #npm run test; RC=$?; 
@@ -19,7 +33,5 @@ npm install --save scv-bilara@latest\
 #  echo "TESTS FAILED (RC$RC)"
 #  exit $RC
 #fi
-
-$DIR/publish-npm
 
 echo -e "${SCRIPT}: END `date`"
