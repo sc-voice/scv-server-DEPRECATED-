@@ -10,6 +10,7 @@ services:
     volumes:
       - type: volume
         source: scv-local
-        target: /home/unroot/scv-server/local
+        target: /home/linode/scv-server/local
 volumes:
-  scv-local:
+  scv-local: 
+  

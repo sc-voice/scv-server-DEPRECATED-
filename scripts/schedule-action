@@ -20,7 +20,7 @@ fi
 
 MSG="$SCRIPT: updating package depedencies..."
 echo $MSG
-git commit -am $MSG
+git commit -am "$MSG"
 npm version patch
 git push
 

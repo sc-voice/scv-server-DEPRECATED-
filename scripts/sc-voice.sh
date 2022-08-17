@@ -3,7 +3,7 @@
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 SCRIPT_DIR=`realpath \`dirname $0\``
 APP_DIR=`realpath $SCRIPT_DIR/..`
-echo -e "$SCRIPT: APP_DIR=$APP_DIR"
+echo -e "$SCRIPT: USER=`whoami` APP_DIR=$APP_DIR"
 LOGDIR="${APP_DIR}/local/logs"
 mkdir -p ${LOGDIR}
 LOGFILE="${LOGDIR}/scv-%Y%m%d.log"
