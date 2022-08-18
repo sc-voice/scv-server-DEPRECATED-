@@ -1,5 +1,6 @@
 #!/bin/bash
-VER=`json version < package.json`
+DIR=`dirname $0`
+VER=`node $DIR/version.cjs`
 echo scv-server-$VER
 DOCKER_BUILDKIT=1 docker build .\
   -t scv\
