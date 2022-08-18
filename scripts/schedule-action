@@ -4,6 +4,8 @@ pushd $DIR/..
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
+set -e
+
 git pull
 npm install --save scv-bilara@latest\
   just-simple@latest\
