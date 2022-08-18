@@ -2,10 +2,13 @@ import { defineStore } from 'pinia'
 import Utils from "../utils.mjs";
 
 const SERVERS = [{
-  title: 'voice.suttacentral.net (AWS)',
+  title: 's1.sc-voice.net (scv-server Linode)',
+  value: 'http://s1.sc-voice.net:8080/scv',
+},{
+  title: 'voice.suttacentral.net (voice AWS)',
   value: 'https://voice.suttacentral.net/scv',
 },{
-  title: 's2.sc-voice.net (Linode)',
+  title: 's2.sc-voice.net (voice Linode)',
   value: 'https://s2.sc-voice.net/scv',
 }];
 
