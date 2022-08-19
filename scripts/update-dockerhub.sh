@@ -27,7 +27,12 @@ do
   fi
 done
 
+echo -e "$SCRIPT: removing existing docker images"
+docker image prune -a -f
+echo -e "$SCRIPT: building image for Dockerhub"
 npm run build:docker
+docker image ls
+echo -e "$SCRIPT: pushing new image to Dockerhub"
 docker login -u $DKR_USER -p $DKR_PWD
 docker image push -a scvoice/scv-server
 
