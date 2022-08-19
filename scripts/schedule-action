@@ -15,9 +15,9 @@ npm install --save scv-bilara@latest\
   suttacentral-api@latest\
   oya-ann@latest
 
-git status | grep 'nothing to commit' > /dev/null; RC=$?
-if [ "$RC" == "0" ]; then
-  echo "$SCRIPT: Nothing to commit"
+CMD="git status | grep 'nothing to commit' > /dev/null"
+if bash -c "$CMD"; then
+  echo "$SCRIPT: Nothing to commit (OK)"
   exit 0
 fi
 
