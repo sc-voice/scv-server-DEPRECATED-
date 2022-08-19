@@ -15,7 +15,14 @@ RUN <<TOOLS
   apt-get install -y --reinstall ca-certificates
 TOOLS
 
+# Container user node UID:1000
+# Container user unroot UID:1001
+# Linode host user unroot UID:1000
+# +---------------- WARNING ----------------------+
+# | ONLY HOST UID 1000 OR 1001 CAN HOST CONTAINER |
+# +-----------------------------------------------+
 RUN <<UNROOT
+  echo "node    ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
   echo "unroot    ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
   useradd unroot -s /bin/bash -m
   usermod -aG sudo unroot
