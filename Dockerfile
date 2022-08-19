@@ -40,6 +40,6 @@ SCV_SERVER
 COPY --link --chown=$USER . $APPDIR
 
 # Start application server
-ENV START=start:8080
-EXPOSE 8080
+ENV START=start
+EXPOSE 80
 CMD npm run $START

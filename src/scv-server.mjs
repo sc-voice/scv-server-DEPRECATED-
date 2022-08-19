@@ -236,6 +236,9 @@ export default class ScvServer extends RestApi {
       this.debug(`initialize() static: ${urlPath} => ${filePath}`);
     });
 
+    app.use("/.well-known", 
+      express.static(path.join(APP_DIR, "public", ".well-known")));
+
     app.use(favicon(path.join(distDir, "img/favicon.png")));
 
     app.get(["/","/scv"], function(req,res,next) {
