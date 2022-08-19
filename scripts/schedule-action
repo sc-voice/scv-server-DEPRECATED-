@@ -7,6 +7,7 @@ echo -e "${SCRIPT}: BEGIN `date`"
 set -e
 
 git pull
+echo -e "${SCRIPT}: updating dependencies..."
 npm install --save scv-bilara@latest\
   just-simple@latest\
   memo-again@latest\
@@ -20,13 +21,14 @@ if [ "$RC" == "0" ]; then
   exit 0
 fi
 
-MSG="$SCRIPT: updating package depedencies..."
-echo $MSG
-git commit -am "$MSG"
-npm version patch
+echo -e "$SCRIPT: updated package depedencies"
+git commit -am "$SCRIPT: updated package depedencies"
+VERSION=`npm version patch`
+echo -e "$SCRIPT: committing package version ${VERSION}"
 git push
 
-$DIR/update-dockerhub
+echo -e "$SCRIPT: updating Dockerhub..."
+$DIR/update-dockerhub.sh
 
 #TODO: solve github action AWS credential challenge
 #npm run test; RC=$?; 
