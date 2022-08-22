@@ -12,28 +12,32 @@ echo $SCRIPT: creating $NGINX_CONF
 mkdir -p $LOCALDIR
 cat > $NGINX_CONF <<NGINX_HEREDOC
 server {
-    listen       80;
-    server_name  SERVERNAME;
+  listen       80;
+  server_name  SERVERNAME;
 
-    #access_log  /var/log/nginx/host.access.log  main;
+  #access_log  /var/log/nginx/host.access.log  main;
 
-    location / {
-        proxy_pass http://localhost:8080; # scv-server Docker container
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
-    }
+location / { # scv-server Docker container
+    proxy_pass http://localhost:8080; 
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host \$host;
+    proxy_cache_bypass \$http_upgrade;
+  }
 
-    #error_page  404              /404.html;
+  location /nginx { # NGINX stub
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+  }
 
-    # redirect server error pages to the static page /50x.html
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
-    }
+  #error_page  404              /404.html;
 
+  # redirect server error pages to the static page /50x.html
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+    root   /usr/share/nginx/html;
+  }
 }
 NGINX_HEREDOC
 
