@@ -1,12 +1,15 @@
 #!/bin/bash
 DIR=`dirname $0`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
-APPDIR=$DIR/../..
+APPDIR=`realpath $DIR/../..`
+LOCALDIR=$APPDIR/local
+NGINX_FILE=nginx-scv-server.conf
+NGINX_CONF=$LOCALDIR/$NGINX_FILE
 
 echo $SCRIPT: BEGIN `date`
-NGINX_FILE=nginx-scv-server.conf
-NGINX_CONF=$APPDIR/local/$NGINX_FILE
 
+echo $SCRIPT: creating $NGINX_CONF
+mkdir -p $LOCALDIR
 cat > $NGINX_CONF <<NGINX_HEREDOC
 server {
     listen       80;
