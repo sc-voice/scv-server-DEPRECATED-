@@ -51,7 +51,7 @@
     "dockerhub": "scripts/update-dockerhub.sh",
     "aws-creds": "node scripts/aws-creds.sh",
     "schedule-action": "scripts/schedule-action",
-    "start": "sudo scripts/sc-voice.sh",
+    "start": "scripts/sc-voice.sh",
     "start:3000": "scripts/sc-voice.sh --port:3000",
     "start:8080": "scripts/sc-voice.sh --port:8080",
     "start:ssl": "scripts/sc-voice.sh --ssl",
