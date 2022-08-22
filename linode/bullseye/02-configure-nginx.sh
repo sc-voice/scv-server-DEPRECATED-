@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR=`dirname $0`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
-APPDIR=$DIR/..
+APPDIR=$DIR/../..
 
 echo $SCRIPT: BEGIN `date`
 NGINX_FILE=nginx-scv-server.conf
