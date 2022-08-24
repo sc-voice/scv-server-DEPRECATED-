@@ -6,14 +6,28 @@ set -e
 
 echo $SCRIPT: BEGIN `date`
 
-echo $SCRIPT: allow port 80 HTTP
+echo $SCRIPT: configure port 80 HTTP
+if sudo ufw status numbered | grep 80; then
+  echo $SCRIPT: firewall rule conflict with existing rule(s)
+  exit 1
+fi
 sudo ufw allow proto tcp from any to any port 80
-echo $SCRIPT: allow port 443 SSL
+
+echo $SCRIPT: configure port 443 SSL
+if sudo ufw status numbered | grep 443; then
+  echo $SCRIPT: firewall rule conflict with existing rule(s)
+  exit 1
+fi
 sudo ufw allow proto tcp from any to any port 443
-echo $SCRIPT: allow port 8000 HTTP for NGINX verification
+
+echo $SCRIPT: configure port 8000 HTTP for NGINX verification
+if sudo ufw status numbered | grep 8000; then
+  echo $SCRIPT: firewall rule conflict with existing rule(s)
+  exit 1
+fi
 sudo ufw allow proto tcp from any to any port 8000
 
-echo $SCRIPT: Firewall status
+echo $SCRIPT: Firewall status numbered
 sudo ufw status verbose 
 
 echo $SCRIPT: END `date`
