@@ -3,7 +3,7 @@ import Utils from "../utils.mjs";
 
 const SERVERS = [{
   title: 's1.sc-voice.net (scv-server Linode)',
-  value: 'http://s1.sc-voice.net:8080/scv',
+  value: 'https://s1.sc-voice.net/scv',
 },{
   title: 'voice.suttacentral.net (voice AWS)',
   value: 'https://voice.suttacentral.net/scv',

@@ -43,7 +43,10 @@ if [ "$SERVERNAME" == "localhost" ]; then
     -m $EMAIL \
   certonly --manual
 else
-  sudo certbot --nginx -d $SERVERNAME
+  sudo certbot --nginx -d $SERVERNAME --agree-tos -m $EMAIL 
+  echo -e "$SCRIPT: To renew SSL certificate automatically,"
+  echo -e "$SCRIPT: run \"crontab -e\" and add following line"
+  echo -e "0 12 * * * sudo /usr/bin/certbot renew --quiet"
 fi
 
 echo -e "${SCRIPT}: END `date`"
