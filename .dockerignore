@@ -1,5 +1,6 @@
 .git
 local/
+linode/
 node_modules/
 README.md
 test

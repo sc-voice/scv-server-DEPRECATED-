@@ -55,14 +55,16 @@ server {
 }
 NGINX_HEREDOC
 
-SERVERNAME=$*
 if [ "$SERVERNAME" == "" ]; then
-  echo $SCRIPT: Configuring $NGINX_FILE
   read -p "$SCRIPT => Enter server_name (localhost): " SERVERNAME
   if [ "$SERVERNAME" == "" ]; then
-    SERVERNAME=localhost
+      export SERVERNAME=localhost
   fi
 fi
+echo -e "$SCRIPT: SERVERNAME is $SERVERNAME"
+
+echo -e "$SCRIPT: Configuring $NGINX_FILE"
+
 sed -i -e "s/SERVERNAME/$SERVERNAME/" $NGINX_CONF
 DST=/etc/nginx/conf.d/$NGINX_FILE
 sudo cp $NGINX_CONF $DST
