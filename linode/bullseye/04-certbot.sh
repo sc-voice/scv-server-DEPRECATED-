@@ -19,6 +19,7 @@ if type certbot >& /dev/null; then
 else
   echo $SCRIPT: installing certbot
   sudo apt-get install -y certbot
+  sudo apt-get install python3-certbot-nginx
 fi
 
 
