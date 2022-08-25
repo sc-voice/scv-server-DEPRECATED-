@@ -6,9 +6,7 @@ services:
     ports: 
       - "8080:8080"
     volumes:
-      - type: volume
-        source: scv-local
-        target: /home/linode/scv-server/local
+      - scv-local:/home/node/scv-server/local
 volumes:
   scv-local: 
   
