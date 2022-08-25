@@ -19,15 +19,13 @@ if [ "$SECRET_ACCESS_KEY" == "" ]; then
     exit 1
   fi
 fi
-echo -e "$SCRIPT: creating $CREDS_FILE"
-CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
 
-################## SUDO BEGIN #####################
-sudo su root
-mkdir -p $CREDS_DIR
-chown unroot:unroot $CREDS_DIR
-CREDS_FILE=$CREDS_DIR/aws-creds.json
-cat > $CREDS_FILE <<CREDS_HEREDOC
+CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
+sudo mkdir -p $CREDS_DIR
+sudo chown unroot:unroot $CREDS_DIR
+CREDS_FILE=aws-creds.json
+echo -e "$SCRIPT: creating $CREDS_FILE"
+cat > /tmp/$CREDS_FILE <<CREDS_HEREDOC
 {
   "Bucket": "sc-voice-vsm",
   "s3": {
@@ -48,7 +46,6 @@ cat > $CREDS_FILE <<CREDS_HEREDOC
   "accessKeyId": "$ACCESS_KEY_ID""
 }
 CREDS_HEREDOC
-exit 0
-################## SUDO END #####################
+sudo mv /tmp/$CREDS_FILE $CREDS_DIR/$CREDS_FILE
 
 echo -e "${SCRIPT}: END `date`"
