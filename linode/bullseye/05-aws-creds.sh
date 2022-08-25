@@ -5,7 +5,7 @@ LOCALDIR=`realpath $APPDIR/local`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
-CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-server/_data
+CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
 sudo mkdir -p $CREDS_DIR
 sudo chown unroot:unroot $CREDS_DIR
 CREDS_FILE=$CREDS_DIR/aws-creds.json
