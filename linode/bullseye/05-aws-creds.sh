@@ -47,5 +47,6 @@ cat > /tmp/$CREDS_FILE <<CREDS_HEREDOC
 }
 CREDS_HEREDOC
 sudo mv /tmp/$CREDS_FILE $CREDS_DIR/$CREDS_FILE
+sudo chown unroot:unroot $CREDS_DIR/$CREDS_FILE
 
 echo -e "${SCRIPT}: END `date`"
