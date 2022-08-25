@@ -5,11 +5,6 @@ LOCALDIR=`realpath $APPDIR/local`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
-CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
-sudo mkdir -p $CREDS_DIR
-sudo chown unroot:unroot $CREDS_DIR
-CREDS_FILE=$CREDS_DIR/aws-creds.json
-
 if [ "$ACCESS_KEY_ID" == "" ]; then
   read -p "$SCRIPT => Enter AWS Access Key Id: " ACCESS_KEY_ID
   if [ "$ACCESS_KEY_ID" == "" ]; then
@@ -25,7 +20,14 @@ if [ "$SECRET_ACCESS_KEY" == "" ]; then
   fi
 fi
 echo -e "$SCRIPT: creating $CREDS_FILE"
-sudo cat > $CREDS_FILE <<CREDS_HEREDOC
+CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
+
+################## SUDO BEGIN #####################
+sudo su root
+mkdir -p $CREDS_DIR
+chown unroot:unroot $CREDS_DIR
+CREDS_FILE=$CREDS_DIR/aws-creds.json
+cat > $CREDS_FILE <<CREDS_HEREDOC
 {
   "Bucket": "sc-voice-vsm",
   "s3": {
@@ -46,5 +48,7 @@ sudo cat > $CREDS_FILE <<CREDS_HEREDOC
   "accessKeyId": "$ACCESS_KEY_ID""
 }
 CREDS_HEREDOC
+exit 0
+################## SUDO END #####################
 
 echo -e "${SCRIPT}: END `date`"
