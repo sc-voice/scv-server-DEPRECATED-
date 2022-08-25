@@ -22,9 +22,13 @@ if [ "$SECRET_ACCESS_KEY" == "" ]; then
   fi
 fi
 
-sudo docker volume create nodejs_scv-local
+
 CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
-sudo mkdir $CREDS_DIR
+if sudo docker volume create nodejs_scv-local; then
+  echo -e "$SCRIPT: created Docker volume $CREDS_DIR"
+else
+  echo -e "$SCRIPT: using existing Docker volume $CREDS_DIR"
+fi
 sudo chown unroot:unroot $CREDS_DIR
 CREDS_FILE=aws-creds.json
 echo -e "$SCRIPT: creating $CREDS_FILE"
