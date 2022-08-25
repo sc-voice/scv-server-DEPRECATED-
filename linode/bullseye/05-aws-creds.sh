@@ -7,7 +7,7 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-server/_data
 sudo mkdir -p $CREDS_DIR
-chown unroot:unroot $CREDS_DIR
+sudo chown unroot:unroot $CREDS_DIR
 CREDS_FILE=$CREDS_DIR/aws-creds.json
 
 if [ "$ACCESS_KEY_ID" == "" ]; then
