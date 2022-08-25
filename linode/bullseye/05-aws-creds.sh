@@ -5,6 +5,8 @@ LOCALDIR=`realpath $APPDIR/local`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
+set -e
+
 if [ "$ACCESS_KEY_ID" == "" ]; then
   read -p "$SCRIPT => Enter AWS Access Key Id: " ACCESS_KEY_ID
   if [ "$ACCESS_KEY_ID" == "" ]; then
@@ -20,8 +22,9 @@ if [ "$SECRET_ACCESS_KEY" == "" ]; then
   fi
 fi
 
+sudo docker volume create nodejs_scv-local
 CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
-sudo mkdir -p $CREDS_DIR
+sudo mkdir $CREDS_DIR
 sudo chown unroot:unroot $CREDS_DIR
 CREDS_FILE=aws-creds.json
 echo -e "$SCRIPT: creating $CREDS_FILE"
