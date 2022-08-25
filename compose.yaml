@@ -1,4 +1,4 @@
-name: dev
+name: nodejs
 services:
   scv-server:
     image: scvoice/scv-server:latest

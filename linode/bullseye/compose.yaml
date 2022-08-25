@@ -1,11 +1,9 @@
-name: dev
+name: nodejs
 services:
   scv-server:
     image: scvoice/scv-server:latest
     ports: 
       - "8080:8080"
-      - "3000:3000"
-      - "443:443"
     volumes:
       - type: volume
         source: scv-local
