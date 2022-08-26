@@ -22,6 +22,9 @@ ln -s -f /var/lib/docker/volumes/$DOCKER_VOLUME/_data local
 echo -e "$SCRIPT: sudo docker compose up -d"
 sudo docker compose up -d
 
+echo -e "$SCRIPT: sudo cat local/scv.log"
+sudo cat local/scv.log
+
 URLPATH=scv/play/segment/thig1.1/en/sujato/thig1.1%3A1.1/Amy
 echo -e "$SCRIPT: testing localhost:8080..."
 curl http://localhost:8080/$URLPATH;
