@@ -22,7 +22,6 @@ if [ "$SECRET_ACCESS_KEY" == "" ]; then
   fi
 fi
 
-
 CREDS_DIR=/var/lib/docker/volumes/nodejs_scv-local/_data
 if sudo docker volume create nodejs_scv-local; then
   echo -e "$SCRIPT: created Docker volume $CREDS_DIR"

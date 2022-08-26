@@ -7,6 +7,14 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 set -e
 
+if [ "$SERVERNAME" == "" ]; then
+  read -p "$SCRIPT => Enter server_name (localhost): " SERVERNAME
+  if [ "$SERVERNAME" == "" ]; then
+      export SERVERNAME=localhost
+  fi
+fi
+
+echo -e "$SCRIPT: SERVERNAME is $SERVERNAME"
 DOCKER_VOLUME=nodejs_scv-local
 echo -e "$SCRIPT: linking to $DOCKER_VOLUME as ./local" 
 ln -s -f /var/lib/docker/volumes/$DOCKER_VOLUME/_data local
@@ -20,8 +28,8 @@ curl http://localhost:8080/$URLPATH;
 echo
 echo -e "$SCRIPT: scv-server docker container is running (OK)"
 
-echo -e "$SCRIPT: testing localhost:80..."
-curl http://localhost/$URLPATH
+echo -e "$SCRIPT: testing https://$SERVERNAME..."
+curl https://$SERVERNAME/$URLPATH
 echo
 echo -e "$SCRIPT: reverse proxy => scv-server docker container (OK)"
 
