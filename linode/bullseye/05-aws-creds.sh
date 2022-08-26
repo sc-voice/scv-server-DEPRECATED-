@@ -50,7 +50,7 @@ cat > /tmp/$CREDS_FILE <<CREDS_HEREDOC
   },
   "region": "us-west-1",
   "secretAccessKey": "$SECRET_ACCESS_KEY",
-  "accessKeyId": "$ACCESS_KEY_ID""
+  "accessKeyId": "$ACCESS_KEY_ID"
 }
 CREDS_HEREDOC
 sudo mv /tmp/$CREDS_FILE $CREDS_DIR/$CREDS_FILE
