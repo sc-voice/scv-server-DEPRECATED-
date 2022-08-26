@@ -14,10 +14,23 @@ ln -s -f /var/lib/docker/volumes/$DOCKER_VOLUME/_data local
 echo -e "$SCRIPT: sudo docker compose up -d"
 sudo docker compose up -d
 
-echo -e "$SCRIPT: testing localhost:8080 (scv-server docker container)"
-curl http://localhost:8080/scv/play/segment/thig1.1/en/sujato/thig1.1%3A1.1/Amy
+URLPATH=/scv/play/segment/thig1.1/en/sujato/thig1.1%3A1.1/Amy
+echo -e "$SCRIPT: testing localhost:8080..."
+if curl http://localhost:8080/$URLPATH; then
+  echo
+  echo -e "$SCRIPT: scv-server docker container is running (OK)"
+else 
+  echo -e "$SCRIPT: scv-server docker container is not running (ERROR)"
+  exit 1
+fi
 
 echo -e "$SCRIPT: testing localhost (nginx reverse proxy => scv-server docker container)"
-curl http://localhost/scv/play/segment/thig1.1/en/sujato/thig1.1%3A1.1/Amy
+if curl http://localhost/$URLPATH; then
+  echo
+  echo -e "$SCRIPT: reverse proxy => scv-server docker container (OK)"
+else
+  echo -e "$SCRIPT: nginx reverse proxy => scv-server docker container (ERROR)"
+  exit 1
+fi
 
 echo -e "${SCRIPT}: END `date`"
