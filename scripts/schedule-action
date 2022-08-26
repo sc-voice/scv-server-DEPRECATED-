@@ -28,7 +28,7 @@ echo -e "$SCRIPT: committing package version ${VERSION}"
 git push
 
 echo -e "$SCRIPT: updating Dockerhub..."
-$DIR/update-dockerhub.sh
+npm run build:dockerhub
 
 #TODO: solve github action AWS credential challenge
 #npm run test; RC=$?; 
