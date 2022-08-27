@@ -12,7 +12,7 @@ sudo /usr/bin/certbot renew --quiet
 
 echo -e "$SCRIPT: checking Dockerhub for scvoice/scv-server:latest..."
 VERLOCAL=`sudo /usr/bin/docker image ls scvoice/scv-server:latest -q`
-sudo /usr/bin/docker pull scvoice/scv-server:latest
+sudo /usr/bin/docker pull -q scvoice/scv-server:latest
 VERDOCKERHUB=`sudo /usr/bin/docker image ls scvoice/scv-server:latest -q`
 if [ "$VERLOCAL" == "$VERDOCKERHUB" ]; then
   echo -e "$SCRIPT: scvoice/scv-server:latest $VERLOCAL is latest"
