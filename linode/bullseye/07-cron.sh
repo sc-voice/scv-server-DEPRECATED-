@@ -7,22 +7,18 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 set -e
 
-export EDITOR=ex
-export VISUAL=ex
-if [ crontab -l | grep scv-cron ]; then
+crontab -l > /tmp/mycron
+if grep scv-cron /tmp/mycron; then
   echo -e "$SCRIPT: scv-cron.sh job already configured"
   echo -e "${SCRIPT}: END `date`"
   exit
 fi
 
 echo -e "$SCRIPT: adding scv-cron.sh to cron "
-cat <<ED_HEREDOC | crontab -e
-G
-a
+cat <<CRON_HEREDOC >> /tmp/mycron
 0 4 * * * /home/unroot/scv-server/linode/bullsyes/scv-cron.sh
-.
-w
-q
-ED_HEREDOC
+CRON_HEREDOC
+
+crontab /tmp/mycron
 
 echo -e "${SCRIPT}: END `date`"
