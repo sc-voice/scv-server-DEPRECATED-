@@ -7,8 +7,8 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 set -e
 
-export EDITOR=ed
-export VISUAL=ed
+export EDITOR=ex
+export VISUAL=ex
 if [ crontab -l | grep scv-cron ]; then
   echo -e "$SCRIPT: scv-cron.sh job already configured"
   echo -e "${SCRIPT}: END `date`"
