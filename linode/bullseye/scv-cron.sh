@@ -5,7 +5,7 @@ LOCALDIR=`realpath $APPDIR/local`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date`"
 
-set -e
+#set -e
 
 echo -e "$SCRIPT: updating SSL certificate"
 sudo /usr/bin/certbot renew --quiet 
@@ -18,6 +18,10 @@ if [ "$VERLOCAL" == "$VERDOCKERHUB" ]; then
   echo -e "$SCRIPT: scvoice/scv-server:latest $VERLOCAL is latest"
 else
   echo -e "$SCRIPT: scvoice/scv-server:latest updated $VERLOCAL => $VERDOCKERHUB"
+  echo -e "$SCRIPT: shutting down scv-server Docker container..."
+  sudo docker compose down
+  echo -e "$SCRIPT: starting updated scv-server Docker container..."
+  sudo docker compose up -d
 fi
 
 echo -e "${SCRIPT}: END `date`"
