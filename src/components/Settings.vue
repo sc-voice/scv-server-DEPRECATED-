@@ -17,7 +17,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-list class="mx-auto" max-width="600">
+        <v-list v-if="$t" class="mx-auto" max-width="600">
           <v-list-item>
             <v-list-item-header>
               <v-list-item-title>
