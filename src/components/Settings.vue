@@ -17,7 +17,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-list v-if="$t" class="mx-auto" max-width="600">
+        <v-list class="mx-auto" max-width="600">
           <v-list-item>
             <v-list-item-header>
               <v-list-item-title>
@@ -45,7 +45,7 @@
                 <v-container fluid>
                   <v-row dense>
                     <v-col>
-                      <v-select v-model="settings.theme" :items="themes(this)" />
+                      <v-select v-model="settings.theme" :items="themes" />
                     </v-col>
                   </v-row>
                 </v-container>
@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed, } from 'vue';
 import { useSettingsStore } from "../stores/settings";
 import Version from "./Version.vue";
 
@@ -101,18 +101,6 @@ const languages = [{
   value:'de',
   title:'German - Deutsch',
 }];
-
-
-function themes(ctx) {
-  let { $t } = ctx;
-  return [{
-    title: $t('scv.themeDark'),
-    value: "dark",
-  },{
-    title: $t('scv.themeLight'),
-    value: "light",
-  }]
-}
 
 function servers() {
   return settings.servers.filter(s => {
@@ -131,6 +119,26 @@ onMounted(()=>{
   console.log('Settings.mounted() settings:', settings);
 });
 
+</script>
+<script>
+export default {
+  data: function() {
+    return {};
+  },
+  computed: {
+    themes: (ctx)=>{
+      let { $t=(s=>s) } = ctx;
+      let result = [{
+        title: $t('scv.themeDark'),
+        value: "dark",
+      },{
+        title: $t('scv.themeLight'),
+        value: "light",
+      }];
+      return result;
+    },
+  },
+}
 </script>
 
 <style scoped>

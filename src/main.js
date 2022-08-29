@@ -30,7 +30,6 @@ const vuetifyOpts = {
   },
 };
 
-const I18N=1;
 import { createI18n, useI18n } from 'vue-i18n';
 import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n';
 const i18n = new createI18n({
@@ -55,9 +54,7 @@ const i18n = new createI18n({
     vi,
   },
 });
-if (I18N) {
-  vuetifyOpts.locale = createVueI18nAdapter({ i18n, useI18n });
-}
+vuetifyOpts.locale = createVueI18nAdapter({ i18n, useI18n });
 
 // Vuetify
 import { createVuetify, } from "vuetify"
@@ -68,9 +65,6 @@ loadFonts()
 
 var app = createApp(App);
 app.use(pinia);
-if (I18N) {
-  app.use(i18n)
-  console.log(`main.js i18n:`, Object.keys(app));
-}
+app.use(i18n)
 app.use(vuetify)
 app.mount('#app')
