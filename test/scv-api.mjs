@@ -453,7 +453,7 @@ typeof describe === "function" &&
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
       should(resDone.guid).equal('858cdb384ffb24de29ffe5703258dd30');
     });
-    it("TESTTESTgetDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
+    it("getDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';

@@ -5,7 +5,7 @@ typeof describe === "function" &&
     const path = require("path");
     const Task = require('../src/task.cjs');
 
-    it("TESTTESTTask(opts) is constructor", () => {
+    it("Task(opts) is constructor", () => {
       // Default constructor
       var task = new Task();
       should(task).properties({

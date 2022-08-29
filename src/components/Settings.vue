@@ -3,11 +3,15 @@
   <!--v-row justify="center"-->
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ props }">
-        <v-btn v-if="settings.isLocalStorage" icon="mdi-cog" v-bind="props" /> 
+        <v-btn v-if="settings.isLocalStorage" icon="mdi-cog" v-bind="props" 
+          :title="$t('scv.settingsTitle')"/> 
       </template>
       <v-card>
         <v-toolbar compact>
-          Settings <Version/>
+          <v-toolbar-title>
+            <div>{{$t('scv.settingsTitle')}}</div>
+            <div class="text-caption"><Version/></div>
+          </v-toolbar-title>
           <v-spacer/>
           <v-btn icon @click="dialog = false">
             <v-icon>mdi-close</v-icon>
@@ -17,7 +21,7 @@
           <v-list-item>
             <v-list-item-header>
               <v-list-item-title>
-                Server
+                {{$t('scv.server')}}
               </v-list-item-title>
               <v-list-item-subtitle>
                 <v-container>
@@ -35,13 +39,29 @@
           <v-list-item>
             <v-list-item-header>
               <v-list-item-title>
-                Theme 
+                {{$t('scv.theme')}} 
               </v-list-item-title>
               <v-list-item-subtitle>
                 <v-container fluid>
                   <v-row dense>
                     <v-col>
-                      <v-select v-model="settings.theme" :items="themes" />
+                      <v-select v-model="settings.theme" :items="themes(this)" />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-list-item-subtitle>
+            </v-list-item-header>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-header>
+              <v-list-item-title>
+                {{$t('scv.languages')}}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                <v-container fluid>
+                  <v-row dense>
+                    <v-col>
+                      <v-select v-model="settings.locale" :items="languages" />
                     </v-col>
                   </v-row>
                 </v-container>
@@ -74,14 +94,25 @@ import Version from "./Version.vue";
 const dialog = ref(false);
 const settings = useSettingsStore();
 const host = ref(undefined);
-
-const themes = [{
-  title: "Dark",
-  value: "dark",
+const languages = [{
+  value: 'en',
+  title: 'English', 
 },{
-  title: "Light",
-  value: "light",
-}]
+  value:'de',
+  title:'German - Deutsch',
+}];
+
+
+function themes(ctx) {
+  let { $t } = ctx;
+  return [{
+    title: $t('scv.themeDark'),
+    value: "dark",
+  },{
+    title: $t('scv.themeLight'),
+    value: "light",
+  }]
+}
 
 function servers() {
   return settings.servers.filter(s => {

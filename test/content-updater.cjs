@@ -26,7 +26,7 @@ typeof describe === "function" &&
       should(updater.suttaStore.isInitialized).equal(true);
       should(updater.isInitialized).equal(true);
     });
-    it("TESTTESTupdate() updates content", async()=>{
+    it("update() updates content", async()=>{
       var updater = await new ContentUpdater().initialize();
       var resUpdate = await updater.update();
       var name = `ContentUpdater.update()`;

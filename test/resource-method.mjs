@@ -29,7 +29,7 @@ typeof describe === "function" &&
       type(t) { this.mockType = t; }
     }
 
-    it("TESTTESTcustom ctor()", async()=>{
+    it("custom ctor()", async()=>{
       let name = 'testName';
       let method = 'testMethod';
       let METHOD = method.toUpperCase();

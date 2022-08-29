@@ -508,7 +508,7 @@ typeof describe === "function" &&
       });
       //console.log(res.body);
     });
-    it("TESTTESTGET /scv/download/...", async()=>{
+    it("GET /scv/download/...", async()=>{
       let scv = await sharedTestServer();
       let audioSuffix = "opus";
       let langs = "pli+en";

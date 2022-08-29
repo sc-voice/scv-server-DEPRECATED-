@@ -9,6 +9,7 @@
           </div>
         </v-app-bar-title>
         <v-spacer/>
+        <div class="text-caption">{{$i18n.locale}}</div>
         <Settings/>
       </v-app-bar>
       <v-progress-linear v-if="volatile.waiting"
@@ -29,6 +30,12 @@
           <PlaySegment/>
           <Download/>
         </v-expansion-panels>
+        <v-card-text>
+          <div class="text-h6">DEBUG</div>
+          <v-btn @click="onTest">
+            Test
+          </v-btn>
+        </v-card-text>
       </v-card>
     </v-main>
   </v-app>
@@ -45,12 +52,17 @@ import PlaySegment from './components/PlaySegment.vue'
 import Download from './components/Download.vue'
 import { onMounted, ref } from 'vue'
 import * as vue from 'vue'
+import { useLocale } from "vuetify"
+import { en, de } from 'vuetify/locale'
 
 const showMenu = ref(false);
 
 function onMenu(value) {
   showMenu.value = !showMenu.value;
   console.log('App.onMenu()', value, showMenu.value);
+}
+function onTest(ctx) {
+  alert("test");
 }
 
 </script>
@@ -69,12 +81,16 @@ function onMenu(value) {
       },
     },
     mounted() {
-      let { $vuetify, settings, } = this;
+      let { $vuetify, settings, $i18n, } = this;
       $vuetify.theme.global.name = settings.theme === 'dark' ? 'dark' : 'light';;
+      $i18n.locale = settings.locale;
       this.unsubscribe = settings.$subscribe((mutation, state) => {
         $vuetify.theme.global.name = settings.theme === 'dark' ? 'dark' : 'light';;
         console.debug("App.mounted() App.mounted() subscribe =>", {mutation, state});
-        settings.isLocalStorage && settings.saveSettings();
+        if (settings.isLocalStorage) {
+          settings.saveSettings();
+          $i18n.locale = settings.locale;
+        }
       });
     },
   }

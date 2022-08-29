@@ -13,6 +13,7 @@ const SERVERS = [{
 }];
 
 const INITIAL_STATE = {
+  locale: 'en',
   theme: 'dark',
   search: undefined,
   audioSuffix: 'mp3',

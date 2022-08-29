@@ -8,32 +8,69 @@ const pinia = createPinia();
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
-//NEXT import { createI18n, useI18n } from 'vue-i18n'
-import { en, de } from 'vuetify/locale'
-//NEXT const i18n = createI18n({
-  //NEXT legacy: false,
-  //NEXT locale: en,
-  //NEXT fallbackLocale: de,
-  //NEXT messages: { en, de },
-//NEXT })
+import cs from './i18n/cs.ts';
+import da from './i18n/da.ts';
+import de from './i18n/de.ts';
+import en from './i18n/en.ts';
+import fr from './i18n/fr.ts';
+import hi from './i18n/hi.ts';
+import is from './i18n/is.ts';
+import ja from './i18n/ja.ts';
+import nb from './i18n/nb.ts';
+import nl from './i18n/nl.ts';
+import pl from './i18n/pl.ts';
+import pt from './i18n/pt.ts';
+import ro from './i18n/ro.ts';
+import si from './i18n/si.ts';
+import vi from './i18n/vi.ts';
 
-// Vuetify
-import { createVuetify, } from "vuetify"
-
-//NEXT import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
-const vuetify = createVuetify({
+const vuetifyOpts = {
   theme: {
     defaultTheme: 'dark',
   },
-  //NEXT locale: createVueI18nAdapter({ i18n, useI18n })
-})
+};
+
+const I18N=1;
+import { createI18n, useI18n } from 'vue-i18n';
+import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n';
+const i18n = new createI18n({
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
+  messages: { 
+    cs,
+    da,
+    de,
+    en,
+    fr,
+    hi,
+    is,
+    ja,
+    nb,
+    nl,
+    pl,
+    pt,
+    ro,
+    si,
+    vi,
+  },
+});
+if (I18N) {
+  vuetifyOpts.locale = createVueI18nAdapter({ i18n, useI18n });
+}
+
+// Vuetify
+import { createVuetify, } from "vuetify"
+const vuetify = createVuetify(vuetifyOpts);
 
 import { loadFonts } from './plugins/webfontloader'
 loadFonts()
 
 var app = createApp(App);
 app.use(pinia);
-//NEXT app.use(i18n)
-//NEXT console.log(`main.js i18n:`, Object.keys(app));
+if (I18N) {
+  app.use(i18n)
+  console.log(`main.js i18n:`, Object.keys(app));
+}
 app.use(vuetify)
 app.mount('#app')
