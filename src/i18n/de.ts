@@ -111,7 +111,7 @@ export default {
     personalAccessToken: 'Persönliches Zugangstoken',
     reader: 'Sprecher*in',
     region: 'Region',
-    releaseIsCurrent: 'Jetzige Version ist die letzte. Keine Aktualisierung',
+    releaseIsCurrent: 'Jetzige Version ist die neueste. Keine Aktualisierung',
     releases: 'Versionen',
     required: '(erforderlich)',
     restartingServer: 'Server wird neu gestartet ',
@@ -231,9 +231,9 @@ export default {
     playSection: "Abschnitt A_SECTION wiedergeben",
     textLayout: "Textgestaltung",
     server: 'Server',
-    theme: 'Theme',
+    theme: 'Hintergrundfarbe',
     themeDark: 'Dunkel',
-    themeLight: 'Licht',
+    themeLight: 'Hell',
 
   },
 }
