@@ -16,7 +16,7 @@ fi
 
 echo -e "$SCRIPT: adding scv-cron.sh to cron "
 cat <<CRON_HEREDOC >> /tmp/mycron
-0 4 * * * /home/unroot/scv-server/linode/bullsyes/scv-cron.sh
+0 4 * * * /home/unroot/scv-server/linode/bullseye/scv-cron.sh
 CRON_HEREDOC
 
 crontab /tmp/mycron
