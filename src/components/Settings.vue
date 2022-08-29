@@ -19,54 +19,48 @@
         </v-toolbar>
         <v-list class="mx-auto" max-width="600">
           <v-list-item>
-            <v-list-item-header>
-              <v-list-item-title>
-                {{$t('scv.server')}}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <v-container>
-                  <v-row dense>
-                    <v-col >
-                      <v-select v-model="settings.serverUrl" :items="servers()" 
-                        :hint='settings.serverUrl'
-                      />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-list-item-subtitle>
-            </v-list-item-header>
+            <v-list-item-title>
+              {{$t('scv.server')}}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <v-container>
+                <v-row dense>
+                  <v-col >
+                    <v-select v-model="settings.serverUrl" :items="servers()" 
+                      :hint='settings.serverUrl'
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
-            <v-list-item-header>
-              <v-list-item-title>
-                {{$t('scv.theme')}} 
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <v-container fluid>
-                  <v-row dense>
-                    <v-col>
-                      <v-select v-model="settings.theme" :items="themes" />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-list-item-subtitle>
-            </v-list-item-header>
+            <v-list-item-title>
+              {{$t('scv.theme')}} 
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <v-container fluid>
+                <v-row dense>
+                  <v-col>
+                    <v-select v-model="settings.theme" :items="themes" />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
-            <v-list-item-header>
-              <v-list-item-title>
-                {{$t('scv.languages')}}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <v-container fluid>
-                  <v-row dense>
-                    <v-col>
-                      <v-select v-model="settings.locale" :items="languages" />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-list-item-subtitle>
-            </v-list-item-header>
+            <v-list-item-title>
+              {{$t('scv.languages')}}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <v-container fluid>
+                <v-row dense>
+                  <v-col>
+                    <v-select v-model="settings.locale" :items="languages" />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-list-item-subtitle>
           </v-list-item>
         </v-list>
         <v-expansion-panels>

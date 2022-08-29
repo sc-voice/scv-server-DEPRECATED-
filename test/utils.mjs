@@ -1,7 +1,8 @@
 import Utils from "../src/utils.mjs";
+import should from "should";
 
 typeof describe === "function" && describe("utils", function() {
-  it ("assignTyped()", ()=>{
+  it ("TESTTESTassignTyped()", ()=>{
     let initial = {
       aString: 'init-string',
       aDate: new Date(2020,2,1),
