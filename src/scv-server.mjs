@@ -45,13 +45,14 @@ export default class ScvServer extends RestApi {
       80;
     let apiUrl = opts.apiUrl || 'http://suttacentral.net/api';
     this.apiUrl = apiUrl;
+    let { autoSyncSeconds } = opts;
 
     // injection
     let app = opts.app || express();
     Object.defineProperty(this, "app", {value: app});
     let scApi = opts.scApi || new ScApi({apiUrl});
     Object.defineProperty(this, "scApi", {value: scApi});
-    let scvApi = opts.scvApi || new ScvApi({});
+    let scvApi = opts.scvApi || new ScvApi({autoSyncSeconds});
     Object.defineProperty(this, "scvApi", {value: scvApi});
 
     this.debug("ctor", opts);

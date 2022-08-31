@@ -23,7 +23,8 @@ var apiUrl = argv.some((a) => a === '--staging')
     : 'http://suttacentral.net/api';
 
 let protocol = argv.some((a) => a === '--ssl') ? "https" : "http";
-let opts = { apiUrl, protocol };
+let autoSyncSeconds = 3600; // autoSyncEbtData
+let opts = { apiUrl, protocol, autoSyncSeconds };
 port != null && (opts.port = port);
 let scv = new ScvServer(opts);
 await scv.initialize();

@@ -62,6 +62,8 @@
           autoSection: true,
           suttaLoader: (scid) => that.loadBilaraSutta(scid),
         });
+      this.autoSyncSeconds = opts.autoSyncSeconds || 0;
+      this.autoSyncCount = 0;
 
       let execGit = new ExecGit({
         repo: "https://github.com/ebt-site/ebt-data.git",
@@ -108,8 +110,27 @@
           return Promise.resolve(this);
         }
         this.isInitialized = true;
-        await this.suttaFactory.initialize();
-        await this.seeker.initialize();
+        let { suttaFactory, seeker, autoSyncSeconds, bilaraData } = this;
+        await suttaFactory.initialize();
+        await seeker.initialize();
+        if (autoSyncSeconds) {
+          let that = this;
+          let autoSync = async ()=>{
+            while (that.autoSyncSeconds) {
+              that.info(`autoSync @ ${autoSyncSeconds}s => syncEbtData()`);
+              bilaraData.syncEbtData()
+              .then(()=>{
+                that.autoSyncCount++;
+              }).catch(e=>{
+                that.warn("autoSync failed:", e.message);
+                that.warn("autoSync disabled");
+                that.autoSyncSeconds = 0;
+              });
+              await new Promise(r=>setTimeout(()=>r(), autoSyncSeconds*1000));
+            }
+          }
+          autoSync();
+        }
 
         return this;
       } catch (e) {

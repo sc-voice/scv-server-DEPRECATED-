@@ -43,24 +43,38 @@ typeof describe === "function" &&
       should(store.seeker).instanceOf(Seeker);
       should(store.seeker.bilaraData).equal(store.bilaraData);
       should(store.bilaraData.logger).equal(store);
+      should(store.autoSyncSeconds).equal(0);
     });
-    it("custom ctor", () => {
+    it("custom ctor", async () => {
       var logger = new LogInstance();
       logger.logLevel = "warn";
-      var store = new SuttaStore({ logger });
+      var autoSyncSeconds = 1;
+      var store = new SuttaStore({ logger, autoSyncSeconds });
       should(store.logger).equal(logger);
       should(store.bilaraData.logger).equal(store);
       should(store.seeker.logger).equal(store);
     });
-    it("initialize() initializes SuttaStore", async () => {
-      var store = new SuttaStore();
+    it("TESTTESTinitialize() initializes SuttaStore", async () => {
+      var autoSyncSeconds = 1;
+      var store = new SuttaStore({autoSyncSeconds});
       should(store.maxDuration).equal(3 * 60 * 60);
       should(store.isInitialized).equal(false);
+
       should(await store.initialize()).equal(store);
       should(store.scApi).instanceOf(ScApi);
       should(store.bilaraData.initialized).equal(true);
       should(store.seeker.initialized).equal(true);
       should(store.seeker.logger).equal(store);
+
+      store.logLevel = 'info';
+      should(store.autoSyncSeconds).equal(autoSyncSeconds);
+      await new Promise(r=>setTimeout(()=>r(),autoSyncSeconds*1000));
+      should(store.autoSyncCount).equal(1);
+      store.autoSyncSeconds = 0; // Disable autoSync
+      await new Promise(r=>setTimeout(()=>r(),autoSyncSeconds*1000));
+      should(store.autoSyncCount).equal(2);
+      await new Promise(r=>setTimeout(()=>r(),autoSyncSeconds*1000));
+      should(store.autoSyncCount).equal(2);
     });
     it("search('thig16.1') returns segmented sutta", async () => {
       var voice = Voice.createVoice({
@@ -898,11 +912,11 @@ typeof describe === "function" &&
           results.map((r) => r.suttaplex.acronym),
           ["SN 12.3"]
         );
-        should(results[0].quote.de).match(/3. Übung /);
+        should(results[0].quote.de).match(/Übung /);
         should(sutta.author_uid).equal("sabbamitta");
         should.deepEqual(sutta.segments[0], {
           matched: true,
-          de: "Verbundene Lehrreden 12 ",
+          de: "Verbundene Lehrreden 12.3 ",
           en: "Linked Discourses 12.3 ",
           pli: "Saṁyutta Nikāya 12.3 ",
           scid: "sn12.3:0.1",
@@ -911,7 +925,7 @@ typeof describe === "function" &&
         var sections = sutta.sections;
         should.deepEqual(sections[0].segments[0], {
           matched: true,
-          de: "Verbundene Lehrreden 12 ",
+          de: "Verbundene Lehrreden 12.3 ",
           en: "Linked Discourses 12.3 ",
           pli: "Saṁyutta Nikāya 12.3 ",
           scid: "sn12.3:0.1",

@@ -81,6 +81,7 @@ TODO*/
         || new VoiceFactory({ scAudio, soundStore, });
       let bilaraData = opts.bilaraData || new BilaraData();
       this.download = null;
+      let { autoSyncSeconds } = opts;
 
       Object.defineProperty(this, "audioUrls", {
         value: opts.audioUrls || new AudioUrls(),
@@ -94,6 +95,7 @@ TODO*/
           scApi: this.scApi,
           suttaFactory: this.suttaFactory,
           voice: null,
+          autoSyncSeconds,
         }),
       });
     }
