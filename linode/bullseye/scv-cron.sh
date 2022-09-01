@@ -7,21 +7,9 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 #set -e
 
-echo -e "$SCRIPT: updating SSL certificate"
-sudo /usr/bin/certbot renew --quiet 
+echo -e "$SCRIPT: updating scv-server"
+git pull
 
-echo -e "$SCRIPT: checking Dockerhub for scvoice/scv-server:latest..."
-VERLOCAL=`sudo /usr/bin/docker image ls scvoice/scv-server:latest -q`
-sudo /usr/bin/docker pull -q scvoice/scv-server:latest
-VERDOCKERHUB=`sudo /usr/bin/docker image ls scvoice/scv-server:latest -q`
-if [ "$VERLOCAL" == "$VERDOCKERHUB" ]; then
-  echo -e "$SCRIPT: scvoice/scv-server:latest $VERLOCAL is latest"
-else
-  echo -e "$SCRIPT: scvoice/scv-server:latest updated $VERLOCAL => $VERDOCKERHUB"
-  echo -e "$SCRIPT: shutting down scv-server Docker container..."
-  sudo docker compose down
-  echo -e "$SCRIPT: starting updated scv-server Docker container..."
-  sudo docker compose up -d
-fi
+$DIR/scv-cron-tasks.sh
 
 echo -e "${SCRIPT}: END `date`"

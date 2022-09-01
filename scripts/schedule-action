@@ -22,8 +22,8 @@ if bash -c "$CMD"; then
   exit 0
 fi
 
-echo -e "$SCRIPT: updated package depedencies"
-git commit -am "$SCRIPT: updated package depedencies"
+echo -e "$SCRIPT: updated package dependencies"
+git commit -am "$SCRIPT: updated package dependencies"
 VERSION=`npm version patch`
 echo -e "$SCRIPT: committing package version ${VERSION}"
 git push
