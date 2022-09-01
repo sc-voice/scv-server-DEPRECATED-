@@ -54,7 +54,7 @@ typeof describe === "function" &&
       should(store.bilaraData.logger).equal(store);
       should(store.seeker.logger).equal(store);
     });
-    it("TESTTESTinitialize() initializes SuttaStore", async () => {
+    it("initialize() initializes SuttaStore", async () => {
       var autoSyncSeconds = 1;
       var store = new SuttaStore({autoSyncSeconds});
       should(store.maxDuration).equal(3 * 60 * 60);

@@ -4,6 +4,7 @@ import AudioUrls from "../src/audio-urls.cjs";
 import SoundStore from "../src/sound-store.cjs";
 import SuttaStore from "../src/sutta-store.cjs";
 import Task from "../src/task.cjs";
+import { logger } from 'log-instance';
 
 import { MerkleJson } from "merkle-json";
 
@@ -71,6 +72,19 @@ typeof describe === "function" &&
       should(api.initialized).equal(true);
 
       should(res).equal(api);
+    });
+    it("TESTTESTgetSearch() => sn22.56/de", async()=>{
+      let api = await testScvApi();
+      let suid = 'sn22.56';
+      let params = { lang: 'de', pattern: suid }; 
+      logger.logLevel = 'debug';
+      let res = await api.getSearch({params, query});
+      let { method, results } = res;
+      should(results).instanceOf(Array);
+      should(results.length).equal(1);
+      should.deepEqual(results.map(r => r.uid),[ suid, ]);
+      should(results[0].sutta.author_uid).equal('sabbamitta');
+      should(method).equal('sutta_uid');
     });
     it("getSearch() => dn7/de", async()=>{
       let api = await testScvApi();
