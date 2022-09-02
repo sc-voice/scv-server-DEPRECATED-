@@ -30,6 +30,8 @@ done
 echo -e "$SCRIPT: removing local docker images"
 docker image ls scv-server 
 docker image ls scv-server -q | xargs docker image rm -f  
+docker image ls scvoice/scv-server 
+docker image ls scvoice/scv-server -q | xargs docker image rm -f  
 
 echo -e "$SCRIPT: building new local image for Dockerhub"
 npm run build:docker
