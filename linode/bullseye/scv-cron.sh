@@ -7,7 +7,7 @@ echo -e "${SCRIPT}: BEGIN `date`"
 
 #set -e
 
-echo -e "$SCRIPT: updating scv-server"
+echo -e "$SCRIPT: updating $DIR"
 cd $DIR
 git pull
 
