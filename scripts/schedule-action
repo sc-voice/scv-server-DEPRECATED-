@@ -29,17 +29,7 @@ echo -e "$SCRIPT: committing package version ${VERSION}"
 git push
 
 echo -e "$SCRIPT: updating Dockerhub..."
-npm run build:dist
-npm run ghpages
+npm run gh-pages
 npm run build:dockerhub
-
-#TODO: solve github action AWS credential challenge
-#npm run test; RC=$?; 
-#if [ "$RC" == "0" ]; then
-#  echo TEST COMPLETED!
-#else 
-#  echo "TESTS FAILED (RC$RC)"
-#  exit $RC
-#fi
 
 echo -e "${SCRIPT}: END `date`"
