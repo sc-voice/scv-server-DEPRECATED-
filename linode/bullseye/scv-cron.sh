@@ -8,6 +8,7 @@ echo -e "${SCRIPT}: BEGIN `date`"
 #set -e
 
 echo -e "$SCRIPT: updating scv-server"
+cd $DIR
 git pull
 
 $DIR/scv-cron-tasks.sh >> $LOCALDIR/scv-cron.log 2>&1
