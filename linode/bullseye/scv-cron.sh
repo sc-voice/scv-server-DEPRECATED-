@@ -11,6 +11,6 @@ echo -e "$SCRIPT: updating $DIR"
 cd $DIR
 git pull
 
-$DIR/scv-cron-tasks.sh >> $LOCALDIR/scv-cron.log 2>&1
+$DIR/scv-cron-tasks.sh 
 
 echo -e "${SCRIPT}: END `date`" 
