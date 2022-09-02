@@ -10,6 +10,6 @@ echo -e "${SCRIPT}: BEGIN `date`"
 echo -e "$SCRIPT: updating scv-server"
 git pull
 
-$DIR/scv-cron-tasks.sh
+$DIR/scv-cron-tasks.sh >> $LOCALDIR/scv-cron.log 2>&1
 
-echo -e "${SCRIPT}: END `date`"
+echo -e "${SCRIPT}: END `date`" 
