@@ -493,7 +493,7 @@ typeof describe === "function" &&
           `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,
       });
     });
-    it("TESTTESTbuildDownload() => thig1.1/de", async()=>{
+    it("buildDownload() => thig1.1/de", async()=>{
       let audioSuffix = "opus";
       let lang = 'de';
       let langs = 'pli+de';
@@ -506,6 +506,7 @@ typeof describe === "function" &&
       let params = { 
         audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
       };
+      let req = {params};
       let api = await testScvApi();
        
       let res = await api.buildDownload({
@@ -529,6 +530,43 @@ typeof describe === "function" &&
       });
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
+    });
+    it("TESTTESTgetBuildDownload() => thig1.1/de", async()=>{
+      let api = await testScvApi();
+      let lang = 'de';
+      let langs = 'pli+de';
+      let maxResults = 2; 
+      let pattern = "thig1.1/de";
+      let vroot = "Aditi";
+      let vtrans = "Vicki";
+      let audioSuffix = "ogg";
+      let params = { 
+        audioSuffix, langs, vtrans, pattern: encodeURIComponent(pattern),
+      };
+      let query = { maxResults: "2", lang };
+      //api.logLevel = 'debug';
+      let res = await api.getBuildDownload({params, query});
+      should(res).properties({ 
+        audioSuffix: ".ogg", 
+        lang, 
+        langs: ['pli', 'de'],
+        maxResults: 2, 
+        pattern, 
+        vroot: 'Aditi', 
+        vtrans,
+      });
+      let taskProperties = [
+        "actionsDone", "actionsTotal", "msActive", "started", "lastActive", "summary",
+      ];
+      should(res.task).properties(taskProperties);
+      should(res.filename).equal(undefined);
+      should(res.guid).equal(undefined);
+      await new Promise(r=>setTimeout(()=>r(),5*1000))
+
+      let resDone = await api.getBuildDownload({params, query});
+      should(resDone.task).properties(taskProperties);
+      should(resDone.filename).equal('thig1.1-de_pli+de_Vicki.ogg');
+      should(resDone.guid).equal('3faaa0fa3f92682fe104fdef3f162edf');
     });
   });
 

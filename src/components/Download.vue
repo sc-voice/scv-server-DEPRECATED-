@@ -32,6 +32,14 @@
                 hint="Enter narrator (e.g., AWS Polly name)"
                 placeholder='Amy'>
               </v-text-field>
+              <v-text-field v-model="settings.langTrans" 
+                clearable density="compact" variant="underlined"
+                @keypress="onFetchKey"
+                label="Translation language"
+                required
+                placeholder='E.g., "de"'
+                >
+              </v-text-field>
               <v-text-field v-model="settings.search" 
                 clearable density="compact" variant="underlined"
                 @keypress="onFetchKey"
@@ -143,7 +151,7 @@
   const urlBuild = computed(()=>{
     let { 
       serverUrl, audioSuffix, langs, maxDuration, maxResults, 
-      vnameRoot, vnameTrans, search, 
+      vnameRoot, vnameTrans, search, langTrans
     } = settings;
     let url = [
       serverUrl,
@@ -159,13 +167,16 @@
     if (maxDuration != null) {
       url = `${url}&maxDuration=${maxDuration}`;
     }
+    if (langTrans != null) {
+      url += `&lang=${langTrans}`;
+    }
     return url;
   })
 
   const urlDownload = computed(()=>{
     let { 
       serverUrl, audioSuffix, langs, maxDuration, maxResults, 
-      vnameRoot, vnameTrans, search, 
+      vnameRoot, vnameTrans, search, langTrans 
     } = settings;
     let url = [
       serverUrl,
@@ -179,7 +190,10 @@
 
     url = `${url}?maxResults=${maxResults}`;
     if (maxDuration != null) {
-      url = `${url}&maxDuration=${maxDuration}`;
+      url += `&maxDuration=${maxDuration}`;
+    }
+    if (langTrans != null) {
+      url += `&lang=${langTrans}`;
     }
     return url;
   })
