@@ -4,7 +4,7 @@ typeof describe === "function" &&
     const fs = require("fs");
     const path = require("path");
     const { logger } = require("log-instance");
-    const logLevel = logger.logLevel = 'info';
+    const logLevel = logger.logLevel = 'warn';
     const { ScApi, SuttaCentralId } = require("suttacentral-api");
     const Sutta = require("../src/sutta.cjs");
     const SuttaStore = require("../src/sutta-store.cjs");

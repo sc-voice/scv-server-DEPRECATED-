@@ -66,7 +66,7 @@ typeof describe === "function" &&
       should(store.seeker.initialized).equal(true);
       should(store.seeker.logger).equal(store);
 
-      store.logLevel = 'info';
+      //store.logLevel = 'info';
       should(store.autoSyncSeconds).equal(autoSyncSeconds);
       await new Promise(r=>setTimeout(()=>r(),autoSyncSeconds*1000));
       should(store.autoSyncCount).equal(1);

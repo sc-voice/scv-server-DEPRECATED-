@@ -73,11 +73,11 @@ typeof describe === "function" &&
 
       should(res).equal(api);
     });
-    it("TESTTESTgetSearch() => sn22.56/de", async()=>{
+    it("getSearch() => sn22.56/de", async()=>{
       let api = await testScvApi();
       let suid = 'sn22.56';
       let params = { lang: 'de', pattern: suid }; 
-      logger.logLevel = 'debug';
+      //logger.logLevel = 'debug';
       let res = await api.getSearch({params, query});
       let { method, results } = res;
       should(results).instanceOf(Array);
@@ -492,6 +492,43 @@ typeof describe === "function" &&
         'Content-disposition': 
           `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,
       });
+    });
+    it("TESTTESTbuildDownload() => thig1.1/de", async()=>{
+      let audioSuffix = "opus";
+      let lang = 'de';
+      let langs = 'pli+de';
+      let maxResults = 2; 
+      let pattern = "thig1.1/de";
+      let vroot = "Aditi";
+      let vtrans = "Vicki";
+      let task = new Task({name: `test buildDownload()`});
+
+      let params = { 
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
+      };
+      let api = await testScvApi();
+       
+      let res = await api.buildDownload({
+        audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans, task,
+      });
+      should(res.filename).equal('thig1.1-de_pli+de_Vicki.opus');
+      should(res.filepath).match(/scv-server\/local\/sounds\/common/);
+      should(res.filepath).match(/3faaa0fa3f92682fe104fdef3f162edf.opus/);
+      let nSegments = 9;
+      should.deepEqual(res.stats, {
+        chars: {
+          de: 405,
+          pli: 257,
+        },
+        duration: 59,
+        segments: { 
+          de: nSegments,
+          pli: nSegments,
+        },
+        tracks: 2,
+      });
+      should(Date.now() - res.buildDate).above(0).below(15*1000);
+      should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
   });
 

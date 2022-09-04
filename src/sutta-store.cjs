@@ -382,7 +382,7 @@
           };
         }
         var pattern = SuttaStore.sanitizePattern(opts.pattern);
-        var lang = opts.language || "en";
+        var lang = opts.language || opts.lang || "en";
         var maxDoc = opts.maxResults ?? this.maxResults;
         var maxDoc = Number(maxDoc);
         if (isNaN(maxDoc)) {
