@@ -514,7 +514,7 @@ typeof describe === "function" &&
       });
       should(res.filename).equal('thig1.1-de_pli+de_Vicki.opus');
       should(res.filepath).match(/scv-server\/local\/sounds\/common/);
-      should(res.filepath).match(/3faaa0fa3f92682fe104fdef3f162edf.opus/);
+      should(res.filepath).match(/22780981f5861a933f196a5a07e1353a.opus/);
       let nSegments = 9;
       should.deepEqual(res.stats, {
         chars: {
@@ -531,7 +531,7 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
-    it("TESTTESTgetBuildDownload() => thig1.1/de", async()=>{
+    it("getBuildDownload() => thig1.1/de", async()=>{
       let api = await testScvApi();
       let lang = 'de';
       let langs = 'pli+de';
@@ -566,7 +566,7 @@ typeof describe === "function" &&
       let resDone = await api.getBuildDownload({params, query});
       should(resDone.task).properties(taskProperties);
       should(resDone.filename).equal('thig1.1-de_pli+de_Vicki.ogg');
-      should(resDone.guid).equal('3faaa0fa3f92682fe104fdef3f162edf');
+      should(resDone.guid).equal('22780981f5861a933f196a5a07e1353a');
     });
   });
 

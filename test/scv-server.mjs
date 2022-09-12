@@ -376,13 +376,13 @@ typeof describe === "function" &&
         scid,
         langTrans,
         translator,
-        title: 'Strophen der altehrwürdigen Nonnen ',
         section: 0,
         nSections: 2,
         vnameTrans,
         iSegment: 4,
         vnameRoot: 'Aditi',
       });
+      should(body.title).match(/Strophen der altehrwürdigen Nonnen/);
       should.deepEqual(body.segment, {
         scid: 'thig1.1:1.1',
         pli: '“Sukhaṁ supāhi therike, ',
