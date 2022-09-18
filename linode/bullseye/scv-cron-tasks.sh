@@ -25,7 +25,7 @@ else
 fi
 
 if sudo docker ps | grep scv-server; then
-  #echo -e "$SCRIPT: scv-server Docker container is running"
+  echo -e "$SCRIPT: scv-server Docker container is running"
 else
   echo -e "$SCRIPT: WARNING: scv-server Docker container not found (RESTARTING)..."
   sudo docker compose up -d
