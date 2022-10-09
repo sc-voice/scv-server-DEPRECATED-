@@ -181,16 +181,16 @@ typeof describe === "function" &&
       });
       testTolerance(resMeasure.seconds, 292);
     });
-    it("measure(sutta, lang) measures an2.1", async () => {
+    it("TESTTESTmeasure(sutta, lang) measures an2.1", async () => {
       var factory = await testSuttaFactory();
       var scd = new SuttaDuration();
       var sutta = await factory.loadSutta("an2.1");
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 6576,
+        text: 6571,
         lang: "en",
-        nSegments: 126,
+        nSegments: 125,
         nEmptySegments: 26,
         nSections: 11,
       });

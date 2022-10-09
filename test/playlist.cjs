@@ -236,7 +236,7 @@ typeof describe === "function" &&
         voices,
         volume: "test-playlist",
       });
-      should(result.signature.guid).match(/2bd755ec79e30d1f12376c8e8e778397/);
+      should(result.signature.guid).match(/7cd30eb2bff3d054870a1a48901ef17c/);
     });
     it("speak(opts) adds break between suttas", async () => {
       var factory = await testSuttaFactory();
