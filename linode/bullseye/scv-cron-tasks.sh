@@ -10,6 +10,9 @@ echo -e "${SCRIPT}: BEGIN `date`"
 echo -e "$SCRIPT: updating SSL certificate"
 sudo /usr/bin/certbot renew --quiet 
 
+echo -e "$SCRIPT: docker system prune"
+sudo /usr/bin/docker system prune -f
+
 echo -e "$SCRIPT: checking Dockerhub for scvoice/scv-server:latest..."
 VERLOCAL=`sudo /usr/bin/docker image ls scvoice/scv-server:latest -q`
 sudo /usr/bin/docker pull -q scvoice/scv-server:latest
