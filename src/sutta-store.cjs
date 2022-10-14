@@ -312,6 +312,7 @@
         var trans =
           translations.filter((t) => t.lang === lang)[0] || translations[0];
         var author_uid = trans.author_uid;
+        var blurb = bd.readBlurb({suid: sutta_uid, lang});
         var suttaplex = await bd.loadSuttaplexJson(sutta_uid, lang, author_uid);
         var authorInfo = bd.authorInfo(author_uid);
         var author = (authorInfo && authorInfo.name) || author_uid;
@@ -349,6 +350,7 @@
             author_uid.charAt(0).toUpperCase() + author_uid.slice(1),
           author_uid: author_uid,
           author_blurb: authorInfo && authorInfo.blurb,
+          blurb,
           nSegments: segments.length,
           title: titles.slice(1).join(" \u2022 "),
           collection_id: trans.collection,

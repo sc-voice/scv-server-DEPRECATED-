@@ -235,20 +235,21 @@ typeof describe === "function" &&
       should.deepEqual(
         Object.keys(results[0]).sort(),
         [
-          "count",
-          "uid",
           "author",
+          "author_blurb",
           "author_short",
           "author_uid",
-          "author_blurb",
+          "blurb",
+          "collection_id",
+          "count",
           "lang",
           "nSegments",
-          "title",
-          "collection_id",
-          "suttaplex",
           "quote",
-          "sutta",
           "stats",
+          "sutta",
+          "suttaplex",
+          "title",
+          "uid",
         ].sort()
       );
       should(method).equal("phrase");
@@ -300,7 +301,7 @@ typeof describe === "function" &&
       should.deepEqual(results.map((r) => r.uid), ["thig1.1", "thig1.2", ]);
       should.deepEqual(results.map((r) => r.author_uid), ["soma", "soma", ]);
     });
-    it("search(pattern) => dn7/de", async () => {
+    it("TESTTESTsearch(pattern) => dn7/de", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",
@@ -324,6 +325,7 @@ typeof describe === "function" &&
         results.map((r) => r.uid),
         ["dn7"]
       );
+      should(results[0].blurb).match(/Diese Lehrrede über die stufenweise/);
     });
     it("search(pattern) => regular expression results", async () => {
       var voice = Voice.createVoice({
