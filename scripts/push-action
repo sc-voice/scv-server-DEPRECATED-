@@ -13,7 +13,7 @@ npm install
 echo -e "$SCRIPT: updating gh-pages ..."
 npm run gh-pages
 
-echo -e "$SCRIPT: updating and Dockerhub..."
+echo -e "$SCRIPT: updating Dockerhub..."
 npm run build:dockerhub
 
 echo -e "${SCRIPT}: END `date`"
