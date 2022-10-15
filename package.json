@@ -51,6 +51,7 @@
     "vite:build": "vite build",
     "gh-pages": "scripts/gh-pages.sh",
     "aws-creds": "node scripts/aws-creds.sh",
+    "push-action": "scripts/push-action",
     "schedule-action": "scripts/schedule-action",
     "start": "scripts/sc-voice.sh",
     "start:3000": "scripts/sc-voice.sh --port:3000",
