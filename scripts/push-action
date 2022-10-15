@@ -1,0 +1,19 @@
+#!/bin/bash
+DIR=`dirname $0`; 
+pushd $DIR/..
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+echo -e "${SCRIPT}: BEGIN `date`"
+
+set -e
+
+git pull
+echo -e "${SCRIPT}: updating dependencies..."
+npm install 
+
+echo -e "$SCRIPT: updating gh-pages ..."
+npm run gh-pages
+
+echo -e "$SCRIPT: updating and Dockerhub..."
+npm run build:dockerhub
+
+echo -e "${SCRIPT}: END `date`"
