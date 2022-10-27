@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-<template>v1.175.0</template>
-=======
-<template>v1.174.11</template>
->>>>>>> refs/remotes/origin/main
+<template>v1.176.0</template>
