@@ -301,7 +301,7 @@ typeof describe === "function" &&
       should.deepEqual(results.map((r) => r.uid), ["thig1.1", "thig1.2", ]);
       should.deepEqual(results.map((r) => r.author_uid), ["soma", "soma", ]);
     });
-    it("TESTTESTsearch(pattern) => dn7/de", async () => {
+    it("search(pattern) => dn7/de", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",
