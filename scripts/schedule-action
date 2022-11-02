@@ -29,7 +29,6 @@ echo -e "$SCRIPT: committing package version ${VERSION}"
 git push
 
 echo -e "$SCRIPT: updating Dockerhub..."
-npm run gh-pages
 npm run build:dockerhub
 
 echo -e "${SCRIPT}: END `date`"
