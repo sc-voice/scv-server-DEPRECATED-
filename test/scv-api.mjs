@@ -359,7 +359,7 @@ typeof describe === "function" &&
       should(api.downloadArgs({pattern, lang})).properties({lang});
       should.throws(()=>api.downloadArgs({pattern, lang:911}));
     });
-    it("buildDownload() => thig1.1/en/soma", async()=>{
+    it("TESTTESTbuildDownload() => thig1.1/en/soma", async()=>{
       let audioSuffix = "opus";
       let lang = 'en';
       let langs = 'pli+en';
@@ -377,14 +377,14 @@ typeof describe === "function" &&
         audioSuffix, lang, langs, maxResults, pattern, vroot, vtrans,
       });
       should(res.filepath).match(/scv-server\/local\/sounds\/common/);
-      should(res.filepath).match(/0918619f6f55981105031005434c236f.opus/);
+      should(res.filepath).match(/26eef1bb9d46a5aef5c4e4a283b30fb4.opus/);
       should(res.filename).equal('thig1.1-en-soma_pli+en_Matthew.opus');
       should.deepEqual(res.stats, {
         chars: {
-          en: 332,
+          en: 306,
           pli: 257,
         },
-        duration: 53,
+        duration: 50,
         segments: { 
           en: 9,
           pli: 9,
@@ -413,14 +413,14 @@ typeof describe === "function" &&
       });
       should(res.filename).equal('thig1.1-3-en-soma_pli+en_Matthew.opus');
       should(res.filepath).match(/scv-server\/local\/sounds\/common/);
-      should(res.filepath).match(/3e36385496eba89a47f26f16f55d07bb.opus/);
+      should(res.filepath).match(/a613517f8cd8aa11a3d37f1d4bdd3e8b.opus/);
       let nSegments = 17;
       should.deepEqual(res.stats, {
         chars: {
-          en: 607,
+          en: 571,
           pli: 467,
         },
-        duration: 95,
+        duration: 92,
         segments: { 
           en: nSegments,
           pli: nSegments,
@@ -430,7 +430,7 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
-    it("getBuildDownload() => thig1.1-3/en/soma", async()=>{
+    it("TESTTESTgetBuildDownload() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -465,9 +465,9 @@ typeof describe === "function" &&
       let resDone = await api.getBuildDownload({params, query});
       should(resDone.task).properties(taskProperties);
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
-      should(resDone.guid).equal('858cdb384ffb24de29ffe5703258dd30');
+      should(resDone.guid).equal('104fff42a9ff64423feabf84c674e573');
     });
-    it("getDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
+    it("TESTTESTgetDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -487,7 +487,7 @@ typeof describe === "function" &&
       let req = {params, query, url};
       let res = new MockResponse();
       let audio = await api.getDownloadPlaylist(req, res);
-      should(audio.length).equal(255935);
+      should(audio.length).equal(252512);
       should.deepEqual(res.mockHeaders, {
         'Content-disposition': 
           `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,

@@ -96,23 +96,16 @@ typeof describe === "function" &&
       should(sutta.sections).instanceOf(Array);
       should(sutta.sections[0]).instanceOf(Section);
     });
-    it("loadSutta(...) loads an3.163-182", function (done) {
-      (async function () {
-        try {
-          await suttaStore.initialize();
-          await suttaFactory.initialize();
-          var sutta = await suttaFactory.loadSutta("an3.163-182");
-          should(sutta.sections[0].segments[0].en).match(
-            /Numbered Discourses 3/
-          );
-          should(sutta.sections[0].segments[1].en).match(
-            /17. Ways of Performing Deeds/
-          );
-          done();
-        } catch (e) {
-          done(e);
-        }
-      })();
+    it("TESTTESTloadSutta(...) loads an3.163-182", async()=>{
+      await suttaStore.initialize();
+      await suttaFactory.initialize();
+      var sutta = await suttaFactory.loadSutta("an3.163-182");
+      should(sutta.sections[0].segments[0].en).match(
+        /Numbered Discourses 3/
+      );
+      should(sutta.sections[0].segments[1].en).match(
+        /Ways of Performing Deeds/
+      );
     });
     it("loadSutta(...) loads dn7", function (done) {
       (async function () {
@@ -262,7 +255,7 @@ typeof describe === "function" &&
         ]
       );
     });
-    it("loadSutta() loads dn22/de/vri", async () => {
+    it("TESTTESTloadSutta() loads dn22/de/vri", async () => {
       await suttaStore.initialize();
       var scApi = await new ScApi().initialize();
       var factory = await new SuttaFactory({

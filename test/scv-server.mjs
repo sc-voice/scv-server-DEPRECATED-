@@ -458,7 +458,7 @@ typeof describe === "function" &&
         .expect("Content-Type", /audio.mp3/)
         .expect("Content-Length", "13524");
     });
-    it("GET /scv/build-download/...", async()=>{
+    it("TESTTESTGET /scv/build-download/...", async()=>{
       let scv = await sharedTestServer();
       let audioSuffix = "opus";
       let langs = "pli+en";
@@ -498,17 +498,17 @@ typeof describe === "function" &&
       should(resDone.body).properties(expectedProps);
       should(resDone.body).properties({
         filename: 'thig1.1-en-soma_pli+en_Amy.opus',
-        guid: '5b5a9ae2ec28ea2f4642b88dfe03f191',
+        guid: 'fdff412ffdfe02501dcbce5ae28b3233',
         stats: {
-          duration: 53,
+          duration: 50,
           tracks: 2,
-          chars: { pli:257, en:332 },
+          chars: { pli:257, en:306 },
           segments: { pli:9, en:9},
         },
       });
       //console.log(res.body);
     });
-    it("GET /scv/download/...", async()=>{
+    it("TESTTESTGET /scv/download/...", async()=>{
       let scv = await sharedTestServer();
       let audioSuffix = "opus";
       let langs = "pli+en";
@@ -531,7 +531,7 @@ typeof describe === "function" &&
         .expect(200)
         .expect('Content-Type', /audio.opus/)
         .expect('Content-disposition', /.*thig1.1-en-soma_pli\+en_Amy.opus/)
-        .expect('Content-length', '143539');
+        .expect('Content-length', '140605');
     });
 
   });
