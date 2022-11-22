@@ -19,7 +19,7 @@
     "promise-queue": "^2.2.5",
     "roboto-fontface": "*",
     "say-again": "^0.6.0",
-    "scv-bilara": "^3.58.17",
+    "scv-bilara": "^3.58.20",
     "serve-favicon": "^2.5.0",
     "suttacentral-api": "^2.2.75",
     "vue": "^3.2.37",
