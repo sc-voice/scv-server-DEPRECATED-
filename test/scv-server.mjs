@@ -458,7 +458,7 @@ typeof describe === "function" &&
         .expect("Content-Type", /audio.mp3/)
         .expect("Content-Length", "13524");
     });
-    it("TESTTESTGET /scv/build-download/...", async()=>{
+    it("GET /scv/build-download/...", async()=>{
       let scv = await sharedTestServer();
       let audioSuffix = "opus";
       let langs = "pli+en";
@@ -508,7 +508,7 @@ typeof describe === "function" &&
       });
       //console.log(res.body);
     });
-    it("TESTTESTGET /scv/download/...", async()=>{
+    it("GET /scv/download/...", async()=>{
       let scv = await sharedTestServer();
       let audioSuffix = "opus";
       let langs = "pli+en";

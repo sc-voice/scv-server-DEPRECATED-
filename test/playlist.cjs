@@ -115,7 +115,7 @@ typeof describe === "function" &&
       should.deepEqual(pl.tracks, []);
       should(pl.maxSeconds).equal(0); // unlimited
     });
-    it("TESTTESTaddSutta(sutta) adds a sutta", function () {
+    it("addSutta(sutta) adds a sutta", function () {
       var pl = new Playlist();
 
       pl.addSutta(suttas[0]);
@@ -180,7 +180,7 @@ typeof describe === "function" &&
         },
       });
     });
-    it("addSutta(sutta) adds dn33", async () => {
+    it("TESTTESTaddSutta(sutta) adds dn33", async () => {
       var factory = await testSuttaFactory();
       var sutta = await factory.loadSutta("dn33");
       var pl = new Playlist();
@@ -188,7 +188,7 @@ typeof describe === "function" &&
       should.deepEqual(pl.stats(), {
         tracks: 12,
         chars: {
-          en: 84796,
+          en: 84794,
           pli: 78866,
         },
         segments: {
@@ -280,7 +280,7 @@ typeof describe === "function" &&
       });
       should(result.signature.guid).match(/138aa18fd821f3622094a2faf97e0c87/);
     });
-    it("TESTTESTspeak(opts) => task progress", async () => {
+    it("speak(opts) => task progress", async () => {
       let factory = await testSuttaFactory();
       let pattern = 'thig1.1/en/soma';
       let sutta = await factory.loadSutta(pattern);

@@ -96,7 +96,7 @@ typeof describe === "function" &&
       should(sutta.sections).instanceOf(Array);
       should(sutta.sections[0]).instanceOf(Section);
     });
-    it("TESTTESTloadSutta(...) loads an3.163-182", async()=>{
+    it("loadSutta(...) loads an3.163-182", async()=>{
       await suttaStore.initialize();
       await suttaFactory.initialize();
       var sutta = await suttaFactory.loadSutta("an3.163-182");
@@ -255,7 +255,7 @@ typeof describe === "function" &&
         ]
       );
     });
-    it("TESTTESTloadSutta() loads dn22/de/vri", async () => {
+    it("loadSutta() loads dn22/de/vri", async () => {
       await suttaStore.initialize();
       var scApi = await new ScApi().initialize();
       var factory = await new SuttaFactory({

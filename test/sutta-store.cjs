@@ -137,7 +137,7 @@ typeof describe === "function" &&
         [3, 308]
       );
     });
-    it("search('sona') finds 'Soṇa'", async () => {
+    it("TESTTESTsearch('sona') finds 'Soṇa'", async () => {
       var voice = Voice.createVoice("raveena");
       var scApi = await new ScApi().initialize();
       var suttaFactory = new SuttaFactory({
@@ -155,7 +155,7 @@ typeof describe === "function" &&
       var { method, results } = await store.search("sona");
       should(results).instanceOf(Array);
       should(method).equal("phrase");
-      should(results.length).equal(23);
+      should(results.length).equal(25);
     });
     it("search('thig1.1') returns segmented sutta", async () => {
       var voice = Voice.createVoice({
@@ -806,16 +806,15 @@ typeof describe === "function" &&
         }
       })();
     });
-    it("nikayaSuttaIds(...) returns sutta_uids", async () => {
+    it("TESTTESTnikayaSuttaIds(...) returns sutta_uids", async () => {
       var store = await new SuttaStore({
         maxDuration: 450,
       }).initialize();
       var language = "en";
       const KNSTART = [
+        'cp1', 'cp2', 'cp3',
         //'iti1', 'iti2', 'iti3',
-        "dhp1-20",
-        "dhp21-32",
-        "dhp33-43",
+        //"dhp1-20", "dhp21-32", "dhp33-43",
         //'kp1', 'kp2', 'kp3',
         //'thag1.1', 'thag1.2', 'thag1.3',
       ];
@@ -835,7 +834,7 @@ typeof describe === "function" &&
       // nikaya
       var ids = await store.nikayaSuttaIds("kn");
       should(ids).instanceOf(Array);
-      should(ids.length).equal(637);
+      should(ids.length).equal(672);
       should.deepEqual(ids.slice(0, 3), KNSTART);
       should.deepEqual(ids.slice(ids.length - 3, ids.length), KNEND);
 

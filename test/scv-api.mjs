@@ -359,7 +359,7 @@ typeof describe === "function" &&
       should(api.downloadArgs({pattern, lang})).properties({lang});
       should.throws(()=>api.downloadArgs({pattern, lang:911}));
     });
-    it("TESTTESTbuildDownload() => thig1.1/en/soma", async()=>{
+    it("buildDownload() => thig1.1/en/soma", async()=>{
       let audioSuffix = "opus";
       let lang = 'en';
       let langs = 'pli+en';
@@ -430,7 +430,7 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
-    it("TESTTESTgetBuildDownload() => thig1.1-3/en/soma", async()=>{
+    it("getBuildDownload() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -467,7 +467,7 @@ typeof describe === "function" &&
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
       should(resDone.guid).equal('104fff42a9ff64423feabf84c674e573');
     });
-    it("TESTTESTgetDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
+    it("getDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
