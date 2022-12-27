@@ -137,7 +137,7 @@ typeof describe === "function" &&
         [3, 308]
       );
     });
-    it("TESTTESTsearch('sona') finds 'Soṇa'", async () => {
+    it("search('sona') finds 'Soṇa'", async () => {
       var voice = Voice.createVoice("raveena");
       var scApi = await new ScApi().initialize();
       var suttaFactory = new SuttaFactory({
@@ -806,7 +806,7 @@ typeof describe === "function" &&
         }
       })();
     });
-    it("TESTTESTnikayaSuttaIds(...) returns sutta_uids", async () => {
+    it("nikayaSuttaIds(...) returns sutta_uids", async () => {
       var store = await new SuttaStore({
         maxDuration: 450,
       }).initialize();

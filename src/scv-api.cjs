@@ -265,7 +265,18 @@ TODO*/
             translator,
             usage: 'recite',
           });
-          segment.audio.pli = resSpeak.signature.guid;
+          //segment.audio.vnamePali = resSpeak.altTts;
+          let { signature } = resSpeak;
+          segment.audio.pli = signature.guid;
+          switch (signature.api) {
+            case 'human-tts':
+              result.vnameRoot = signature.reader;
+              break;
+            default:
+            case 'aws-polly':
+              result.vnameRoot = signature.voice;
+              break;
+          }
         }
         var audio = segment.audio;
         this.info(`GET ${req.url} =>`, 

@@ -237,6 +237,54 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
+    it("TESTTESTgetPlaySegment => HumanTts sn1.1:0.2", async()=>{
+      let api = await testScvApi();
+      let scid = "sn1.9:0.2";
+      let sutta_uid = scid.split(":")[0];
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = "Matthew";
+      let vnameRoot = "sujato_pli";
+      let params = { langTrans, translator, scid, vnameTrans, vnameRoot };
+      let query = {};
+      let res = await api.getPlaySegment({params, query});
+      should(res).properties({
+        sutta_uid,
+        scid,
+        langTrans,
+        translator,
+        vnameTrans,
+        vnameRoot: 'Aditi',
+      });
+      should(res.segment.audio).properties({
+        en: 'e69848a68f51e384c823cdf3d58b401c',
+        pli: '88ebe8878aee4b27e775b2e05ea39302',
+      });
+    });
+    it("TESTTESTgetPlaySegment => HumanTts sn1.1:0.3", async()=>{
+      let api = await testScvApi();
+      let scid = "sn1.9:0.3";
+      let sutta_uid = scid.split(":")[0];
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = "Matthew";
+      let vnameRoot = "sujato_pli";
+      let params = { langTrans, translator, scid, vnameTrans, vnameRoot };
+      let query = {};
+      let res = await api.getPlaySegment({params, query});
+      should(res).properties({
+        sutta_uid,
+        scid,
+        langTrans,
+        translator,
+        vnameTrans,
+        vnameRoot,
+      });
+      should(res.segment.audio).properties({
+        en: '5e8c05e6f52a00b58a4be8c90a7d36e9',
+        pli: '8d7a014474c041125b5132ae94dc8c7e',
+      });
+    });
     it("getPlaySegment() => HumanTts DN33", async()=>{
       let api = await testScvApi();
       let scid = "dn33:0.1";
