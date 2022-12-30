@@ -258,7 +258,7 @@ TODO*/
           let { voice, signature } = resSpeak;
           switch (signature.api) {
             case 'human-tts':
-              result.vnameTrans = signature.voice || voice;
+              result.vnameTrans = signature.reader || voice;
               break;
             default:
             case 'aws-polly':
