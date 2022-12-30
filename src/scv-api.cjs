@@ -255,6 +255,16 @@ TODO*/
             usage,
           });
           segment.audio[langTrans] = resSpeak.signature.guid;
+          let { voice, signature } = resSpeak;
+          switch (signature.api) {
+            case 'human-tts':
+              result.vnameTrans = signature.voice || voice;
+              break;
+            default:
+            case 'aws-polly':
+              result.vnameTrans = signature.voice || voice;
+              break;
+          }
         }
         if (segment.pli) {
           var pali = new Pali();

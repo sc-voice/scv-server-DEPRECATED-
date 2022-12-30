@@ -243,7 +243,7 @@ typeof describe === "function" &&
       let sutta_uid = scid.split(":")[0];
       let langTrans = 'en';
       let translator = 'sujato';
-      let vnameTrans = "Matthew";
+      let vnameTrans = "sujato_en";
       let vnameRoot = "sujato_pli";
       let params = { langTrans, translator, scid, vnameTrans, vnameRoot };
       let query = {};
@@ -253,15 +253,15 @@ typeof describe === "function" &&
         scid,
         langTrans,
         translator,
-        vnameTrans,
+        vnameTrans: 'Amy',
         vnameRoot: 'Aditi',
       });
       should(res.segment.audio).properties({
-        en: 'e69848a68f51e384c823cdf3d58b401c',
+        en: '399a42cb8c635d84d8a58d421fd844ea',
         pli: '88ebe8878aee4b27e775b2e05ea39302',
       });
     });
-    it("TESTTESTgetPlaySegment => HumanTts sn1.1:0.3", async()=>{
+    it("getPlaySegment => HumanTts sn1.1:0.3", async()=>{
       let api = await testScvApi();
       let scid = "sn1.9:0.3";
       let sutta_uid = scid.split(":")[0];
@@ -285,7 +285,7 @@ typeof describe === "function" &&
         pli: '8d7a014474c041125b5132ae94dc8c7e',
       });
     });
-    it("getPlaySegment() => HumanTts DN33", async()=>{
+    it("TESTTESTgetPlaySegment() => HumanTts DN33", async()=>{
       let api = await testScvApi();
       let scid = "dn33:0.1";
       let langTrans = 'en';
@@ -304,7 +304,7 @@ typeof describe === "function" &&
         title: 'Long Discourses 33 ',
         section: 0,
         nSections: 12,
-        vnameTrans,
+        vnameTrans: 'Amy',
         iSegment: 0,
       });
       should.deepEqual(res.segment, {

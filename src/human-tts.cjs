@@ -188,6 +188,8 @@
                 that.warn(`synthesizeSegment() failed ` + `with no altTts`);
                 reject(e);
               } else {
+                that.info(`synthesizeSegment()`, suttaSegId, voice,
+                  `=> altTts`, altTts.voice);
                 var resAlt = await altTts.synthesizeText(text, altArgs);
                 resAlt.altTts = altTts.voice;
                 resolve(resAlt);
