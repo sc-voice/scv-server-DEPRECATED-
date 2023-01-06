@@ -19,12 +19,12 @@
     "promise-queue": "^2.2.5",
     "roboto-fontface": "*",
     "say-again": "^0.6.0",
-    "scv-bilara": "^3.59.1",
+    "scv-bilara": "^3.59.4",
     "serve-favicon": "^2.5.0",
-    "suttacentral-api": "^2.2.81",
+    "suttacentral-api": "^2.2.82",
     "vue": "^3.2.37",
     "vue-i18n": "^9.2.2",
-    "vuetify": "^3.0.7",
+    "vuetify": "^3.1.0",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
