@@ -237,7 +237,7 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
-    it("TESTTESTgetPlaySegment => HumanTts sn1.1:0.2", async()=>{
+    it("getPlaySegment => HumanTts sn1.1:0.2", async()=>{
       let api = await testScvApi();
       let scid = "sn1.9:0.2";
       let sutta_uid = scid.split(":")[0];
@@ -285,7 +285,7 @@ typeof describe === "function" &&
         pli: '8d7a014474c041125b5132ae94dc8c7e',
       });
     });
-    it("TESTTESTgetPlaySegment() => HumanTts DN33", async()=>{
+    it("getPlaySegment() => HumanTts DN33", async()=>{
       let api = await testScvApi();
       let scid = "dn33:0.1";
       let langTrans = 'en';

@@ -3507,7 +3507,7 @@
               {
                 "scid": "mn66:6.8",
                 "pli": "‘yampi no saddhā gahapatikā divā vikāle paṇītaṁ khādanīyaṁ bhojanīyaṁ denti tassapi no bhagavā pahānamāha, tassapi no sugato paṭinissaggamāhā’ti. ",
-                "en": "‘But these faithful householders give us a variety of delicious foods at the wrong time of day. And the Blessed One tells us to give it up! The Holy One tells us to let it go!’ "
+                "en": "‘But these faithful householders give us delicious fresh and cooked foods at the wrong time of day. And the Blessed One tells us to give it up! The Holy One tells us to let it go!’ "
               },
               {
                 "scid": "mn66:6.9",
@@ -4422,12 +4422,12 @@
         "blurb": "Again raising the rule regarding eating, but this time as a reflection of gratitude for the Buddha in eliminating things that cause complexity and stress. The Buddha emphasizes how attachment even to little things can be dangerous."
       },
       "stats": {
-        "text": 15784,
+        "text": 15788,
         "lang": "en",
         "nSegments": 202,
         "nEmptySegments": 5,
         "nSections": 2,
-        "seconds": 1702.8901945038192
+        "seconds": 1703.3596308166884
       }
     }
   ]
