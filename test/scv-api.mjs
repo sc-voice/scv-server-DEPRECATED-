@@ -237,6 +237,30 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
+    it("TESTTESTgetPlaySegment => Aditi sn1.1:1.3", async()=>{
+      let api = await testScvApi();
+      let scid = "sn1.1:1.3";
+      let sutta_uid = scid.split(":")[0];
+      let langTrans = 'en';
+      let translator = 'sujato';
+      let vnameTrans = "Amy";
+      let vnameRoot = "aditi";
+      let params = { langTrans, translator, scid, vnameTrans, vnameRoot };
+      let query = {};
+      let res = await api.getPlaySegment({params, query});
+      should(res).properties({
+        sutta_uid,
+        scid,
+        langTrans,
+        translator,
+        vnameTrans: 'Amy',
+        vnameRoot: 'Aditi',
+      });
+      should(res.segment.audio).properties({
+        en: 'bbe28c63cba7aa04ac2ee08a837e873a',
+        pli: '29e610dabb4042653d1a30373933e342',
+      });
+    });
     it("getPlaySegment => HumanTts sn1.1:0.2", async()=>{
       let api = await testScvApi();
       let scid = "sn1.9:0.2";

@@ -283,8 +283,9 @@ TODO*/
               result.vnameRoot = signature.reader;
               break;
             default:
+            case 'ffmegConcat':
             case 'aws-polly':
-              result.vnameRoot = signature.voice;
+              result.vnameRoot = signature.voice || 'Aditi';
               break;
           }
         }
