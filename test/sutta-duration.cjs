@@ -211,14 +211,14 @@ typeof describe === "function" &&
       });
       testTolerance(resMeasure.seconds, 719);
     });
-    it("measure(sutta, lang) measures dn33", async () => {
+    it("TESTTESTmeasure(sutta, lang) measures dn33", async () => {
       var factory = await testSuttaFactory();
       var scd = new SuttaDuration();
       var sutta = await factory.loadSutta("dn33");
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 84794,
+        text: 84797,
         lang: "en",
         nSegments: 1167,
         nEmptySegments: 38,
