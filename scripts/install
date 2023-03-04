@@ -6,8 +6,14 @@ SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 echo -e "${SCRIPT}: BEGIN `date` (OK)"
 
 echo -e "${SCRIPT}: apt update; apt upgrade..."
-sudo apt update -y
-sudo apt upgrade -y
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+# HACK BEGIN
+# FIX BROKEN INSTALL OF  grub-efi-amd64-signed
+sudo rm /var/lib/dpkg/info/grub*
+sudo dpkg --configure -a
+# HACK END
 
 ${DIR}/install-node16 &&
 ${DIR}/update-npm &&
