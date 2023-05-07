@@ -903,7 +903,7 @@
               {
                 "scid": "mn105:15.6",
                 "pli": "“Aduñhi, bhante, bhattaṁ paṭikūlasammatan”ti. ",
-                "en": "Because that food is considered repulsive.” "
+                "en": "Because that food is deemed repulsive.” "
               },
               {
                 "scid": "mn105:15.7",
@@ -1475,12 +1475,12 @@
         "blurb": "Not all of those who claim to be awakened are genuine. The Buddha teaches how true spiritual progress depends on an irreversible letting go of the forces that lead to suffering."
       },
       "stats": {
-        "text": 14452,
+        "text": 14448,
         "lang": "en",
         "nSegments": 188,
         "nEmptySegments": 8,
         "nSections": 2,
-        "seconds": 1246.747619249275
+        "seconds": 1246.450301295293
       }
     },
     {

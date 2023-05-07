@@ -565,7 +565,7 @@ typeof describe === "function" &&
           `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,
       });
     });
-    it("buildDownload() => thig1.1/de", async()=>{
+    it("TESTTESTbuildDownload() => thig1.1/de", async()=>{
       let audioSuffix = "opus";
       let lang = 'de';
       let langs = 'pli+de';
@@ -586,11 +586,11 @@ typeof describe === "function" &&
       });
       should(res.filename).equal('thig1.1-de_pli+de_Vicki.opus');
       should(res.filepath).match(/scv-server\/local\/sounds\/common/);
-      should(res.filepath).match(/22780981f5861a933f196a5a07e1353a.opus/);
+      should(res.filepath).match(/f6a18c6c48f784475e73c9e9766dc5f3.opus/);
       let nSegments = 9;
       should.deepEqual(res.stats, {
         chars: {
-          de: 405,
+          de: 404,
           pli: 257,
         },
         duration: 59,
@@ -638,7 +638,7 @@ typeof describe === "function" &&
       let resDone = await api.getBuildDownload({params, query});
       should(resDone.task).properties(taskProperties);
       should(resDone.filename).equal('thig1.1-de_pli+de_Vicki.ogg');
-      should(resDone.guid).equal('22780981f5861a933f196a5a07e1353a');
+      should(resDone.guid).equal('f6a18c6c48f784475e73c9e9766dc5f3');
     });
   });
 
