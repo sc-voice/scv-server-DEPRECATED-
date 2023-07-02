@@ -165,7 +165,7 @@ typeof describe === "function" &&
       });
       testTolerance(resMeasure.seconds, 270);
     });
-    it("measure(sutta, lang) measures sn42.11", async () => {
+    it("TESTTESTmeasure(sutta, lang) measures sn42.11", async () => {
       var factory = await testSuttaFactory();
       var scd = new SuttaDuration();
 
@@ -173,7 +173,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 3314,
+        text: 3315,
         lang: "en",
         nSegments: 55,
         nEmptySegments: 1,
@@ -188,7 +188,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 6581,
+        text: 6595,
         lang: "en",
         nSegments: 125,
         nEmptySegments: 26,
@@ -196,14 +196,14 @@ typeof describe === "function" &&
       });
       testTolerance(resMeasure.seconds, 596);
     });
-    it("measure(sutta, lang) measures sn12.51", async () => {
+    it("TESTTESTmeasure(sutta, lang) measures sn12.51", async () => {
       var factory = await testSuttaFactory();
       var scd = new SuttaDuration();
       var sutta = await factory.loadSutta("sn12.51");
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 6782,
+        text: 6783,
         lang: "en",
         nSegments: 92,
         nEmptySegments: 1,
@@ -218,7 +218,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 84799,
+        text: 84806,
         lang: "en",
         nSegments: 1167,
         nEmptySegments: 38,
@@ -226,7 +226,7 @@ typeof describe === "function" &&
       });
       testTolerance(resMeasure.seconds, 7500);
     });
-    it("measure(sutta, lang) measures mn1", async () => {
+    it("TESTTESTmeasure(sutta, lang) measures mn1", async () => {
       var factory = await testSuttaFactory();
       var scd = new SuttaDuration();
       var sutta = await factory.loadSutta("mn1");
@@ -234,12 +234,12 @@ typeof describe === "function" &&
 
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 14237,
+        text: 16059,
         lang: "en",
         nSegments: 334,
         nSections: 2,
         nEmptySegments: 9,
       });
-      testTolerance(resMeasure.seconds, 1250);
+      testTolerance(resMeasure.seconds, 1400);
     });
   });

@@ -237,7 +237,7 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
-    it("TESTTESTgetPlaySegment => Aditi sn1.1:1.3", async()=>{
+    it("getPlaySegment => Aditi sn1.1:1.3", async()=>{
       let api = await testScvApi();
       let scid = "sn1.1:1.3";
       let sutta_uid = scid.split(":")[0];
@@ -565,7 +565,7 @@ typeof describe === "function" &&
           `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,
       });
     });
-    it("TESTTESTbuildDownload() => thig1.1/de", async()=>{
+    it("buildDownload() => thig1.1/de", async()=>{
       let audioSuffix = "opus";
       let lang = 'de';
       let langs = 'pli+de';
