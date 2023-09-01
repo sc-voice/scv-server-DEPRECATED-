@@ -180,7 +180,7 @@ typeof describe === "function" &&
         },
       });
     });
-    it("TESTTESTaddSutta(sutta) adds dn33", async () => {
+    it("addSutta(sutta) adds dn33", async () => {
       var factory = await testSuttaFactory();
       var sutta = await factory.loadSutta("dn33");
       var pl = new Playlist();
@@ -188,7 +188,7 @@ typeof describe === "function" &&
       should.deepEqual(pl.stats(), {
         tracks: 12,
         chars: {
-          en: 84806,
+          en: 84799,
           pli: 78866,
         },
         segments: {

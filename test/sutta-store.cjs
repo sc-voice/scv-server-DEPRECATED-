@@ -217,7 +217,7 @@ typeof describe === "function" &&
         [3, 6]
       );
     });
-    it("search(pattern) => multiple results", async () => {
+    it("TESTTESTsearch(pattern) => multiple results", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",
@@ -263,7 +263,7 @@ typeof describe === "function" &&
       );
       should.deepEqual(
         results.map((r) => r.author_uid),
-        ["sujato", "sujato", "sujato", "sujato"]
+        ["davis", "sujato", "sujato", "sujato"]
       );
       should.deepEqual(
         results.map((r) => r.suttaplex.acronym),

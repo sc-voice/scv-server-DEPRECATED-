@@ -5,9 +5,9 @@
       "count": 5.091,
       "uid": "sn42.11",
       "lang": "en",
-      "author": "Bhikkhu Sujato",
-      "author_short": "Sujato",
-      "author_uid": "sujato",
+      "author": "Dr Joongpyo Lee",
+      "author_short": "Davis",
+      "author_uid": "davis",
       "blurb": "The chief Bhadraka asks the Buddha about the origin and ending of suffering, and the Buddha points out that a loss among Bhadraka’s own community would cause him suffering, due to his attachment.",
       "nSegments": 55,
       "title": "1. Chiefs • With Bhadraka",
@@ -32,26 +32,27 @@
         "translated_title": "With Bhadraka ",
         "translations": [
           {
+            "author": "Dr Joongpyo Lee",
+            "author_short": "Lee",
+            "author_uid": "davis",
+            "is_root": false,
             "lang": "en",
             "lang_name": "English",
-            "is_root": false,
-            "author": "Bhikkhu Sujato",
-            "author_short": "sujato",
-            "author_uid": "sujato",
-            "publication_date": null,
-            "id": "sn42.11_translation-en-sujato",
+            "id": "en_sn42.11_davis",
             "segmented": true,
-            "title": "With Bhadraka ",
+            "publication_date": null,
+            "title": false,
             "volpage": null
           }
         ],
         "parallel_count": 2,
         "biblio": null,
-        "priority_author_uid": "sujato"
+        "priority_author_uid": "sujato",
+        "verseNo": ""
       },
       "sutta": {
         "sutta_uid": "sn42.11",
-        "author_uid": "sujato",
+        "author_uid": "davis",
         "support": true,
         "suttaplex": {
           "acronym": "SN 42.11",
@@ -67,25 +68,26 @@
           "translated_title": "With Bhadraka ",
           "translations": [
             {
+              "author": "Dr Joongpyo Lee",
+              "author_short": "Lee",
+              "author_uid": "davis",
+              "is_root": false,
               "lang": "en",
               "lang_name": "English",
-              "is_root": false,
-              "author": "Bhikkhu Sujato",
-              "author_short": "sujato",
-              "author_uid": "sujato",
-              "publication_date": null,
-              "id": "sn42.11_translation-en-sujato",
+              "id": "en_sn42.11_davis",
               "segmented": true,
-              "title": "With Bhadraka ",
+              "publication_date": null,
+              "title": false,
               "volpage": null
             }
           ],
           "parallel_count": 2,
           "biblio": null,
-          "priority_author_uid": "sujato"
+          "priority_author_uid": "sujato",
+          "verseNo": ""
         },
         "translation": {
-          "author_uid": "sujato",
+          "author_uid": "davis",
           "lang": "en"
         },
         "titles": [
@@ -93,7 +95,7 @@
           "1. Chiefs",
           "With Bhadraka"
         ],
-        "author": "Bhikkhu Sujato",
+        "author": "Dr Joongpyo Lee",
         "lang": "en",
         "sections": [
           {
@@ -396,7 +398,7 @@
             "expandable": false
           }
         ],
-        "suttaCode": "sn42.11/en/sujato",
+        "suttaCode": "sn42.11/en/davis",
         "blurb": "The chief Bhadraka asks the Buddha about the origin and ending of suffering, and the Buddha points out that a loss among Bhadraka’s own community would cause him suffering, due to his attachment."
       },
       "stats": {
@@ -452,12 +454,14 @@
             "id": "mn105_translation-en-sujato",
             "segmented": true,
             "title": "With Sunakkhatta ",
-            "volpage": null
+            "volpage": null,
+            "has_comment": false
           }
         ],
         "parallel_count": 1,
         "biblio": null,
-        "priority_author_uid": "sujato"
+        "priority_author_uid": "sujato",
+        "verseNo": ""
       },
       "sutta": {
         "sutta_uid": "mn105",
@@ -490,12 +494,14 @@
               "id": "mn105_translation-en-sujato",
               "segmented": true,
               "title": "With Sunakkhatta ",
-              "volpage": null
+              "volpage": null,
+              "has_comment": false
             }
           ],
           "parallel_count": 1,
           "biblio": null,
-          "priority_author_uid": "sujato"
+          "priority_author_uid": "sujato",
+          "verseNo": ""
         },
         "translation": {
           "author_uid": "sujato",
@@ -718,7 +724,7 @@
               {
                 "scid": "mn105:8.1",
                 "pli": "Ṭhānaṁ kho panetaṁ, sunakkhatta, vijjati yaṁ idhekacco purisapuggalo lokāmisādhimutto assa. ",
-                "en": "It’s possible that a certain individual may be intent on material pleasures. "
+                "en": "It’s possible that a certain individual may be intent on worldly pleasures of the flesh. "
               },
               {
                 "scid": "mn105:8.2",
@@ -768,7 +774,7 @@
               {
                 "scid": "mn105:9.8",
                 "pli": "“Evameva kho, sunakkhatta, ṭhānametaṁ vijjati yaṁ idhekacco purisapuggalo lokāmisādhimutto assa. ",
-                "en": "“In the same way, it’s possible that a certain individual may be intent on material pleasures. "
+                "en": "“In the same way, it’s possible that a certain individual may be intent on worldly pleasures of the flesh. "
               },
               {
                 "scid": "mn105:9.9",
@@ -788,7 +794,7 @@
               {
                 "scid": "mn105:9.12",
                 "pli": "‘āneñjasaṁyojanena hi kho visaṁyutto lokāmisādhimutto purisapuggalo’ti. ",
-                "en": "‘That individual is intent on material pleasures, for they’re detached from things connected with the imperturbable.’ "
+                "en": "‘That individual is intent on pleasures of the flesh, for they’re detached from things connected with the imperturbable.’ "
               },
               {
                 "scid": "mn105:10.1",
@@ -803,7 +809,7 @@
               {
                 "scid": "mn105:10.3",
                 "pli": "lokāmisapaṭisaṁyuttāya ca pana kathāya kacchamānāya na sussūsati, na sotaṁ odahati, na aññā cittaṁ upaṭṭhāpeti, na ca taṁ purisaṁ bhajati, na ca tena vittiṁ āpajjati. ",
-                "en": "But when talk connected with material pleasures is going on they don’t want to listen. They don’t actively listen or try to understand. They don’t associate with that kind of person, and they don’t find it satisfying. "
+                "en": "But when talk connected with worldly pleasures of the flesh is going on they don’t want to listen. They don’t actively listen or try to understand. They don’t associate with that kind of person, and they don’t find it satisfying. "
               },
               {
                 "scid": "mn105:11.1",
@@ -813,7 +819,7 @@
               {
                 "scid": "mn105:11.2",
                 "pli": "evameva kho, sunakkhatta, āneñjādhimuttassa purisapuggalassa ye lokāmisasaṁyojane se pavutte. ",
-                "en": "In the same way, an individual intent on the imperturbable has dropped the connection with material pleasures. "
+                "en": "In the same way, an individual intent on the imperturbable has dropped the connection with worldly pleasures of the flesh. "
               },
               {
                 "scid": "mn105:11.3",
@@ -823,7 +829,7 @@
               {
                 "scid": "mn105:11.4",
                 "pli": "‘lokāmisasaṁyojanena hi kho visaṁyutto āneñjādhimutto purisapuggalo’ti. ",
-                "en": "‘That individual is intent on the imperturbable, for they’re detached from things connected with material pleasures.’ "
+                "en": "‘That individual is intent on the imperturbable, for they’re detached from things connected with pleasures of the flesh.’ "
               },
               {
                 "scid": "mn105:12.1",
@@ -1475,12 +1481,12 @@
         "blurb": "Not all of those who claim to be awakened are genuine. The Buddha teaches how true spiritual progress depends on an irreversible letting go of the forces that lead to suffering."
       },
       "stats": {
-        "text": 14361,
+        "text": 14417,
         "lang": "en",
         "nSegments": 188,
         "nEmptySegments": 8,
         "nSections": 2,
-        "seconds": 1239.977093814185
+        "seconds": 1244.1451905938338
       }
     },
     {
@@ -1527,12 +1533,14 @@
             "id": "mn1_translation-en-sujato",
             "segmented": true,
             "title": "The Root of All Things ",
-            "volpage": null
+            "volpage": null,
+            "has_comment": true
           }
         ],
         "parallel_count": 4,
         "biblio": null,
-        "priority_author_uid": "sujato"
+        "priority_author_uid": "sujato",
+        "verseNo": ""
       },
       "sutta": {
         "sutta_uid": "mn1",
@@ -1565,12 +1573,14 @@
               "id": "mn1_translation-en-sujato",
               "segmented": true,
               "title": "The Root of All Things ",
-              "volpage": null
+              "volpage": null,
+              "has_comment": true
             }
           ],
           "parallel_count": 4,
           "biblio": null,
-          "priority_author_uid": "sujato"
+          "priority_author_uid": "sujato",
+          "verseNo": ""
         },
         "translation": {
           "author_uid": "sujato",
@@ -1658,7 +1668,7 @@
               {
                 "scid": "mn1:3.1",
                 "pli": "“Idha, bhikkhave, assutavā puthujjano ariyānaṁ adassāvī ariyadhammassa akovido ariyadhamme avinīto, sappurisānaṁ adassāvī sappurisadhammassa akovido sappurisadhamme avinīto—",
-                "en": "“Take an unlearned ordinary person who has not seen the noble ones, and is neither skilled nor trained in the teaching of the noble ones. They’ve not seen good persons, and are neither skilled nor trained in the teaching of the good persons. "
+                "en": "“Take an unlearned ordinary person who has not seen the noble ones, and is neither skilled nor trained in the teaching of the noble ones. They’ve not seen true persons, and are neither skilled nor trained in the teaching of the true persons. "
               },
               {
                 "scid": "mn1:3.2",
@@ -3323,12 +3333,14 @@
             "id": "mn66_translation-en-sujato",
             "segmented": true,
             "title": "The Simile of the Quail ",
-            "volpage": null
+            "volpage": null,
+            "has_comment": false
           }
         ],
         "parallel_count": 5,
         "biblio": null,
-        "priority_author_uid": "sujato"
+        "priority_author_uid": "sujato",
+        "verseNo": ""
       },
       "sutta": {
         "sutta_uid": "mn66",
@@ -3361,12 +3373,14 @@
               "id": "mn66_translation-en-sujato",
               "segmented": true,
               "title": "The Simile of the Quail ",
-              "volpage": null
+              "volpage": null,
+              "has_comment": false
             }
           ],
           "parallel_count": 5,
           "biblio": null,
-          "priority_author_uid": "sujato"
+          "priority_author_uid": "sujato",
+          "verseNo": ""
         },
         "translation": {
           "author_uid": "sujato",

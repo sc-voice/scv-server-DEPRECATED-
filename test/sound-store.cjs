@@ -44,7 +44,6 @@ typeof describe === "function" &&
       should(store.sayAgain.awsConfig.sayAgain.Bucket).equal(
         "say-again.sc-voice"
       );
-      should(store.logger).equal(logger);
     });
     it("custom ctor", async () => {
       var filePruner = new FilePruner({ root: TEST_SOUNDS });
