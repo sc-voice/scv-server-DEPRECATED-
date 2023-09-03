@@ -5,7 +5,12 @@
   const AbstractTTS = require("./abstract-tts.cjs");
   const LOCAL_DIR = path.join(__dirname, "..", "local");
   const AWS_CFG_PATH = path.join(LOCAL_DIR, "aws-creds.json");
-  const AWS = require("aws-sdk");
+  //const AWS = require("aws-sdk");
+  const { 
+    Polly:AWSPolly,
+    PollyClient,
+    SynthesizeSpeechCommand,
+  } = require("@aws-sdk/client-polly");
   const { logger } = require("log-instance");
 
   class Polly extends AbstractTTS {
@@ -42,7 +47,7 @@
         this.polly = opts.polly;
       } else {
         var cfg = this.pollyConfig;
-        this.polly = new AWS.Polly(cfg);
+        this.polly = new AWSPolly(cfg);
       }
     }
 

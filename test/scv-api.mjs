@@ -150,7 +150,7 @@ typeof describe === "function" &&
         ]);
       }
     });
-    it("TESTTESTgetSearch() => -l de -ra soma thig1.1", async()=>{
+    it("getSearch() => -l de -ra soma thig1.1", async()=>{
       let api = await testScvApi();
       let params = {pattern: "root of suffering"};
       

@@ -217,7 +217,7 @@ typeof describe === "function" &&
         [3, 6]
       );
     });
-    it("TESTTESTsearch(pattern) => multiple results", async () => {
+    it("search(pattern) => multiple results", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",
