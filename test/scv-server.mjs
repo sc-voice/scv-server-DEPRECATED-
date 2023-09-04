@@ -412,6 +412,7 @@ typeof describe === "function" &&
       should.deepEqual(res.body, testResponse);
       await scv.close();
     })
+    /* DEPRECATED
     it("GET /scv/auth/aws-creds", async()=>{
       let name = 'auth/aws-creds';
       let scv = await sharedTestServer();
@@ -437,6 +438,7 @@ typeof describe === "function" &&
         .expect(401)
         .expect({ error: errMsg });
     })
+    */
     it("GET /scv/audio/:sutta_uid/...", async()=>{
       let scv = await sharedTestServer();
       let filename = 'test-file.mp3';

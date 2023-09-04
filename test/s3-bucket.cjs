@@ -1,3 +1,4 @@
+/* DEPRECATED
 typeof describe === "function" &&
   describe("s3-bucket", function () {
     const should = require("should");
@@ -225,3 +226,4 @@ typeof describe === "function" &&
       })();
     });
   });
+*/

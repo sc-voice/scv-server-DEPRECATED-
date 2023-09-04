@@ -179,6 +179,7 @@ typeof describe === "function" &&
         ]);
       }
     });
+    /* DEPRECATED
     it("getAwsCreds() => obfuscated", async()=>{
       let api = await testScvApi();
       let creds = await api.getAwsCreds({});
@@ -191,6 +192,7 @@ typeof describe === "function" &&
       should(creds.polly).properties(properties);
       should(creds.polly.accessKeyId.startsWith('*****')).equal(true);
     })
+    */
     it("getPlaySegment() => mn1:0.1", async()=>{
       let api = await testScvApi();
       let scid = "mn1:0.1";

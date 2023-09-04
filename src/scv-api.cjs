@@ -16,7 +16,7 @@
   const SCAudio = require("./sc-audio.cjs");
   const SoundStore = require("./sound-store.cjs");
   const SuttaStore = require("./sutta-store.cjs");
-  const S3Creds = require("./s3-creds.cjs");
+  //const S3Creds = require("./s3-creds.cjs");
   const Task = require("./task.cjs");
   const Voice = require("./voice.cjs");
   const VoiceFactory = require("./voice-factory.cjs");
@@ -178,10 +178,12 @@ TODO*/
       }
     }
 
+    /*
     async getAwsCreds(req, res) {
       let creds = new S3Creds();
       return creds.obfuscated();
     }
+    */
 
     async getPlaySegment(req, res) {
       let { suttaStore, soundStore } = this;

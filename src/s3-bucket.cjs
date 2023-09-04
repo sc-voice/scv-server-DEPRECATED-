@@ -1,3 +1,4 @@
+/* DEPRECATED
 (function (exports) {
   const fs = require("fs");
   const path = require("path");
@@ -264,3 +265,4 @@
 
   module.exports = exports.S3Bucket = S3Bucket;
 })(typeof exports === "object" ? exports : (exports = {}));
+*/
