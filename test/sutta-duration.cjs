@@ -142,7 +142,7 @@ typeof describe === "function" &&
       sutta = factory.sectionSutta(sutta);
       var resMeasure = scd.measure(sutta);
       should(resMeasure).properties({
-        text: 1836,
+        text: 1839,
         lang: "en",
         nSegments: 47,
         nSections: 2,
