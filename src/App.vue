@@ -9,6 +9,7 @@
           </div>
         </v-app-bar-title>
         <v-spacer/>
+        {{settings.serverUrl}}
         <div class="text-caption">{{$i18n.locale}}</div>
         <Settings/>
       </v-app-bar>
