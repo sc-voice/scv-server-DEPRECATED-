@@ -150,11 +150,12 @@
 
   const urlBuild = computed(()=>{
     let { 
-      serverUrl, audioSuffix, langs, maxDuration, maxResults, 
+      audioSuffix, langs, maxDuration, maxResults, 
       vnameRoot, vnameTrans, search, langTrans
     } = settings;
+    let endpoint = settings.endpoint();
     let url = [
-      serverUrl,
+      endpoint,
       `build-download`,
       encodeURIComponent(audioSuffix),
       langs,
@@ -175,11 +176,12 @@
 
   const urlDownload = computed(()=>{
     let { 
-      serverUrl, audioSuffix, langs, maxDuration, maxResults, 
+      audioSuffix, langs, maxDuration, maxResults, 
       vnameRoot, vnameTrans, search, langTrans 
     } = settings;
+    let endpoint = settings.endpoint();
     let url = [
-      serverUrl,
+      endpoint,
       `download`,
       encodeURIComponent(audioSuffix),
       langs,

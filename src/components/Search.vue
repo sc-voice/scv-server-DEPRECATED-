@@ -55,8 +55,9 @@
   const url = computed(()=>{
     let { search } = settings;
     let pattern = search && search.toLowerCase().trim();
+    let endpoint = settings.endpoint();
     let url = [
-      settings.serverUrl,
+      endpoint,
       `search`,
       encodeURIComponent(pattern),
     ].join('/');

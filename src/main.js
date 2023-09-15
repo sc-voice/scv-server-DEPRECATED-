@@ -30,31 +30,31 @@ const vuetifyOpts = {
   },
 };
 
-import { createI18n, useI18n } from 'vue-i18n';
-import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n';
-const i18n = new createI18n({
-  legacy: false,
-  locale: "en",
-  fallbackLocale: "en",
-  messages: { 
-    cs,
-    da,
-    de,
-    en,
-    fr,
-    hi,
-    is,
-    ja,
-    nb,
-    nl,
-    pl,
-    pt,
-    ro,
-    si,
-    vi,
-  },
-});
-vuetifyOpts.locale = createVueI18nAdapter({ i18n, useI18n });
+//import { createI18n, useI18n } from 'vue-i18n';
+//import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n';
+//const i18n = new createI18n({
+  //legacy: false,
+  //locale: "en",
+  //fallbackLocale: "en",
+  //messages: { 
+    //cs,
+    //da,
+    //de,
+    //en,
+    //fr,
+    //hi,
+    //is,
+    //ja,
+    //nb,
+    //nl,
+    //pl,
+    //pt,
+    //ro,
+    //si,
+    //vi,
+  //},
+//});
+//vuetifyOpts.locale = createVueI18nAdapter({ i18n, useI18n });
 
 // Vuetify
 import { createVuetify, } from "vuetify"
@@ -65,6 +65,6 @@ loadFonts()
 
 var app = createApp(App);
 app.use(pinia);
-app.use(i18n)
+//app.use(i18n)
 app.use(vuetify)
 app.mount('#app')

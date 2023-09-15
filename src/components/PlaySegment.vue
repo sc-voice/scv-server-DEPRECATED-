@@ -95,9 +95,10 @@
   })
 
   const url = computed(()=>{
-    let { serverUrl, sutta_uid, scid, langTrans, translator, vnameTrans } = settings;
+    let { sutta_uid, scid, langTrans, translator, vnameTrans } = settings;
+    let endpoint = settings.endpoint();
     let url = [
-      serverUrl,
+      endpoint,
       `play/segment`,
       encodeURIComponent(sutta_uid),
       encodeURIComponent(langTrans),
@@ -115,11 +116,12 @@
       return null;
     }
     let { 
-      serverUrl, sutta_uid, scid, langTrans, translator, vnameTrans, vnameRoot,
+      sutta_uid, scid, langTrans, translator, vnameTrans, vnameRoot,
     } = settings;
+    let endpoint = settings.endpoint();
     return Object.keys(audio).reduce((a, k) => {
       if (k !== "vnameTrans") {
-        let prefix = [serverUrl, 'audio', sutta_uid, k];
+        let prefix = [endpoint, 'audio', sutta_uid, k];
         let guid = audio[k];
         let urlParts = k === "pli"
           ? prefix.concat(["ms", vnameRoot, guid])

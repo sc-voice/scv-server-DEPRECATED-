@@ -183,6 +183,7 @@ export default {
       nDisplayed: {},
       mdiLaunch,
       mdiDotsHorizontal,
+      $t: (s=>s),
     };
   },
   async mounted() {

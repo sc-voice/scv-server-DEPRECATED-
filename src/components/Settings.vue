@@ -1,7 +1,7 @@
 
 <template>
   <!--v-row justify="center"-->
-    <v-dialog v-model="dialog">
+    <v-dialog v-if="$t" v-model="dialog">
       <template v-slot:activator="{ props }">
         <v-btn v-if="settings.isLocalStorage" icon="mdi-cog" v-bind="props" 
           :title="$t('scv.settingsTitle')"/> 
@@ -117,7 +117,9 @@ onMounted(()=>{
 <script>
 export default {
   data: function() {
-    return {};
+    return {
+      $t: (s=>s),
+    };
   },
   computed: {
     themes: (ctx)=>{

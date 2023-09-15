@@ -28,6 +28,7 @@ const INITIAL_STATE = {
   translator: 'sujato',
   vnameTrans: 'Amy',
   vnameRoot: 'Aditi',
+  localApi: true,
   isLocalStorage: false,
   id: 1,
 };
@@ -65,6 +66,14 @@ export const useSettingsStore = defineStore('settings', {
       delete localStorage.settings;
       Utils.assignTyped(this, INITIAL_STATE);
       console.debug(`SettingsStore.clear()`, this);
+    },
+    endpoint() {
+      let { localApi } = this;
+      let { location } = window;
+      let { pathname, host } = location;
+      return localApi && pathname.startsWith('/scv')
+        ? `/scv`
+        : this.serverUrl;
     },
   },
   getters: {
