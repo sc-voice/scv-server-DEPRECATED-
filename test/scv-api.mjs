@@ -34,7 +34,9 @@ typeof describe === "function" &&
     var scvApi; 
     async function testScvApi(singleton=TESTSINGLETON) {
       if (bilaraData == null) {
-        bilaraData = new BilaraData();
+        bilaraData = new BilaraData({
+          name: 'ebt-data',
+        });
         await bilaraData.initialize();
       }
       should(bilaraData.initialized).equal(true);
@@ -72,6 +74,35 @@ typeof describe === "function" &&
       should(api.initialized).equal(true);
 
       should(res).equal(api);
+    });
+    it("TESTTEST getSearch() => mn28 -dl de", async()=>{
+      let api = await testScvApi();
+      let suid = 'mn28';
+      suid = 'dn33';
+      let pattern = `${suid} -dl de -nm`;
+      let params = { lang: 'de', pattern}; 
+      //logger.logLevel = 'debug';
+      let res = await api.getSearch({params, query});
+      let { 
+        trilingual, method, results,
+        author, docAuthor, docLang, refAuthor, refLang,
+      } = res;
+      let mld0 = res.mlDocs[0];
+      should(mld0).not.equal(undefined);
+      let seg0_2 = mld0.segMap['mn28:0.2'];
+
+      should(docAuthor).equal('sabbamitta');
+      should(docLang).equal('de');
+      should(refAuthor).equal('sujato');
+      should(refLang).equal('en');
+      should(method).equal('sutta_uid');
+      console.log("TESTTEST", seg0_2);
+      should(trilingual).equal(true);
+      should(seg0_2.de).equal(
+        'Das längere Gleichnis von der Elefanten-Fußspur ');
+      should(seg0_2.en).equal(undefined);
+      should(seg0_2.ref).equal(
+        'The Longer Simile of the Elephant’s Footprint ');
     });
     it("getSearch() => sn22.56/de", async()=>{
       let api = await testScvApi();
@@ -533,7 +564,7 @@ typeof describe === "function" &&
       should(Date.now() - res.buildDate).above(0).below(15*1000);
       should(task.actionsTotal).equal(nSegments + 2 + 2);
     });
-    it("TESTTESTgetBuildDownload() => thig1.1-3/en/soma", async()=>{
+    it("getBuildDownload() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -570,7 +601,7 @@ typeof describe === "function" &&
       should(resDone.filename).equal('thig1.1-3-en-soma_pli+en_amy.ogg');
       should(resDone.guid).equal('104fff42a9ff64423feabf84c674e573');
     });
-    it("TESTTESTgetDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
+    it("getDownloadPlaylist() => thig1.1-3/en/soma", async()=>{
       let api = await testScvApi();
       let audioSuffix = "ogg";
       let lang = 'en';
@@ -596,7 +627,7 @@ typeof describe === "function" &&
           `attachment; filename=thig1.1-3-en-soma_pli+en_amy.ogg`,
       });
     });
-    it("TESTTESTbuildDownload() => thig1.1/de", async()=>{
+    it("buildDownload() => thig1.1/de", async()=>{
       let audioSuffix = "opus";
       let lang = 'de';
       let langs = 'pli+de';

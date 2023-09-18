@@ -52,6 +52,7 @@
 
   class SuttaStore {
     constructor(opts = {}) {
+      const msg = 'SuttaStore.ctor() ';
       var that = this;
       (opts.logger || logger).logInstance(this, opts);
       this.scApi = opts.scApi || new ScApi();
@@ -78,6 +79,7 @@
           logger: this,
         });
       let root = opts.root || path.join(LOCAL_DIR, this.bilaraData.name);
+      this.info(msg, {root});
       this.seeker =
         opts.Seeker ||
         new Seeker({
@@ -150,8 +152,9 @@
     }
 
     static sanitizePattern(pattern) {
+      const msg = 'sutta-store.sanitizePattern() ';
       if (!pattern) {
-        throw new Error("SuttaStore.search() pattern is required");
+        throw new Error(`${msg} pattern is required`);
       }
       const MAX_PATTERN = 1024;
       var excess = pattern.length - MAX_PATTERN;
@@ -372,6 +375,7 @@
     }
 
     async search(...args) {
+      const msg = 'sutta-store.search()';
       try {
         if (!this.isInitialized) {
           throw new Error(`initialize() is required`);

@@ -65,6 +65,7 @@ TODO*/
         audioFormat: "mp3",
       }
     ) {
+      const msg = 'ScvApi.ctor() ';
       (opts.logger || logger).logInstance(this);
       this.name = APP_NAME;
       this.info(`ScvApi.ctor(${this.name})`);
@@ -79,7 +80,11 @@ TODO*/
       let scAudio = opts.scAudio || new SCAudio();
       let voiceFactory = opts.voiceFactory 
         || new VoiceFactory({ scAudio, soundStore, });
-      let bilaraData = opts.bilaraData || new BilaraData();
+      let bilaraData = opts.bilaraData || new BilaraData({
+        name: "ebt-data",
+        branch: "published",
+      });
+      this.info(msg, bilaraData.root);
       this.download = null;
       let { autoSyncSeconds } = opts;
 
