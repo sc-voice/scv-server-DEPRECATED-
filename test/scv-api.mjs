@@ -78,8 +78,7 @@ typeof describe === "function" &&
     it("TESTTEST getSearch() => mn28 -dl de", async()=>{
       let api = await testScvApi();
       let suid = 'mn28';
-      suid = 'dn33';
-      let pattern = `${suid} -dl de -nm`;
+      let pattern = `${suid} -dl de`;
       let params = { lang: 'de', pattern}; 
       //logger.logLevel = 'debug';
       let res = await api.getSearch({params, query});
