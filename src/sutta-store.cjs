@@ -395,9 +395,11 @@
           throw new Error("search() maxResults must be a number");
         }
         var bdres;
-        var matchHighlight = SuttaStore.isUidPattern(pattern)
-          ? false
-          : '<span class="scv-matched">$&</span>';
+
+        // strip search options from pattern
+        var findArgs = this.seeker.findArgs([{pattern}]);
+
+        let matchHighlight = '<span class="scv-matched">$&</span>';
         var maxGrepResults = Math.max(500, maxDoc * 3);
         var findOpts = {
           pattern,

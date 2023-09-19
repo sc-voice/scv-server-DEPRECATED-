@@ -97,6 +97,7 @@ typeof describe === "function" &&
       should(method).equal('sutta_uid');
       console.log("TESTTEST", seg0_2);
       should(trilingual).equal(true);
+      should(seg0_2.scid).equal('mn28:0.2');
       should(seg0_2.de).equal(
         'Das längere Gleichnis von der Elefanten-Fußspur ');
       should(seg0_2.en).equal(undefined);
