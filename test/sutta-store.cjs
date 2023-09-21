@@ -76,6 +76,53 @@ typeof describe === "function" &&
       await new Promise(r=>setTimeout(()=>r(),autoSyncSeconds*1000));
       should(store.autoSyncCount).equal(2);
     });
+    it("TESTTESTsearch() sn3.3/fr -dl en -da sujato", async () => {
+      var voice = Voice.createVoice({
+        name: "raveena",
+        localeIPA: "pli",
+        usage: "recite",
+      });
+      let lang = 'fr';
+      let suid = 'sn3.3';
+      let pattern = `${suid}/${lang} -dl en -da sujato`;
+      var scApi = await new ScApi().initialize();
+      var suttaFactory = new SuttaFactory({
+        scApi,
+        autoSection: true,
+      });
+      var store = await new SuttaStore({
+        scApi,
+        suttaFactory,
+        voice,
+      }).initialize();
+
+      // multiple results
+      var { method, results } = await store.search(pattern);
+      should(results).instanceOf(Array);
+      should(method).equal("sutta_uid");
+      should.deepEqual(
+        results.map((r) => r.count),
+        [0]
+      );
+      should.deepEqual(results.map((r) => r.uid), [suid]);
+      should.deepEqual( results.map((r) => r.author_uid), ['noeismet']);
+      should.deepEqual(
+        results.map((r) => r.suttaplex.acronym),
+        ["SN 3.3"]
+      );
+      should(results[0].quote[lang]).match(/La Vieillesse et la Mort/);
+      should(results[0].nSegments).equal(16);
+      var sutta = results[0].sutta;
+      should(sutta.sutta_uid).equal(suid)
+      should(sutta.author_uid).equal("noeismet");
+      should.deepEqual(sutta.segments[0], {
+        scid: "sn3.3:0.1",
+        fr: 'Discours Groupés 3 ',
+        ref: 'Linked Discourses 3.3 ',
+        pli: 'Saṁyutta Nikāya 3.3 ',
+        matched: true,
+      });
+    });
     it("search('thig16.1') returns segmented sutta", async () => {
       var voice = Voice.createVoice({
         name: "raveena",

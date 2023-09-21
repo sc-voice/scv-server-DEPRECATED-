@@ -305,18 +305,22 @@
     }
 
     async mldResult(mld, lang) {
+      const msg = 'SuttaStore.mldResult() ';
       try {
         if (mld == null) {
           throw new Error(`Expected MLDoc`);
         }
         var { scApi, suttaFactory, bilaraData: bd } = this;
-        var { suid: sutta_uid, translations } = mld;
-        lang = lang || mld.lang || "en";
-        var trans =
-          translations.filter((t) => t.lang === lang)[0] || translations[0];
-        var author_uid = trans.author_uid;
+        var { trilingual, suid: sutta_uid, translations } = mld;
+        lang = trilingual
+          ? mld.docLang || lang || "en"
+          : lang || mld.lang || "en";
+        let trans = translations.filter((t) => t.lang === lang)[0] || 
+          translations[0];
+        let author_uid = trans.author_uid;
         var blurb = bd.readBlurb({suid: sutta_uid, lang});
-        var suttaplex = await bd.loadSuttaplexJson(sutta_uid, lang, author_uid);
+        var suttaplex = await bd.loadSuttaplexJson(
+          sutta_uid, lang, author_uid);
         var authorInfo = bd.authorInfo(author_uid);
         var author = (authorInfo && authorInfo.name) || author_uid;
         var segments = mld.segments();

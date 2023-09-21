@@ -75,7 +75,7 @@ typeof describe === "function" &&
 
       should(res).equal(api);
     });
-    it("TESTTEST getSearch() => mn28 -dl de", async()=>{
+    it("getSearch() => mn28 -dl de", async()=>{
       let api = await testScvApi();
       let suid = 'mn28';
       let pattern = `${suid} -dl de`;
@@ -95,7 +95,6 @@ typeof describe === "function" &&
       should(refAuthor).equal('sujato');
       should(refLang).equal('en');
       should(method).equal('sutta_uid');
-      console.log("TESTTEST", seg0_2);
       should(trilingual).equal(true);
       should(seg0_2.scid).equal('mn28:0.2');
       should(seg0_2.de).equal(
