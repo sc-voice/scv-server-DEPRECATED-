@@ -16,6 +16,11 @@ typeof describe === "function" &&
     const LOCAL = path.join(__dirname, "..", "local");
     const EBT_DATA = path.join(LOCAL, "ebt-data");
     const MAXRESULTS = 5;
+    const RAVEENA = Voice.createVoice({
+      name: "raveena",
+      localeIPA: "pli",
+      usage: "recite",
+    });
     const STAGING = {
       apiUrl: "http://staging.suttacentral.net/api",
     };
@@ -76,7 +81,82 @@ typeof describe === "function" &&
       await new Promise(r=>setTimeout(()=>r(),autoSyncSeconds*1000));
       should(store.autoSyncCount).equal(2);
     });
-    it("TESTTESTsearch() sn3.3/fr -dl en -da sujato", async () => {
+    it("search() thig1.1/pt -ra sujato -ml1", async () => {
+      // no pt translation, but reference is available
+      var voice = RAVEENA;
+      let lang = 'pt';
+      let suid = 'thig1.1';
+      let pattern = `${suid}/${lang} -ra sujato -ml1`;
+      var scApi = await new ScApi().initialize();
+      var suttaFactory = new SuttaFactory({ scApi, autoSection: true, });
+      var store = await new SuttaStore({ scApi, suttaFactory, voice, })
+        .initialize();
+
+      var { method, results } = await store.search(pattern);
+      should(results).instanceOf(Array);
+      should(method).equal("sutta_uid");
+      should.deepEqual(
+        results.map((r) => r.count),
+        [0]
+      );
+      should.deepEqual(results.map((r) => r.uid), [suid]);
+      should.deepEqual( results.map((r) => r.author_uid), ['sujato']);
+      should.deepEqual(
+        results.map((r) => r.suttaplex.acronym),
+        ["Thig 1.1"]
+      );
+      should(results[0].quote.ref).match(/An Unnamed Nun/);
+      should(results[0].nSegments).equal(9);
+      var sutta = results[0].sutta;
+      should(sutta.sutta_uid).equal(suid)
+      should(sutta.author_uid).equal("sujato");
+      should.deepEqual(sutta.segments[0], {
+        scid: `${suid}:0.1`,
+        ref: 'Verses of the Senior Nuns 1.1 ',
+        pli: 'Therīgāthā 1.1 ',
+        matched: true,
+      });
+    });
+    it("TESTTESTsearch() cnd1/pt -ra sujato -ml1", async () => {
+      // no pt or en translation
+      var voice = RAVEENA;
+      let lang = 'pt';
+      let suid = 'cnd1';
+      let pattern = `${suid}/${lang} -ra sujato -ml1`;
+      var scApi = await new ScApi().initialize();
+      var suttaFactory = new SuttaFactory({ scApi, autoSection: true, });
+      var store = await new SuttaStore({ scApi, suttaFactory, voice, })
+        .initialize();
+
+      var { method, results } = await store.search(pattern);
+      should(results).instanceOf(Array);
+      should(method).equal("sutta_uid");
+      should.deepEqual(
+        results.map((r) => r.count),
+        [0]
+      );
+      should.deepEqual(results.map((r) => r.uid), [suid]);
+      should.deepEqual( results.map((r) => r.author_uid), ['ms']);
+      should.deepEqual(
+        results.map((r) => r.suttaplex.acronym),
+        ["Cnd 1"]
+      );
+      should.deepEqual(results[0].quote, {
+        matched: true,
+        pli: '1. Vatthugāthā ',
+        scid: `${suid}:0.3`,
+      });
+      should(results[0].nSegments).equal(235);
+      var sutta = results[0].sutta;
+      should(sutta.sutta_uid).equal(suid)
+      should(sutta.author_uid).equal("ms");
+      should.deepEqual(sutta.segments[0], {
+        scid: `${suid}:0.1`,
+        pli: 'Cūḷaniddesa ',
+        matched: true,
+      });
+    });
+    it("search() sn3.3/fr -dl en -da sujato", async () => {
       var voice = Voice.createVoice({
         name: "raveena",
         localeIPA: "pli",

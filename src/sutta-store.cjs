@@ -315,12 +315,21 @@
         lang = trilingual
           ? mld.docLang || lang || "en"
           : lang || mld.lang || "en";
-        let trans = translations.filter((t) => t.lang === lang)[0] || 
-          translations[0];
-        let author_uid = trans.author_uid;
-        var blurb = bd.readBlurb({suid: sutta_uid, lang});
-        var suttaplex = await bd.loadSuttaplexJson(
-          sutta_uid, lang, author_uid);
+        let trans = translations.filter((t) => t.lang === lang)[0];
+        if (!trans) { 
+          trans = translations[0];
+          lang = trans?.lang || 'pli';
+        }
+        let author_uid = trans?.author_uid || 'ms';
+        var blurb = await bd.readBlurb({suid: sutta_uid, lang});
+        var suttaplex = {};
+        try {
+          suttaplex = await bd.loadSuttaplexJson(
+            sutta_uid, lang, author_uid);
+        } catch(e) {
+          logger.warn(msg, e.message);
+        }
+        //console.log(msg, {trans, lang, author_uid, blurb, suttaplex});
         var authorInfo = bd.authorInfo(author_uid);
         var author = (authorInfo && authorInfo.name) || author_uid;
         var segments = mld.segments();
@@ -348,19 +357,21 @@
           lang,
         });
         sectSutta.blurb = blurb;
+        let author_short = author_uid
+          ? author_uid.charAt(0).toUpperCase() + author_uid.slice(1)
+          : null
         return {
           count: mld.score,
           uid: sutta_uid,
           lang,
           author,
-          author_short:
-            author_uid.charAt(0).toUpperCase() + author_uid.slice(1),
-          author_uid: author_uid,
+          author_short,
+          author_uid,
           author_blurb: authorInfo && authorInfo.blurb,
           blurb,
           nSegments: segments.length,
           title: titles.slice(1).join(" \u2022 "),
-          collection_id: trans.collection,
+          collection_id: trans?.collection,
           quote,
           suttaplex,
           sutta: sectSutta,
@@ -391,7 +402,19 @@
             maxResults: args[1],
           };
         }
-        var pattern = SuttaStore.sanitizePattern(opts.pattern);
+        // strip search options from pattern
+        var findArgs = this.seeker.findArgs([{pattern:opts.pattern}]);
+        let { 
+          pattern,
+          minLang,
+          docLang,
+          docAuthor,
+          refLang,
+          refAuthor,
+          trilingual,
+        } = findArgs;
+
+        pattern = SuttaStore.sanitizePattern(pattern);
         var lang = opts.language || opts.lang || "en";
         var maxDoc = opts.maxResults ?? this.maxResults;
         var maxDoc = Number(maxDoc);
@@ -399,9 +422,6 @@
           throw new Error("search() maxResults must be a number");
         }
         var bdres;
-
-        // strip search options from pattern
-        var findArgs = this.seeker.findArgs([{pattern}]);
 
         let matchHighlight = '<span class="scv-matched">$&</span>';
         var maxGrepResults = Math.max(500, maxDoc * 3);
@@ -412,6 +432,12 @@
           maxResults: maxGrepResults,
           showMatchesOnly: false,
           matchHighlight,
+          minLang,
+          docAuthor,
+          docLang,
+          refAuthor,
+          refLang,
+          trilingual,
         };
         try {
           bdres = await this.seeker.find(findOpts);
