@@ -246,14 +246,17 @@
     }
 
     async loadBilaraSutta(opts) {
+      const msg = 'SuttaStore.loadBilaraSutta() ';
       try {
         if (typeof opts === "string") {
           opts = {
             scid: opts,
           };
         }
-        var { scid, language, langTrans, translator, expand, matchHighlight } =
-          opts;
+        var { 
+          scid, language, langTrans, translator, expand, matchHighlight,
+          trilingual, minLang,
+        } = opts;
         var lang = langTrans || language || scid.split("/")[1] || "en";
         var pattern = translator
           ? `${scid}/${lang}/${translator}`
@@ -263,6 +266,8 @@
           lang,
           showMatchesOnly: false,
           matchHighlight,
+          trilingual,
+          minLang,
         };
         var bdres = await this.seeker.find(findOpts);
         var mld = bdres.mlDocs[0];

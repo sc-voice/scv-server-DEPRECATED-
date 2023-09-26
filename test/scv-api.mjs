@@ -298,6 +298,20 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
+    it("TESTTESTgetPlaySegment() => cnd1:1.1", async()=>{
+      let api = await testScvApi();
+      let scid = "cnd1:1.1";
+      let langTrans = 'pli';
+      let translator = 'ms';
+      let vnameTrans = 'Aditi';
+      let params = { langTrans, translator, scid, vnameTrans };
+      let query = {};
+      
+      let res = await api.getPlaySegment({params, query});
+      should.deepEqual(res.segment.audio, {
+        pli: '02cb4081a1c52b029a5f80c79d5bd3bd',
+      });
+    });
     it("getPlaySegment => Aditi sn1.1:1.3", async()=>{
       let api = await testScvApi();
       let scid = "sn1.1:1.3";
@@ -370,7 +384,7 @@ typeof describe === "function" &&
         pli: '8d7a014474c041125b5132ae94dc8c7e',
       });
     });
-    it("getPlaySegment() => HumanTts DN33", async()=>{
+    it("TESTTESTgetPlaySegment() => HumanTts DN33", async()=>{
       let api = await testScvApi();
       let scid = "dn33:0.1";
       let langTrans = 'en';
@@ -396,6 +410,7 @@ typeof describe === "function" &&
         scid,
         pli: 'Dīgha Nikāya 33 ',
         en: 'Long Discourses 33 ',
+        ref: 'Long Discourses 33 ',
         matched: true,
         audio: {
           en: 'b06d3e95cd46714448903fa8bcb12004',
@@ -417,6 +432,7 @@ typeof describe === "function" &&
         scid,
         pli: '“Sukhaṁ supāhi therike, ',
         en: '“Sleep with ease, Elder, ', // Soma
+        ref: 'Sleep softly, little nun, ', // Sujato
         matched: true,
         audio: {
           en: '37cedc61727373870e197793e653330d', // Soma

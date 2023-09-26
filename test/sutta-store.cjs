@@ -117,7 +117,7 @@ typeof describe === "function" &&
         matched: true,
       });
     });
-    it("TESTTESTsearch() cnd1/pt -ra sujato -ml1", async () => {
+    it("search() cnd1/pt -ra sujato -ml1", async () => {
       // no pt or en translation
       var voice = RAVEENA;
       let lang = 'pt';

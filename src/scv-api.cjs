@@ -209,6 +209,8 @@ TODO*/
         language: langTrans, // deprecated
         langTrans,
         expand: true,
+        minLang: 1,
+        trilingual: true,
       });
       if (iSection < 0 || sutta.sections.length <= iSection) {
         var suttaRef = `${sutta_uid}/${langTrans}/${translator}`;

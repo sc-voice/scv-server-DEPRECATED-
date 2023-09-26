@@ -352,7 +352,7 @@ typeof describe === "function" &&
         'sn42.11', 'sn56.21', 'mn116',
       ]);
     })
-    it("GET /scv/play/segment/...", async()=>{
+    it("TESTTESTGET /scv/play/segment/...", async()=>{
       let scv = await sharedTestServer();
       let sutta_uid = 'thig1.1';
       let scid = `${sutta_uid}:1.1`;
@@ -387,7 +387,7 @@ typeof describe === "function" &&
         scid: 'thig1.1:1.1',
         pli: '“Sukhaṁ supāhi therike, ',
         de: 'Schlafe sanft, kleine Nonne, ',
-        en: 'Sleep softly, little nun, ',
+        ref: 'Sleep softly, little nun, ',
         matched: true,
         audio: {
           de: 'df3554e56794be279cde5df84b8e38ec',
