@@ -352,7 +352,7 @@ typeof describe === "function" &&
         'sn42.11', 'sn56.21', 'mn116',
       ]);
     })
-    it("TESTTESTGET /scv/play/segment/...", async()=>{
+    it("GET /scv/play/segment/...", async()=>{
       let scv = await sharedTestServer();
       let sutta_uid = 'thig1.1';
       let scid = `${sutta_uid}:1.1`;

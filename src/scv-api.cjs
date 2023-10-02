@@ -16,6 +16,7 @@
   const SCAudio = require("./sc-audio.cjs");
   const SoundStore = require("./sound-store.cjs");
   const SuttaStore = require("./sutta-store.cjs");
+  var Links = import("./links.mjs");
   //const S3Creds = require("./s3-creds.cjs");
   const Task = require("./task.cjs");
   const Voice = require("./voice.cjs");
@@ -152,6 +153,27 @@ TODO*/
       parms.sutta_uid = parms.sutta_uid || parms.scid && parms.scid.split(':')[0];
       parms.langTrans = parms.langTrans || parms.language || 'en';
       return parms;
+    }
+
+    async getLinks(req) {
+      const msg = 'ScvApi.getLinks() ';
+      try {
+        if (Links instanceof Promise) {
+          Links = (await Links).default;
+        }
+        let links = new Links();
+        let { sutta_uid, lang, author } = req.params;
+        let link =  links.ebtSuttaRefLink({sutta_uid, lang, author});
+        return {
+          sutta_uid,
+          lang,
+          author,
+          link,
+        };
+      } catch (e) {
+        this.warn(msg, req.params, e.message);
+        throw e;
+      }
     }
 
     async getSearch(req) {

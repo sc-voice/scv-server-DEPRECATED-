@@ -1,5 +1,6 @@
 import ScvApi from "../src/scv-api.cjs";
 import { BilaraData } from "scv-bilara";
+import Links from "../src/links.mjs";
 import AudioUrls from "../src/audio-urls.cjs";
 import SoundStore from "../src/sound-store.cjs";
 import SuttaStore from "../src/sutta-store.cjs";
@@ -7,6 +8,8 @@ import Task from "../src/task.cjs";
 import { logger } from 'log-instance';
 
 import { MerkleJson } from "merkle-json";
+
+const EBT_VUE3 = "https://ebt-vue3.sc-voice.net";
 
 class MockResponse {
   constructor(data, code, type) {
@@ -74,6 +77,28 @@ typeof describe === "function" &&
       should(api.initialized).equal(true);
 
       should(res).equal(api);
+    });
+    it("TESTTESTgetLinks() => thig1.1", async()=>{
+      let api = await testScvApi();
+      let sutta_uid = 'thig1.1';
+      let lang = 'de';
+      let author;
+      let params = { sutta_uid, lang, author };
+      let res = await api.getLinks({params});
+      should(res).properties({
+        link: 'https://dhammaregen.net/#/sutta/thig1.1/de',
+      });
+    });
+    it("TESTTESTgetLinks() => thig1.1:2.3", async()=>{
+      let api = await testScvApi();
+      let sutta_uid = 'thig1.1:1.2';
+      let lang = 'en';
+      let author = 'soma';
+      let params = { sutta_uid, lang, author };
+      let res = await api.getLinks({params});
+      should(res).properties({
+        link: `${EBT_VUE3}/#/sutta/${sutta_uid}/${lang}/${author}`,
+      });
     });
     it("getSearch() => mn28 -dl de", async()=>{
       let api = await testScvApi();
@@ -298,7 +323,7 @@ typeof describe === "function" &&
         pli: '93c80a6ed3f7a3a931a451735c59df39',
       });
     });
-    it("TESTTESTgetPlaySegment() => cnd1:1.1", async()=>{
+    it("getPlaySegment() => cnd1:1.1", async()=>{
       let api = await testScvApi();
       let scid = "cnd1:1.1";
       let langTrans = 'pli';
@@ -384,7 +409,7 @@ typeof describe === "function" &&
         pli: '8d7a014474c041125b5132ae94dc8c7e',
       });
     });
-    it("TESTTESTgetPlaySegment() => HumanTts DN33", async()=>{
+    it("getPlaySegment() => HumanTts DN33", async()=>{
       let api = await testScvApi();
       let scid = "dn33:0.1";
       let langTrans = 'en';
