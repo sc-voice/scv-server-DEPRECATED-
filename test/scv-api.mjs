@@ -20,6 +20,7 @@ class MockResponse {
   }
 
   send(data) { this.mockData = data; }
+  redirect(link) { this.mockRedirect = link; }
   status(code) { this.statusCode = code; }
   type(t) { this.mockType = t; }
   set(key, value) { this.mockHeaders[key] = value; }
@@ -78,7 +79,19 @@ typeof describe === "function" &&
 
       should(res).equal(api);
     });
-    it("TESTTESTgetLinks() => thig1.1", async()=>{
+    it("TESTTESTgetEbtSite() => thig1.1", async()=>{
+      let api = await testScvApi();
+      let sutta_uid = 'thig1.1';
+      let lang = 'de';
+      let author;
+      let params = { sutta_uid, lang, author };
+      let response = new MockResponse();
+      let httpRes = await api.getEbtSite({params}, response);
+      should(response).properties({
+        mockRedirect: 'https://dhammaregen.net/#/sutta/thig1.1/de',
+      });
+    });
+    it("getLinks() => thig1.1", async()=>{
       let api = await testScvApi();
       let sutta_uid = 'thig1.1';
       let lang = 'de';
@@ -89,7 +102,7 @@ typeof describe === "function" &&
         link: 'https://dhammaregen.net/#/sutta/thig1.1/de',
       });
     });
-    it("TESTTESTgetLinks() => thig1.1:2.3", async()=>{
+    it("getLinks() => thig1.1:2.3", async()=>{
       let api = await testScvApi();
       let sutta_uid = 'thig1.1:1.2';
       let lang = 'en';

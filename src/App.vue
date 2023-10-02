@@ -12,6 +12,8 @@
         <div class="pr-5"> <Version/> </div>
       </v-app-bar>
       <v-expansion-panels variant="inset">
+        <EbtSite/>
+        <Links/>
         <Search/>
         <PlaySegment/>
         <Download/>
@@ -41,6 +43,8 @@
 import { useSettingsStore } from './stores/settings'
 import { useVolatileStore } from './stores/volatile'
 import Version from './components/Version.vue'
+import EbtSite from './components/EbtSite.vue'
+import Links from './components/Links.vue'
 import Search from './components/Search.vue'
 import PlaySegment from './components/PlaySegment.vue'
 import Download from './components/Download.vue'
@@ -53,6 +57,8 @@ export default {
   }),
   components: {
     Version,
+    EbtSite,
+    Links,
     Search,
     PlaySegment,
     Download,
