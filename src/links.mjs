@@ -27,7 +27,7 @@ export default class Links {
       case 'pli':
       case 'en':
       default: 
-        return `https://ebt-vue3.sc-voice.net/#/sutta/${sr}`;
+        return `https://sc-voice.net/#/sutta/${sr}`;
         //return this.voiceLink(suttaRef);
     }
   }
