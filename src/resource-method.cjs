@@ -24,19 +24,25 @@
     }
 
     async processRequest(req, res, next) {
+      const msg = "RestApi.processRequest() ";
       let { method, mime, handler } = this;
       let statusOk = 200;
       try {
         res.type(mime);
+        let { statusCode } = res;
         let value = await handler(req, res);
-        res.status(statusOk);
-        res.send(value);
+        if (!res.headersSent) {
+          res.status(statusOk);
+          res.send(value);
+        }
       } catch(e) {
-        res.type("application/json");
-        let { statusCode = statusOk } = res;
-        statusCode === statusOk && res.status(500);
-        this.warn(`processRequest() => HTTP${res.statusCode}:`, e.message);
-        res.send({error:e.message});
+        this.warn(msg, `HTTP${res.statusCode}:`, e.message);
+        if (!res.headersSent) {
+          res.type("application/json");
+          let { statusCode = statusOk } = res;
+          statusCode === statusOk && res.status(500);
+          res.send({error:e.message});
+        }
       }
     }
 

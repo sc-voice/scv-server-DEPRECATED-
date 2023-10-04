@@ -159,6 +159,7 @@ TODO*/
       const msg = 'ScvApi.getEbtSite() ';
       let result = {};
       let emsg;
+      let link;
       try {
         if (Links instanceof Promise) {
           Links = (await Links).default;
@@ -166,7 +167,7 @@ TODO*/
         let links = new Links();
         let { sutta_uid, lang, author } = req.params;
         emsg = `${msg} ${sutta_uid} ${lang} ${author} [NOT FOUND]`;
-        let link =  links.ebtSuttaRefLink({sutta_uid, lang, author});
+        link =  links.ebtSuttaRefLink({sutta_uid, lang, author});
         result = {
           sutta_uid,
           lang,
@@ -182,7 +183,7 @@ TODO*/
         this.warn(msg, req.params, emsg);
         throw new Error(emsg);;
       }
-      res.redirect(result.link);
+      res.redirect(link);
       return result;
     }
 
