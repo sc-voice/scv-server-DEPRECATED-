@@ -9,7 +9,7 @@ import { logger } from 'log-instance';
 
 import { MerkleJson } from "merkle-json";
 
-const EBT_VUE3 = "https://ebt-vue3.sc-voice.net";
+const SC_VOICE_NET = "https://sc-voice.net";
 
 class MockResponse {
   constructor(data, code, type) {
@@ -110,7 +110,7 @@ typeof describe === "function" &&
       let params = { sutta_uid, lang, author };
       let res = await api.getLinks({params});
       should(res).properties({
-        link: `${EBT_VUE3}/#/sutta/${sutta_uid}/${lang}/${author}`,
+        link: `${SC_VOICE_NET}/#/sutta/${sutta_uid}/${lang}/${author}`,
       });
     });
     it("getSearch() => mn28 -dl de", async()=>{

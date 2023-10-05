@@ -4,7 +4,7 @@ import should from "should";
 
 const VOICE="https://voice.suttacentral.net/scv/#";
 const DHAMMAREGEN = "https://dhammaregen.net/#";
-const EBT_VUE3 = "https://ebt-vue3.sc-voice.net/#";
+const SC_VOICE_NET = "https://sc-voice.net/#";
 
 typeof describe === "function" && describe("links", function() {
   it ("TESTTESTebtSuttaRefLink)()", ()=>{
@@ -13,7 +13,7 @@ typeof describe === "function" && describe("links", function() {
       sutta_uid, lang, author });
 
     should(test('thig1.1')).equal(
-      `${EBT_VUE3}/sutta/thig1.1/en`);
+      `${SC_VOICE_NET}/sutta/thig1.1/en`);
 
     // de
     should(test('thig1.1', 'de', 'sabbamitta')).equal(
@@ -23,11 +23,11 @@ typeof describe === "function" && describe("links", function() {
 
     // en
     should(test('thig1.1')).equal(
-      `${EBT_VUE3}/sutta/thig1.1/en`);
+      `${SC_VOICE_NET}/sutta/thig1.1/en`);
     should(test('thig1.1:1.2')).equal(
-      `${EBT_VUE3}/sutta/thig1.1:1.2/en`);
+      `${SC_VOICE_NET}/sutta/thig1.1:1.2/en`);
     should(test('thig1.1', 'en')).equal(
-      `${EBT_VUE3}/sutta/thig1.1/en`);
+      `${SC_VOICE_NET}/sutta/thig1.1/en`);
 
     //`${VOICE}/?search=thig1.1&lang=en`);
   });
