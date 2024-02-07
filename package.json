@@ -1,6 +1,6 @@
 {
   "name": "scv-server",
-  "version": "1.204.119",
+  "version": "1.204.120",
   "description": "SuttaCentral Voice Server",
   "main": "index.js",
   "private": false,
